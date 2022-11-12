@@ -1,0 +1,127 @@
+
+  <div class="app-page-title">
+    <div class="page-title-wrapper">
+      <div class="page-title-heading">
+        <div class="page-title-icon">
+          <i class="pe-7s-home icon-gradient bg-night-fade">
+          </i>
+        </div>
+        <div>Gestion des magasins
+          <div class="page-title-subheading">Managez vos magasins dans cet espace
+          </div>
+        </div>
+      </div>
+      <div class="page-title-actions">
+        <button (click)="open(mymodal)" type="button" data-toggle="tooltip" title="cartons" data-placement="bottom" class="btn-shadow mr-3 btn btn-primary">
+           <span class="btn-icon-wrapper pr-2 opacity-7">
+                                            <i class="fa fa-plus fa-w-20"></i>
+                                        </span>
+          Magasin
+        </button>
+<!--        <div class="d-inline-block ">-->
+<!--          <button routerLink="/magasin/carnets" type="button" data-toggle="tooltip" title="carnets" class="btn-shadow btn btn-info">-->
+<!--                                        <span class="btn-icon-wrapper pr-2 opacity-7">-->
+<!--                                            <i class="fa fa-envelope-open-text fa-w-20"></i>-->
+<!--                                        </span>-->
+<!--            Carnets-->
+<!--          </button>-->
+<!--        </div>-->
+      </div>    </div>
+  </div>
+<!--  <ul class="body-tabs body-tabs-layout tabs-animated body-tabs-animated nav">-->
+<!--    <li class="nav-item" (click)="open(mymodal)"  >-->
+<!--      <a class="nav-link " >-->
+<!--        <span class="btn-icon-wrapper pr-2 opacity-7"> <i class="fa fa-plus fa-w-20"></i> </span>-->
+<!--        <span> magasin</span>-->
+<!--      </a>-->
+<!--    </li>-->
+<!--    <li class="nav-item">-->
+<!--      <a class="nav-link" >-->
+<!--        <span>Available Loaders</span>-->
+<!--      </a>-->
+<!--    </li>-->
+<!--  </ul>-->
+
+  <div class="col-lg-12 col-xl-12">
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <h5 class="card-title">Liste des Magasins</h5>
+        <table class="table table-hover bg-white" id="servers">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Ref. interne</th>
+            <th>Localisation</th>
+<!--            <th>Statut</th>-->
+            <th>Date creation</th>
+            <th>Date modification</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody *ngFor="let store of stores; let i = index">
+
+          <tr>
+            <td>{{i + 1}}</td>
+            <td>{{store.internalReference}}</td>
+            <td>{{store.localization}} </td>
+<!--            <td>{{store.status.name}}</td>-->
+            <td> {{store.createdAt | date: 'dd/MM/yyyy hh:mm'}}</td>
+            <td> {{store.updateAt | date: 'dd/MM/yyyy hh:mm'}}</td>
+            <td>
+              <a style="cursor: pointer"  class="delete text-danger" data-toggle="modal">
+                <i class="pe-7s-trash" data-toggle="modal" title="delete"></i>
+              </a>
+            </td>
+          </tr>
+          </tbody>
+          <tfoot style="padding: 10px">
+          <!--                Total Clients: {{clients.length}}-->
+          </tfoot>
+        </table>
+
+      </div>
+    </div>
+  </div>
+
+
+
+<ng-template #mymodal let-modal >
+  <div class="modal-header">
+    <h6 class="modal-title timeline-title" id="modal-basic-title"><b>Enregistrer nouveau magasin</b> </h6>
+    <div class="close vertical-timeline-element-content bounce-in" (click)=" modal.close('save click')" >
+      <p><i class="fa fa-times"></i></p>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="">
+      <div class="">
+        <form [formGroup]="storeForm">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="position-relative form-group">
+                <label for="localisation" class="">Localisation</label>
+                <input name="amount" id="localisation" placeholder="localisation" type="text" class="form-control" formControlName="localization">
+              </div>
+              <div *ngIf="storeForm.controls['localization'].invalid && (storeForm.controls['localization'].dirty || storeForm.controls['localization'].touched)"
+                   class="mb-2"  style="color: #f65656; font-style: italic;">
+
+                <div *ngIf="storeForm.controls['localization'].errors?.['required']" class="ml-3">
+                  la localisation est obligatoire.
+                </div>
+                <div *ngIf="storeForm.controls['localization'].errors?.['minLength']" class="ml-3">
+                  entrez une localisation valide
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="mt-1 btn btn-secondary float-right ml-3"  (click)="annuler()"><i class="pe-7s-back"></i>Annuler</button>
+          <button class="mt-1 btn btn-primary float-right" (click)="createStore()" [disabled]="storeForm.invalid || (isLoading$ | async)">
+            <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
+            <span *ngIf="isLoading$ | async">Enregistrement ...</span>
+            <span *ngIf="!(isLoading$ | async)">Enregistrer magasin</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</ng-template>

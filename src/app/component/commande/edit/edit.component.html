@@ -1,0 +1,303 @@
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div class="page-title-icon">
+        <i class="pe-7s-news-paper icon-gradient bg-night-fade">
+        </i>
+      </div>
+      <div>Edition de Commande
+        <div class="page-title-subheading">compléter la commande</div>
+      </div>
+    </div>
+    <div class="page-title-actions">
+              <div class="d-inline-block">
+                <div class="page-title-icon bg-primary btn btn-success" disabled="">
+                  <i class="pe-7s-diskette icon-gradient bg-white">
+                  </i>
+                </div>
+            </div>
+      <div class="d-inline-block ">
+        <div class="  ml-3 ">
+          <div class="widget-subheading">
+            Etat de la commande
+          </div>
+          <div class="widget-heading">
+            <span class="text-success font-weight-bolder">{{order.status.name}}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="tab-content" style="">
+  <div class="tab-pane tabs-animation fade show active" id="tab-content-0" role="tabpanel">
+    <div class="main-card mb-3 card">
+      <div class="card-body">
+        <div class="card-title">
+          Commande N°: <span class="text-alternate">#{{order.internalReference}}</span>
+          <div class="float-right">
+            <select id="example-single" class="btn-primary">
+              <option value="1">Facture</option>
+              <option value="2">Proforma</option>
+              <option value="3">Reçu de paiement</option>
+              <option value="4">Bordereau de livraison</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-body">
+          <form class="">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Ref. commande</label>
+                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="email" value="{{order.internalReference}}"
+                         class="form-control" disabled>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Ref. client</label>
+                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text"
+                         value="{{client.internalReference}}"
+                         class="form-control">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Nom client</label>
+                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text" value="{{client.completeName}}"
+                         class="form-control">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Magasin</label>
+                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text" value="{{store.localization}}"
+                         class="form-control">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Delai de livraison</label>
+                  <input name="email" id="exampleEmail" placeholder="2 jours" type="text" class="form-control">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Canal</label>
+                  <input name="email" id="exampleEmail" placeholder="appel" type="text" class="form-control" value="{{order.channel}}">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Mode de paiement</label>
+                  <select name="select" id="exampleSelect" class="form-control">
+                    <option>--Sélectionner un mode--</option>
+                    <option *ngFor="let payment of paymentMethods" >{{payment.designation}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Ref. paeiment</label>
+                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text"
+                         class="form-control">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Montant</label>
+                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text" value="{{order.ttcaggregateAmount}}"
+                         class="form-control" disabled>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Piece justificative</label>
+                  <input name="file" id="exampleFile" type="file" class="form-control-file">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Ref. paeiment</label>
+                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text"
+                         class="form-control">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Mode de paiement</label>
+                  <select name="select" id="exampleSelect" class="form-control">
+                    <option>--Sélectionner un mode--</option>
+                    <option>Paiement en espèce</option>
+                    <option>Virement bancaire (banque)</option>
+                    <option>Paiement par chèque (banque)</option>
+                    <option>Versement en espèce (banque)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Description</label>
+                  <textarea name="text" id="exampleText" class="form-control"
+                            placeholder="description de la commande"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Raison d'annulation</label>
+                  <textarea name="text" rows="1" id="exampleText" class="form-control"
+                            placeholder="raison d'annulation de la commande"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="d-block text-right">
+              <button class="btn btn-success btn-lg">Save</button>
+            </div>
+            <!--              <button class="mt-1 btn btn-primary float-right">Enregistrer</button>-->
+          </form>
+        </div>
+        <div class="divider"></div>
+        <ul class="nav nav-tabs">
+          <li class="nav-item"><a data-toggle="tab" href="#tab-eg10-0" class="active nav-link">Produits</a></li>
+          <li class="nav-item"><a data-toggle="tab" href="#tab-eg10-1" class="nav-link">Etats de la commande</a>
+          </li>
+          <li class="nav-item"><a data-toggle="tab" href="#tab-eg10-2" class="nav-link">Caisse/Trésorerie</a></li>
+<!--          <li class="nav-item"><a data-toggle="tab" href="#tab-eg10-3" class="nav-link">Caisse/Trésorerie</a></li>-->
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="tab-eg10-0" role="tabpanel">
+            <p>Liste des produits de la commande</p>
+            <table class="mb-0 table table-sm">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Type de coupon</th>
+                <th>Quantité</th>
+                <th>Total</th>
+                <th>Date création</th>
+                <th>Date modification</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let prod of products; let i = index">
+                <th scope="row">{{i + 1}}</th>
+                <td><span *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? voucher.amount : ''}}</span></td>
+                <td>{{prod.quantityNotebook}}</td>
+                <td><span *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? voucher.amount * prod.quantityNotebook : ''}}</span></td>
+                <td>{{prod.createdAt}}</td>
+                <td>{{prod.updateAt}}</td>
+              </tr>
+              </tbody>
+              <tfoot>
+              <!--            <div class="float-right">Total: {{totalOrder}} Fcfa</div>-->
+              </tfoot>
+            </table>
+          </div>
+          <div class="tab-pane" id="tab-eg10-1" role="tabpanel">
+            <table class="mb-0 table table-sm">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Ref. comm</th>
+                <th>Utilisateurs</th>
+                <th>Etats</th>
+                <th>Date création</th>
+                <th>Date modification</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <th scope="row">1</th>
+                <td>#0015FE</td>
+                <td>mbarga</td>
+                <td>créé</td>
+                <td>12/10/2022 11:42</td>
+                <td>12/10/2022 11:42</td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>#0015FE</td>
+                <td>chimène</td>
+                <td>accepté</td>
+                <td>12/10/2022 11:42</td>
+                <td>12/10/2022 11:42</td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>#0015FE</td>
+                <td>nicolas</td>
+                <td>payé</td>
+                <td>12/10/2022 11:42</td>
+                <td>12/10/2022 11:42</td>
+              </tr>
+              <tr>
+                <th scope="row">4</th>
+                <td>#0015FE</td>
+                <td>nicolas</td>
+                <td>en cours de livraison</td>
+                <td>12/10/2022 11:42</td>
+                <td>12/10/2022 11:42</td>
+              </tr>
+              <tr>
+                <th scope="row">5</th>
+                <td>#0015FE</td>
+                <td>nicolas</td>
+                <td>terminé</td>
+                <td>12/10/2022 11:42</td>
+                <td>12/10/2022 11:42</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="tab-pane" id="tab-eg10-2" role="tabpanel">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Piece justificative</label>
+                  <input name="file" id="exampleFile" type="file" class="form-control-file">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Ref. paeiment</label>
+                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text"
+                         class="form-control">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="position-relative form-group">
+                  <label for="exampleEmail" class="">Montant</label>
+                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text"
+                         class="form-control" disabled>
+                </div>
+              </div>
+            </div>
+            <div class="d-block text-right">
+              <button class="btn btn-primary btn-lg">Accepter</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="d-block text-right card-footer">
+        <button class="mr-2 btn btn-link btn-sm">Cancel</button>
+        <button class="btn btn-primary btn-lg">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+

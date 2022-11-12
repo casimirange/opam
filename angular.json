@@ -102,5 +102,8 @@
       }
     }
   },
-  "defaultProject": "gulfin"
+  "defaultProject": "gulfin",
+  "cli": {
+    "analytics": false
+  }
 }

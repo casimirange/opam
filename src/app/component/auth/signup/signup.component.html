@@ -1,0 +1,193 @@
+<div class="app-container app-theme-white body-tabs-shadow">
+  <div class="app-container">
+    <div class="h-100 bg-plum-plate bg-animation">
+      <div class="d-flex h-100 justify-content-center align-items-center">
+        <div class="mx-auto app-login-box col-md-8">
+          <div class="app-logo-inverse mx-auto mb-3">Gulfcam</div>
+          <div class="modal-dialog w-100 mx-auto">
+            <div class="modal-content">
+              <div class="modal-body">
+                <div class="h5 modal-title text-center">
+                  <h4 class="mt-2">
+                    <div>Nouvel utilisateur</div>
+                    <span>Créer un nouveau compte ici</span>
+                  </h4>
+                </div>
+                <form [formGroup]="signup">
+                  <div class="form-row">
+                    <div class="col-md-12">
+                      <div class="position-relative form-group">
+                        <input id="exampleEmail" placeholder="Email..." type="email" name="email" class="form-control form-control-sm"  formControlName="email">
+                      </div>
+                      <div *ngIf="form['email'].invalid && (form['email'].dirty || form['email'].touched)"
+                           class="mb-2"  style="color: #f65656; font-style: italic;">
+
+                        <div *ngIf="form['email'].errors?.['required']" class="ml-3">
+                          l'email est obligatoire.
+                        </div>
+                        <div *ngIf="form['email'].errors?.['email']" class="ml-3">
+                          entrez une email valide : example@example.com
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="position-relative form-group">
+                        <input id="telephone" placeholder="téléphone..." type="text" name="telephone" class="form-control form-control-sm"  formControlName="telephone">
+                      </div>
+                      <div *ngIf="form['telephone'].invalid && (form['telephone'].dirty || form['telephone'].touched)"
+                           class="mb-2"  style="color: #f65656; font-style: italic;">
+
+                        <div *ngIf="form['telephone'].errors?.['required']" class="ml-3">
+                          le numéro de téléphone est obligatoire.
+                        </div>
+                        <div *ngIf="form['telephone'].errors?.['pattern']" class="ml-3">
+                          Le numéro de téléphone doit comporter 9 chiffres commençant par 2 ou par 6
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="position-relative form-group">
+                        <input id="pinCode" placeholder="Code pin" type="text" name="pinCode" class="form-control form-control-sm"  formControlName="pinCode">
+                      </div>
+                      <div *ngIf="form['pinCode'].invalid && (form['pinCode'].dirty || form['pinCode'].touched)"
+                           class="mb-2"  style="color: #f65656; font-style: italic;">
+
+                        <div *ngIf="form['pinCode'].errors?.['required']" class="ml-3">
+                          le code pin est obligatoire.
+                        </div>
+                        <div *ngIf="form['pinCode'].errors?.['pattern']" class="ml-3">
+                          Le code pin est un nombre
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="position-relative form-group">
+<!--                        <input id="idStore" placeholder="Magasin" type="text" name="idStore" class="form-control form-control-sm"  formControlName="idStore">-->
+                        <input type="text" id="clientref" class="form-control" formControlName="idStore" placeholder="choisir un magasin" list="storeListOption">
+                        <datalist id="storeListOption">
+                          <option *ngFor="let store of stores" [value]="store.localization"></option>
+                        </datalist>
+                      </div>
+                      <div *ngIf="form['idStore'].invalid && (form['idStore'].dirty || form['idStore'].touched)"
+                           class="mb-2"  style="color: #f65656; font-style: italic;">
+
+                        <div *ngIf="form['idStore'].errors?.['required']" class="ml-3">
+                          le magasin est obligatoire.
+                        </div>
+<!--                        <div *ngIf="form['idStore'].errors?.['pattern']" class="ml-3">-->
+<!--                          Le magasin est un nombre-->
+<!--                        </div>-->
+                      </div>
+                    </div>
+<!--                    <div class="col-md-12">-->
+<!--                      <div class="position-relative form-group">-->
+<!--                        <input  id="username" placeholder="Nom d'utilisateur" type="text" class="form-control form-control-sm" formControlName="username"></div>-->
+<!--                      <div *ngIf="form['username'].invalid && (form['username'].dirty || form['username'].touched)"-->
+<!--                           class=""  style="color: #f65656; font-style: italic;">-->
+
+<!--                        <div *ngIf="form['username'].errors?.['required']" class="ml-3">-->
+<!--                          le mot de passe est obligatoire.-->
+<!--                        </div>-->
+<!--                        <div *ngIf="form['username'].errors?.['pattern']" class="ml-3">-->
+<!--                          au moins 4 caractères requis-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                    </div>-->
+                    <div class="col-md-12">
+                      <div class="position-relative form-group">
+                        <input  id="examplePassword" name="pwd" placeholder="Mot de passe" type="password" class="form-control form-control-sm" formControlName="password"></div>
+                      <div *ngIf="form['password'].invalid && (form['password'].dirty || form['password'].touched)"
+                           class=""  style="color: #f65656; font-style: italic;">
+
+                        <div *ngIf="form['password'].errors?.['required']" class="ml-3">
+                          le mot de passe est obligatoire.
+                        </div>
+                        <div *ngIf="form['password'].errors?.['pattern']" class="ml-3">
+                          au moins 8 caractères avec 1 minuscule, 1 majuscule et 1 caractère spécial
+                        </div>
+                      </div>
+                    </div>
+<!--                    <div class="col-md-12">-->
+<!--                      <div class="position-relative form-group">-->
+<!--                        <input  id="cexamplePassword" name="cpwd" placeholder="Confirmer mot de passe" type="password" class="form-control form-control-sm" formControlName="password"></div>-->
+<!--                      <div *ngIf="form['cpassword'].invalid && (form['cpassword'].dirty || form['cpassword'].touched)"-->
+<!--                           class=""  style="color: #f65656; font-style: italic;">-->
+
+<!--                        <div *ngIf="form['cpassword'].errors?.['required']" class="ml-3">-->
+<!--                          le mot de passe est obligatoire.-->
+<!--                        </div>-->
+<!--                        <div *ngIf="form['cpassword'].errors?.['pattern']" class="ml-3">-->
+<!--                          au moins 8 caractères avec 1 minuscule, 1 majuscule et 1 caractère spécial-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                    </div>-->
+                    <div class="col-md-12">
+                      <div class="position-relative form-group">
+                        <input  id="firstName" placeholder="Nom" type="text" class="form-control form-control-sm" formControlName="firstName"></div>
+                      <div *ngIf="form['firstName'].invalid && (form['firstName'].dirty || form['firstName'].touched)"
+                           class=""  style="color: #f65656; font-style: italic;">
+
+                        <div *ngIf="form['firstName'].errors?.['required']" class="ml-3">
+                          le nom est obligatoire.
+                        </div>
+                        <div *ngIf="form['firstName'].errors?.['minlength']" class="ml-3">
+                          le nom doit comporter au moins 4 caractères..
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="position-relative form-group">
+                        <input  id="lastName" placeholder="Prénom" type="text" class="form-control form-control-sm" formControlName="lastName"></div>
+                      <div *ngIf="form['lastName'].invalid && (form['lastName'].dirty || form['lastName'].touched)"
+                           class=""  style="color: #f65656; font-style: italic;">
+
+                        <div *ngIf="form['lastName'].errors?.['required']" class="ml-3">
+                          le prénom est obligatoire.
+                        </div>
+                        <div *ngIf="form['lastName'].errors?.['minlength']" class="ml-3">
+                          le prénom doit comporter au moins 4 caractères..
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-12">
+                      <div class="position-relative form-group">
+                        <input  id="position" placeholder="Poste occupé" type="text" class="form-control form-control-sm" formControlName="position"></div>
+                      <div *ngIf="form['position'].invalid && (form['position'].dirty || form['position'].touched)"
+                           class=""  style="color: #f65656; font-style: italic;">
+
+                        <div *ngIf="form['position'].errors?.['required']" class="ml-3">
+                          le nom est obligatoire.
+                        </div>
+                        <div *ngIf="form['position'].errors?.['minlength']" class="ml-3">
+                          le nom doit comporter au moins 4 caractères..
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <ng-container *ngIf="(appState$ | async) as appState" [ngSwitch]="appState.dataState">
+                  <ng-container *ngSwitchCase="DataState.ERROR_STATE" class="">
+                    <div class="divider" ></div>
+                    <h6 class="mb-0 text-danger">{{appState.error}}</h6>
+                  </ng-container>
+                </ng-container>
+                {{errorMessage}}
+              </div>
+              <div class="modal-footer clearfix">
+                <div class="float-right">
+<!--                  <button class="btn btn-primary btn-lg" type="submit"  (click)="onSubmit()">Login</button>-->
+                  <button type="submit" class="btn btn-primary" [disabled]="signup.invalid || (isLoading$ | async)"  (click)="onSubmit()">
+                    <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
+                    <span *ngIf="isLoading$ | async">Enregistrement...</span>
+                    <span *ngIf="!(isLoading$ | async)">Enregistrer</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center text-white opacity-8 mt-3">Copyright © {{socity}} 2022</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

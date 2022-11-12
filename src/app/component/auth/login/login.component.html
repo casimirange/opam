@@ -1,0 +1,92 @@
+<div class="app-container app-theme-white body-tabs-shadow">
+  <div class="app-container">
+    <div class="h-100 bg-plum-plate bg-animation">
+      <div class="d-flex h-100 justify-content-center align-items-center">
+        <div class="mx-auto app-login-box col-md-8">
+          <div class="app-logo-inverse mx-auto mb-3">Gulfcam</div>
+          <div class="modal-dialog w-100 mx-auto">
+            <div class="modal-content">
+              <div class="modal-body">
+                <div class="h5 modal-title text-center">
+                  <h4 class="mt-2">
+                    <div>Welcome back,</div>
+                    <span>Please sign in to your account below.</span>
+                  </h4>
+                </div>
+                <form [formGroup]="loginForm">
+                  <div class="form-row">
+                    <div class="col-md-12">
+                      <div class="position-relative form-group">
+                        <input id="exampleEmail" placeholder="Username..." type="email" class="form-control"  formControlName="username">
+                        <div *ngIf="form['username'].invalid && (form['username'].dirty || form['username'].touched)"
+                             class=""  style="color: #f65656; font-style: italic;">
+
+                          <div *ngIf="form['username'].errors?.['required']" class="ml-3">
+                            le nom d'utilisateur est requis.
+                          </div>
+                          <div *ngIf="form['username'].errors?.['email']" class="ml-3">
+                            entrez une email valide : example@example.com
+                          </div>
+                        </div>
+                      </div>
+<!--                      <div style="color: #f65656; font-style: italic;" *ngIf="loginForm.controls['username'].invalid && ((loginForm.controls['username'].dirty))">-->
+<!--                        <span>*</span> usernmae invalide-->
+<!--                      </div>-->
+<!--                      <div *ngIf="form['username'].invalid && (form['username'].dirty || form['username'].touched)"-->
+<!--                           class="mb-2"  style="color: #f65656; font-style: italic;">-->
+
+<!--                        <div *ngIf="form['username'].errors?.['required']" class="ml-3">-->
+<!--                          le nom d'utilisateur est requis.-->
+<!--                        </div>-->
+<!--                        <div *ngIf="form['username'].errors?.['pattern']" class="ml-3">-->
+<!--                          le nom d'utilisateur doit comporter au moins 4 caractères.-->
+<!--                        </div>-->
+<!--                      </div>-->
+                    </div>
+                    <div class="col-md-12">
+                      <div class="position-relative form-group">
+                        <input  id="examplePassword" placeholder="Password..." type="password" class="form-control" formControlName="password"></div>
+                      <div *ngIf="form['password'].invalid && (form['password'].dirty || form['password'].touched)"
+                           class=""  style="color: #f65656; font-style: italic;">
+
+                        <div *ngIf="form['password'].errors?.['required']" class="ml-3">
+                          le mot de passe est obligatoire.
+                        </div>
+                        <div *ngIf="form['password'].errors?.['pattern']" class="ml-3">
+                          au moins 8 caractères avec 1 minuscule, 1 majuscule et 1 caractère spécial
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <div *ngIf="errorMessage" >
+                  <div class="divider" ></div>
+                  <h6 class="mb-0 text-danger">{{errorMessage}}</h6>
+                </div>
+
+                <ng-container *ngIf="(appState$ | async) as appState" [ngSwitch]="appState.dataState">
+                  <ng-container *ngSwitchCase="DataState.ERROR_STATE" class="">
+                    <div class="divider" ></div>
+                    <h6 class="mb-0 text-danger">{{appState.error}}</h6>
+                  </ng-container>
+                </ng-container>
+              </div>
+              <div class="modal-footer clearfix">
+                <div class="float-right">
+<!--                  <button class="btn btn-primary btn-lg" [disabled]="loginForm.invalid " (click)="onSubmit()">Login</button>-->
+                  <button type="submit" class="btn btn-primary  " [disabled]="loginForm.invalid || (isLoading$ | async)" (click)="onSubmit()">
+                    <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
+                    <span *ngIf="isLoading$ | async">Connexion ...</span>
+                    <span *ngIf="!(isLoading$ | async)">Login</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center text-white opacity-8 mt-3">Copyright © {{socity}} 2022</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
