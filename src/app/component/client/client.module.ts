@@ -9,7 +9,7 @@ import { DetailsComponent } from './details/details.component';
 import {ClientService} from "../../_services/clients/client.service";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 // import {Ng2OrderModule} from "ng2-order-pipe";
-import {NgxPaginationModule} from "ngx-pagination";
+// import {NgxPaginationModule} from "ngx-pagination";
 // import {Ng2SearchPipeModule} from "ng2-search-filter";
 import { ClientNameFilterPipe } from './pipes/client-name-filter.pipe';
 import { ClientRefFilterPipe } from './pipes/client-ref-filter.pipe';
@@ -33,7 +33,7 @@ import { ClientCompagnyFilterPipe } from './pipes/client-compagny-filter.pipe';
         FormsModule,
         ReactiveFormsModule,
         // Ng2OrderModule,
-        NgxPaginationModule,
+        // NgxPaginationModule,
         // Ng2SearchPipeModule,
     ],
     providers: [
