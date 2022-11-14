@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ClientService} from "../../../_services/clients/client.service";
 import {IClient, TypeClient} from "../../../_interfaces/client";
 import {HttpParams} from "@angular/common/http";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-details',
@@ -11,7 +11,7 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class DetailsComponent implements OnInit {
   client: IClient;
-  constructor(private clientService: ClientService, private activatedRoute: ActivatedRoute) {
+  constructor(private clientService: ClientService, private activatedRoute: ActivatedRoute, private router: Router) {
     this.client = new class implements IClient {
       address: string;
       companyName: string;
@@ -29,6 +29,7 @@ export class DetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log(this.router.url)
     this.activatedRoute.params.subscribe(params => {
       this.clientService.findClient(params['id']).subscribe(
         res => {

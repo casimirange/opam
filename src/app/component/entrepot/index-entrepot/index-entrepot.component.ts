@@ -48,9 +48,9 @@ export class IndexEntrepotComponent implements OnInit {
       resp => {
         this.stores = resp.content
       },
-      error => {
-        this.notifService.onError(error.error.message, 'Erreur de chargement des magasins')
-      }
+      // error => {
+        // this.notifService.onError(error.error.message, 'Erreur de chargement des magasins')
+      // }
     )
   }
 
@@ -62,9 +62,9 @@ export class IndexEntrepotComponent implements OnInit {
         this.storeHouses = resp.content
         this.notifService.onSuccess('chargement des entrepots')
       },
-      error => {
-        this.notifService.onError(error.error.message, 'Erreur de chargement des magasins')
-      }
+      // error => {
+      //   this.notifService.onError(error.error.message, 'Erreur de chargement des magasins')
+      // }
     )
   }
 

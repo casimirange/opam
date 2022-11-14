@@ -37,12 +37,19 @@ export class TokenService {
     localStorage.setItem('lastName', user.lastName)
     localStorage.setItem('uid', user.internalReference.toString())
     localStorage.setItem('email', user.email)
+    localStorage.setItem('userAccount', user.typeAccount.name)
   }
 
   saveRefreshToken(token: string){
     // localStorage.removeItem('bearerToken');
     localStorage.setItem('bearerToken', <string>token);
-    this.router.navigate(['/dashboard'])
+    if (this.isRedirect()){
+      this.router.navigate([localStorage.getItem('url').toString()])
+      localStorage.removeItem('url')
+    }else {
+      this.router.navigate(['/dashboard'])
+    }
+
     // localStorage.setItem('username', <string>token.username);
     // localStorage.setItem('roles', <string>token.roles);
     // token.roles?.forEach(role => {
@@ -78,6 +85,11 @@ export class TokenService {
   isLogged(): boolean{
     const token = localStorage.getItem(('bearerToken'))
     return !! token;
+  }
+
+  isRedirect(): boolean{
+    const url = localStorage.getItem('url')
+    return !! url;
   }
 
   getToken(): string | null{

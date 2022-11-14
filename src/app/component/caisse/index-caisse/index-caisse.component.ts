@@ -156,7 +156,7 @@ export class IndexCaisseComponent implements OnInit {
 
 
   saveClientt(){
-    this.clientService.createClients(this.clientForm.value as IClient).subscribe(
+    this.clientService.addClient(this.clientForm.value as IClient).subscribe(
       resp => {
         this.clients.push(resp)
         this.notifsService.onSuccess('client rajouté avec succès')

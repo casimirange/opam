@@ -1,3 +1,10 @@
+.ng-invalid.ng-dirty{
+  border-color: red;
+}
+.ng-invalid.ng-touched{
+  border-color: red;
+}
+
 ::ng-deep {
   .ngx-pagination {
     display: flex;

@@ -91,7 +91,7 @@ export class IndexPaiementMethodComponent implements OnInit {
         this.annuler()
       },
       error => {
-        this.notifServices.onError(error.error.message,"échec de suppression")
+        // this.notifServices.onError(error.error.message,"échec de suppression")
         this.isLoading.next(false);
       }
     )

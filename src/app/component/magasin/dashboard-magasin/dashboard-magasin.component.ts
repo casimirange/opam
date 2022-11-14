@@ -68,9 +68,13 @@ export class DashboardMagasinComponent implements OnInit {
         console.log(resp)
         this.stores = resp.content
       },
-      error => {
-
-      }
+      // error => {
+      //   if (error.error.message.includes('JWT expired')){
+      //     console.log('foutu tesst')
+      //   }else {
+      //     this.notifService.onError(error.error.message, '')
+      //   }
+      // }
     )
   }
   annuler() {

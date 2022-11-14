@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {Subject} from "rxjs";
 import  Swal from 'sweetalert2/dist/sweetalert2.js';
 import {TokenService} from "../token/token.service";
+import {Router} from "@angular/router";
 const Toast = Swal.mixin({
   toast: true,
   position: 'top-end',
@@ -20,7 +21,7 @@ const Toast = Swal.mixin({
 export class NotifsService {
 
   apiError = new Subject()
-  constructor(private tokenService: TokenService) { }
+  constructor(private tokenService: TokenService, private router: Router) { }
 
   onDefault(message: string): void{
     Toast.fire({
@@ -64,6 +65,7 @@ export class NotifsService {
     }).then((result) => {
       if (result.value) {
         this.tokenService.clearTokenExpired();
+        localStorage.setItem('url', this.router.url)
       }
     })
   }

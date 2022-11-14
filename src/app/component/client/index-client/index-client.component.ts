@@ -1,5 +1,5 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {IClient} from "../../../_interfaces/client";
+import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {IClient, TypeClient} from "../../../_interfaces/client";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 import {ClientService} from "../../../_services/clients/client.service";
@@ -10,6 +10,9 @@ import {CustomResponseCliennts} from "../../../_interfaces/custom-response-clien
 import {catchError, map, startWith} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
+import {Router} from "@angular/router";
+// import Swal from "sweetalert2";
+
 
 @Component({
   selector: 'app-index-client',
@@ -19,6 +22,8 @@ import {NotifsService} from "../../../_services/notifications/notifs.service";
 export class IndexClientComponent implements OnInit {
 
   clients: IClient[] = [];
+  client: IClient = new IClient();
+  clientType: string;
   displaySearchBar: boolean = false;
   clientForm: FormGroup;
   appState$: Observable<AppState<CustomResponseCliennts>>;
@@ -37,12 +42,12 @@ export class IndexClientComponent implements OnInit {
   totalElements: number;
   size: number;
 
-
-
+  modalTitle = 'Enregistrer nouveau client'
 
   @ViewChild('mymodal', {static: false}) viewMe?: ElementRef<HTMLElement>;
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private clientService: ClientService, private notifService: NotifsService) {
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private clientService: ClientService, private router: Router,
+              private notifService: NotifsService) {
     this.formClient();
   }
 
@@ -50,8 +55,8 @@ export class IndexClientComponent implements OnInit {
     this.isLoading.next(true);
     this.clientService.getAllClients().subscribe(
       resp => {
-        this.isLoading.next(false);
         this.clients = resp.content;
+        this.isLoading.next(false);
         console.log(resp)
         this.size = resp.size
         this.totalPages = resp.totalPages
@@ -63,7 +68,7 @@ export class IndexClientComponent implements OnInit {
         if (error.error.message.includes('JWT expired')){
 
         }else {
-          this.notifService.onError(error.error.message, 'Erreur')
+          this.notifService.onError(error.error.message, '')
         }
 
       }
@@ -84,124 +89,117 @@ export class IndexClientComponent implements OnInit {
       address: ['', [Validators.required, Validators.minLength(5)]],
       gulfcamAccountNumber: ['', [Validators.required, Validators.pattern('^[0-9 ]*$')]],
       rccm: ['', [Validators.required, Validators.minLength(2)]],
-      typeClient: ['', [Validators.required]],
+      typeClient : ['', [Validators.required]],
     });
   }
 
-  searchBar() {
-    this.displaySearchBar = !this.displaySearchBar;
-  }
-
-  getClients() {
-    this.appState$ = this.clientService.clients$
-      .pipe(
-        map(response => {
-          console.log('la reponse', response)
-          this.dataSubjects.next(response); //on met la liste des serveurs dans la variable datasubject pour pouvoir l'utiliser ailleurs
-          // this.notificationService.onDefault(response.message);
-          return {
-            dataState: DataState.LOADED_STATE,
-            appData: {...response, content: {clients: response.content.clients}}
-          };
-        }),
-        startWith({dataState: DataState.LOADING_STATE, appData: null}),
-        catchError((error => {
-          // this.notificationService.onError(error);
-          return of({dataState: DataState.ERROR_STATE, error: error});
-        }))
-      );
-  }
+  // searchBar() {
+  //   this.displaySearchBar = !this.displaySearchBar;
+  // }
 
   saveClient() {
     this.isLoading.next(true);
     this.clientService.addClient(this.clientForm.value as IClient).subscribe(
       resp => {
-        this.isLoading.next(false);
         this.clients.push(resp)
+        this.isLoading.next(false);
         this.notifService.onSuccess("client créé avec succès!")
         this.annuler()
       },
-      err => {
+      error => {
         this.isLoading.next(false);
-        this.notifService.onError(err.error.message, 'échec lors de la création')
+        if (error.error.message.includes('JWT expired')){
+
+        }else {
+          this.notifService.onError(error.error.message, '')
+        }
       }
     )
   }
 
   annuler() {
     this.formClient();
+    // this.clientForm.reset()
+    this.clientType = ''
+    this.client = new IClient()
     this.modalService.dismissAll()
   }
 
-  searchByName() {
-    if (this.name == "") {
-      this.ngOnInit()
-    } else {
-      let tab = [];
-      tab = this.clients.filter(res => {
-        return res.completeName.includes(this.name.toLowerCase());
-      })
-      this.clients = tab
-      console.log(this.name.toLowerCase())
-      console.log(tab)
-    }
-  }
-
-  searchByInternalRef() {
-    if (this.internalRef == "") {
-      this.clients = [...this.clients]
-    } else {
-      this.clients = [...this.clients.filter(res => {
-
-        // return res.completeName.toLocaleLowerCase().match(this.name.toLocaleLowerCase())
-        return res.internalReference.toLocaleString().match(this.internalRef.toLocaleLowerCase())
-          // res.createdAt.getDate() === this.date.getDate(),
-
-
-      })]
-    }
-  }
-
-  key = 'id'
-  reverse = false;
-  sort(key: any){
-    this.key = key
-    this.reverse = !this.reverse
-  }
-
-  // searchByCompagny() {
-  //   if (this.compagny == "") {
-  //     this.clients = this.clients
-  //   } else {
-  //     this.clients = this.clients.filter(res => {
-  //       return res.companyName.toLocaleLowerCase().match(this.compagny.toLocaleLowerCase())
-  //     })
-  //   }
-  // }
-  //
-  // searchByDate() {
-  //   // if (this.date == "") {
-  //   //   this.clients = this.clients
-  //   // } else {
-  //     this.clients = this.clients.filter(res => {
-  //       return res.createdAt.getDate().toLocaleString().match(this.date.getDate().toLocaleString())
-  //     })
-  //   // }
-  // }
-  //
-  // searchByInternal() {
-  //   if (this.internalRef == "") {
-  //     this.clients = this.clients
-  //   } else {
-  //     this.clients = this.clients.filter(res => {
-  //       return res.internalReference.toLocaleString().match(this.internalRef.toLocaleLowerCase())
-  //     })
-  //   }
-  // }
-
-
   open(content: any) {
-    const modal = true;
+    this.annuler()
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
+    this.modalTitle = 'Enregistrer nouveau client'
+  }
+
+  deleteClient(client: IClient, index: number) {
+
+      Swal.fire({
+        title: 'Supprimer client',
+        html: "Voulez-vous vraiment supprimer "+ client.completeName.bold() + " de la liste de vos clients ?",
+        icon: 'warning',
+        showCancelButton: true,
+
+        confirmButtonColor: '#00ace6',
+        cancelButtonColor: '#f65656',
+        confirmButtonText: 'OUI',
+        cancelButtonText: 'NON',
+        allowOutsideClick: true,
+        focusConfirm: false,
+        focusCancel: true,
+        focusDeny: true,
+        showLoaderOnConfirm: true
+      }).then((result) => {
+        if (result.value) {
+          this.isLoading.next(true)
+          this.clientService.deleteClient(client.internalReference).subscribe(
+            resp => {
+              this.clients.splice(index, 1)
+              this.isLoading.next(false)
+              this.notifService.onSuccess(client.completeName.bold() +' supprimé avec succès !')
+            },error => {
+              this.isLoading.next(false);
+              if (error.error.message.includes('JWT expired')){
+
+              }else {
+                this.notifService.onError(error.error.message, '')
+              }
+            }
+          )
+        }
+      })
+
+  }
+
+  detailsClient(client: IClient) {
+    this.router.navigate(['/clients/', client.internalReference])
+  }
+
+  updateClientModal(mymodal: TemplateRef<any>, client: IClient) {
+    this.modalService.open(mymodal, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
+    this.client = client
+    this.clientType = client.typeClient.name
+    this.modalTitle = 'Modifier client'
+  }
+
+  updateClient() {
+    this.isLoading.next(true);
+    this.clientService.updatelient(this.clientForm.value as IClient, this.client.internalReference).subscribe(
+      resp => {
+        this.isLoading.next(false);
+        // on recherche l'index du client dont on veut faire la modification dans liste des clients
+        const index = this.clients.findIndex(client => client.internalReference === resp.internalReference);
+        this.clients[ index ] = resp;
+        this.notifService.onSuccess("client modifié avec succès!")
+        this.annuler()
+      },
+      error => {
+        this.isLoading.next(false);
+        if (error.error.message.includes('JWT expired')){
+
+        }else {
+          this.notifService.onError(error.error.message, '')
+        }
+      }
+    )
   }
 }

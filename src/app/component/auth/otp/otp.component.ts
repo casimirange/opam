@@ -24,7 +24,7 @@ export class OtpComponent implements OnInit {
     email: ''
   }
 
-  public conNumber = 3;
+  firstName: string | null = '';
 
   public configOptions = {
     length: 4,
@@ -36,13 +36,14 @@ export class OtpComponent implements OnInit {
   }
 
   ngOnInit() {
-    // console.log(this.conNumber)
+    this.setTimer()
+  }
+
+  setTimer(){
+    //on fait un décompte de 5 minutes pour entrer le code otp
     const date = Date.parse(localStorage.getItem('exp').toString())
-    console.log('d1',date)
     const date1 = new Date()
-    console.log('d2',date1.getTime())
     this.timer = (date - date1.getTime())/1000
-    console.log('temp', this.timer)
     setInterval(() => {
       if(this.timer > 0) {
         this.timer--;
@@ -68,34 +69,23 @@ export class OtpComponent implements OnInit {
   }
 
   verifier(){
-    // console.log(this.otp)
-    // console.log(this.token.getToken())
 
-
-    // if (this.conNumber > 0){
       this.authService.verifyOtp(this.otp).subscribe(
         (resp) => {
+          console.log(resp)
           this.token.saveRefreshToken(resp.refreshToken);
           this.token.saveAuthorities(resp.roles)
           this.token.saveUserInfo(resp.user)
-          console.log(resp)
-          this.notifService.onSuccess(`Bienvenue `)
-      //
+          this.firstName = localStorage.getItem('firstName')
+          this.notifService.onSuccess(`Bienvenue ${this.firstName}`)
+
         }, (error) => {
           console.log('error', error)
           this.inputDigitLeft = "Reéssayer";
           this.btnStatus = 'btn-danger';
-          this.notifService.onError(error.error.message, 'échec de connexion')
+          // this.notifService.onError(error.error.message, 'échec de connexion')
         }
       )
-    //   this.notifService.onError('try again', 'échec de connexion')
-    // }
-    // else if (this.conNumber == 0){
-    //   this.notifService.onError('reconnectez-vous à nouveau', 'échec de connexion')
-    //   // this.token.clearToken()
-    // }
-
-
   }
 
   sendNewCode(){
@@ -108,13 +98,15 @@ export class OtpComponent implements OnInit {
         // this.token.saveUserInfo(resp.user)
         // console.log(resp)
         this.sendNewVerifyCode = false;
+        this.setTimer()
+        this.token.saveToken(resp);
         this.notifService.onSuccess(`Nouveau code envoyé`)
         //
       }, (error) => {
         console.log('error', error)
         this.inputDigitLeft = "Vérifier";
         this.btnStatus = 'btn-danger';
-        this.notifService.onError(error.error.message, 'échec de connexion')
+        // this.notifService.onError(error.error.message, 'échec de connexion')
       }
     )
   }
