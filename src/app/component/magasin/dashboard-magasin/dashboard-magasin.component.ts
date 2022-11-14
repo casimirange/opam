@@ -7,6 +7,7 @@ import {Store} from "../../../_interfaces/store";
 import {StoreService} from "../../../_services/store/store.service";
 import {BehaviorSubject} from "rxjs";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
+import {PaiementMethod} from "../../../_interfaces/paiement";
 
 @Component({
   selector: 'app-dashboard-magasin',
@@ -65,7 +66,6 @@ export class DashboardMagasinComponent implements OnInit {
     console.log(this.storeForm.value)
     this.storeService.getStore().subscribe(
       resp => {
-        console.log(resp)
         this.stores = resp.content
       },
       // error => {
@@ -80,5 +80,21 @@ export class DashboardMagasinComponent implements OnInit {
   annuler() {
     this.formStore();
     this.modalService.dismissAll()
+  }
+
+  delete(store: Store, index:number) {
+    this.isLoading.next(true);
+    this.storeService.deleteStore(store.internalReference).subscribe(
+      resp => {
+        // console.log(resp)
+        this.stores.splice(index, 1)
+        this.isLoading.next(false);
+        this.notifService.onSuccess("magasin "+store.localization+" supprimé")
+      },
+      error => {
+        // this.notifServices.onError(error.error.message,"échec de suppression")
+        this.isLoading.next(false);
+      }
+    )
   }
 }

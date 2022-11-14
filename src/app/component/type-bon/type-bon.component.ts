@@ -87,4 +87,20 @@ export class TypeBonComponent implements OnInit {
     this.formVoucherType();
     this.modalService.dismissAll()
   }
+
+  delete(voucher: TypeVoucher, index: number) {
+    this.isLoading.next(true);
+    this.voucherService.deleteTypevoucher(voucher.internalReference).subscribe(
+      resp => {
+        // console.log(resp)
+        this.vouchers.splice(index, 1)
+        this.isLoading.next(false);
+        this.notifService.onSuccess("type de bon de "+voucher.amount+" supprimé")
+      },
+      error => {
+        // this.notifServices.onError(error.error.message,"échec de suppression")
+        this.isLoading.next(false);
+      }
+    )
+  }
 }

@@ -82,10 +82,9 @@ export class SignupComponent implements OnInit {
   onSubmit() {
     this.isLoading.next(true);
     this.credentials = this.signup.value;
+    // on recherche l'id du magasin dans la liste des magasins
     const store = this.stores.filter(store => store.localization === this.signup.controls['idStore'].value)
-    // for (let st of store){
-      this.credentials.idStore = store[0].internalReference;
-    // }
+    this.credentials.idStore = store[0].internalReference;
 
     this.authService.signup(this.credentials).subscribe(
       resp => {
@@ -95,7 +94,7 @@ export class SignupComponent implements OnInit {
       error => {
         this.isLoading.next(false)
         this.errorMessage = error.error.message;
-        console.log("voici l'erreur ", error.error.message)
+        // console.log("voici l'erreur ", error.error.message)
       }
     )
     // this.appState$ = this.authService.signup$(this.credentials)

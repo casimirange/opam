@@ -23,20 +23,19 @@ export class IndexUsersComponent implements OnInit {
     this.getStores()
   }
 
-  openCommandModal(content: any){
-    const modal = true;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-titles', size: 'xl', });
-  }
+  // openCommandModal(content: any){
+  //   const modal = true;
+  //   this.modalService.open(content, {ariaLabelledBy: 'modal-basic-titles', size: 'xl', });
+  // }
 
   getUsers(): void{
     this.userService.getUsers().subscribe(
       resp => {
         this.users = resp.content;
-        console.log(resp)
         this.notifsService.onSuccess('liste des utilisateurs')
       },
       error => {
-        this.notifsService.onError(error.error.message, "échec de chargement des utilisateurs")
+        // this.notifsService.onError(error.error.message, "échec de chargement des utilisateurs")
       }
     )
   }
@@ -47,7 +46,7 @@ export class IndexUsersComponent implements OnInit {
         this.stores = resp.content
       },
       error => {
-        this.notifsService.onError(error.error.message, 'échec chargement magasins')
+        // this.notifsService.onError(error.error.message, 'échec chargement magasins')
       }
     )
   }

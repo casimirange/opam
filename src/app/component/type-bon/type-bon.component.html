@@ -40,7 +40,7 @@
                   <th>Ref. interne</th>
                   <th>Description</th>
                   <th>Montant</th>
-<!--                  <th>Statut</th>-->
+                  <th>Statut</th>
                   <th>Date creation</th>
                   <th>Date modification</th>
                   <th>Actions</th>
@@ -53,11 +53,11 @@
                   <td>{{voucher.internalReference}}</td>
                   <td>{{voucher.designation}} </td>
                   <td>{{voucher.amount}} <small>Fcfa</small></td>
-<!--                  <td> {{voucher.status.name}}</td>-->
+                  <td> {{voucher.status.name}}</td>
                   <td> {{voucher.createdAt | date: 'dd/MM/yyyy hh:mm'}}</td>
                   <td> {{voucher.updateAt | date: 'dd/MM/yyyy hh:mm'}}</td>
                   <td>
-                    <a style="cursor: pointer"  class="delete text-danger" data-toggle="modal">
+                    <a style="cursor: pointer"  class="delete text-danger" data-toggle="modal"  (click)="delete(voucher, i)">
                       <i class="pe-7s-trash" data-toggle="modal" title="delete"></i>
                     </a>
                   </td>

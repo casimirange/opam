@@ -18,4 +18,8 @@ export class VoucherService {
   getTypevoucher(): Observable<any>{
     return this.http.get<any>(environment.typeVoucher)
   }
+
+  deleteTypevoucher(internalref: number): Observable<any>{
+    return this.http.delete<any>(environment.typeVoucher+`/${internalref}`)
+  }
 }
