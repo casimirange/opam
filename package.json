@@ -1,5 +1,5 @@
 {
-  "name": "jsonserver",
+  "name": "gulfin",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -8,15 +8,13 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "compodoc": "npx compodoc -p src/tsconfig.doc.json",
-    "heroku-postbuild": "ng build — prod"
+    "heroku-postbuild": "ng build --prod"
   },
   "private": true,
   "dependencies": {
     "@angular/animations": "~12.2.0",
-    "@angular/cli": "~12.2.10",
     "@angular/common": "~12.2.0",
     "@angular/compiler": "~12.2.0",
-    "@angular/compiler-cli": "~12.2.0",
     "@angular/core": "~12.2.0",
     "@angular/forms": "~12.2.0",
     "@angular/localize": "~12.2.0",
@@ -39,7 +37,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^14.2.9",
-    "@angular/cli": "~12.2.10",
+    "@angular/cli": "^14.2.9",
     "@angular/compiler-cli": "~12.2.0",
     "@types/jasmine": "~3.8.0",
     "@types/node": "^12.11.1",
