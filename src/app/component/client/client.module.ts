@@ -8,9 +8,9 @@ import {SharedModule} from "../shared/shared.module";
 import { DetailsComponent } from './details/details.component';
 import {ClientService} from "../../_services/clients/client.service";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {Ng2OrderModule} from "ng2-order-pipe";
+// import {Ng2OrderModule} from "ng2-order-pipe";
 import {NgxPaginationModule} from "ngx-pagination";
-import {Ng2SearchPipeModule} from "ng2-search-filter";
+// import {Ng2SearchPipeModule} from "ng2-search-filter";
 import { ClientNameFilterPipe } from './pipes/client-name-filter.pipe';
 import { ClientRefFilterPipe } from './pipes/client-ref-filter.pipe';
 import { ClientDateFilterPipe } from './pipes/client-date-filter.pipe';
@@ -32,9 +32,9 @@ import { ClientCompagnyFilterPipe } from './pipes/client-compagny-filter.pipe';
         SharedModule,
         FormsModule,
         ReactiveFormsModule,
-        Ng2OrderModule,
+        // Ng2OrderModule,
         NgxPaginationModule,
-        Ng2SearchPipeModule,
+        // Ng2SearchPipeModule,
     ],
     providers: [
         ClientService,

@@ -14,8 +14,8 @@ import {TokenInterceptorProvider} from "./_helpers/token.interceptor";
 import { CopyAndPasteDirective } from './directive/copy-and-paste.directive';
 import {NgOtpInputModule} from "ng-otp-input";
 import {ClientService} from "./_services/clients/client.service";
-import {Ng2SearchPipeModule} from "ng2-search-filter";
-import {Ng2OrderModule} from "ng2-order-pipe";
+// import {Ng2SearchPipeModule} from "ng2-search-filter";
+// import {Ng2OrderModule} from "ng2-order-pipe";
 
 @NgModule({
   declarations: [
@@ -33,8 +33,8 @@ import {Ng2OrderModule} from "ng2-order-pipe";
     NgbModule,
     NgOtpInputModule,
     SweetAlert2Module.forRoot(),
-    Ng2SearchPipeModule,
-    Ng2OrderModule
+    // Ng2SearchPipeModule,
+    // Ng2OrderModule
   ],
   providers: [
     TokenInterceptorProvider,
