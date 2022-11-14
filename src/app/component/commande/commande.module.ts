@@ -5,7 +5,7 @@ import { CommandeRoutingModule } from './commande-routing.module';
 import { AddCommandComponent } from './add/add-command.component';
 import { CommandLayoutComponent } from './command-layout/command-layout.component';
 import {SharedModule} from "../shared/shared.module";
-import {SweetAlert2Module} from "@sweetalert2/ngx-sweetalert2";
+
 // import {RouterModule} from "@angular/router";
 import { EditComponent } from './edit/edit.component';
 import {IndexCommandComponent} from "./index-command/index-command.component";
@@ -32,7 +32,7 @@ import { OrderDateFilterPipe } from './pipes/order-date-filter.pipe';
     CommonModule,
     CommandeRoutingModule,
     SharedModule,
-    SweetAlert2Module.forChild(),
+    // SweetAlert2Module.forChild(),
     ReactiveFormsModule,
     FormsModule
   ],

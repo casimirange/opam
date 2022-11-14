@@ -1,7 +1,7 @@
 import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {IClient, TypeClient} from "../../../_interfaces/client";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import Swal from 'sweetalert2/dist/sweetalert2.js';
+
 import {ClientService} from "../../../_services/clients/client.service";
 import {BehaviorSubject, Observable, of} from "rxjs";
 import {AppState} from "../interface/app-state";
@@ -11,6 +11,7 @@ import {catchError, map, startWith} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {Router} from "@angular/router";
+import Swal from "sweetalert2";
 // import Swal from "sweetalert2";
 
 

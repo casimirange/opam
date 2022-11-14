@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import {Subject} from "rxjs";
-import  Swal from 'sweetalert2/dist/sweetalert2.js';
+
 import {TokenService} from "../token/token.service";
 import {Router} from "@angular/router";
+import Swal from "sweetalert2";
 const Toast = Swal.mixin({
   toast: true,
   position: 'top-end',

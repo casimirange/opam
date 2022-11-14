@@ -9,7 +9,7 @@ import {HttpClientModule} from "@angular/common/http";
 import {SharedModule} from "./component/shared/shared.module";
 import {Erreur404Component} from "./component/erreur404/erreur404.component";
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
-import {SweetAlert2Module} from "@sweetalert2/ngx-sweetalert2";
+// import {SweetAlert2Module} from "@sweetalert2/ngx-sweetalert2";
 import {TokenInterceptorProvider} from "./_helpers/token.interceptor";
 import { CopyAndPasteDirective } from './directive/copy-and-paste.directive';
 import {NgOtpInputModule} from "ng-otp-input";
@@ -32,7 +32,7 @@ import {ClientService} from "./_services/clients/client.service";
     HttpClientModule,
     NgbModule,
     NgOtpInputModule,
-    SweetAlert2Module.forRoot(),
+    // SweetAlert2Module.forRoot(),
     // Ng2SearchPipeModule,
     // Ng2OrderModule
   ],

@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {IClient} from "../../../_interfaces/client";
 
-import  Swal from 'sweetalert2/dist/sweetalert2.js';
+
 import {ClientService} from "../../../_services/clients/client.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {IndexClientComponent} from "../../client/index-client/index-client.component";
