@@ -63,7 +63,7 @@ export class TypeBonComponent implements OnInit {
         this.notifService.onSuccess('type de coupon créé')
       },
       error => {
-        this.notifService.onError(error.error.message, '')
+        // this.notifService.onError(error.error.message, '')
         this.isLoading.next(false);
       }
     )
