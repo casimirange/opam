@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {NotifsService} from "./_services/notifications/notifs.service";
-import {ConnectionService} from "ng-connection-service";
-import {OnlineStatusService, OnlineStatusType} from "ngx-online-status";
+// import {ConnectionService} from "ng-connection-service";
+// import {OnlineStatusService, OnlineStatusType} from "ngx-online-status";
 import {fromEvent, merge, Observable, Observer} from "rxjs";
 import {map} from "rxjs/operators";
 
@@ -27,23 +27,22 @@ export class AppComponent implements OnInit{
   title = 'gulfin';
   status: string = ''
   isConnected: boolean
-  status1: OnlineStatusType; //Enum provided by ngx-online-status
-  onlineStatusCheck: any = OnlineStatusType;
-  constructor(private notifsService: NotifsService, private connectionService: ConnectionService,
-              private onlineStatusService: OnlineStatusService) {
-    this.connectionService.monitor().subscribe(
-      isConnect => {
-        this.isConnected = isConnect
-        if (this.isConnected){
-          status = 'ONLINE'
-          notifsService.onSuccess('connexion établie')
-        }else {
-          status = 'OFFLINE'
-          notifsService.onError('Vous êtes hors réseau', '')
-        }
-        // alert(status)
-      }
-    )
+  // status1: OnlineStatusType; //Enum provided by ngx-online-status
+  // onlineStatusCheck: any = OnlineStatusType;
+  constructor(private notifsService: NotifsService, p) {
+    // this.connectionService.monitor().subscribe(
+    //   isConnect => {
+    //     this.isConnected = isConnect
+    //     if (this.isConnected){
+    //       status = 'ONLINE'
+    //       notifsService.onSuccess('connexion établie')
+    //     }else {
+    //       status = 'OFFLINE'
+    //       notifsService.onError('Vous êtes hors réseau', '')
+    //     }
+    //     // alert(status)
+    //   }
+    // )
     //
     // this.onlineStatusService.status.subscribe((status: OnlineStatusType) => {
     //   // Retrieve Online status Type

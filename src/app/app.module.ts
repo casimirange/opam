@@ -14,7 +14,7 @@ import {TokenInterceptorProvider} from "./_helpers/token.interceptor";
 import { CopyAndPasteDirective } from './directive/copy-and-paste.directive';
 import {NgOtpInputModule} from "ng-otp-input";
 import {ClientService} from "./_services/clients/client.service";
-import {OnlineStatusModule} from "ngx-online-status";
+// import {OnlineStatusModule} from "ngx-online-status";
 // import {Ng2SearchPipeModule} from "ng2-search-filter";
 // import {Ng2OrderModule} from "ng2-order-pipe";
 
@@ -36,7 +36,7 @@ import {OnlineStatusModule} from "ngx-online-status";
     // SweetAlert2Module.forRoot(),
     // Ng2SearchPipeModule,
     // Ng2OrderModule
-    OnlineStatusModule
+    // OnlineStatusModule
   ],
   providers: [
     TokenInterceptorProvider,
