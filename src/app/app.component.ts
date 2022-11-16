@@ -29,7 +29,7 @@ export class AppComponent implements OnInit{
   isConnected: boolean
   // status1: OnlineStatusType; //Enum provided by ngx-online-status
   // onlineStatusCheck: any = OnlineStatusType;
-  constructor(private notifsService: NotifsService, p) {
+  constructor(private notifsService: NotifsService) {
     // this.connectionService.monitor().subscribe(
     //   isConnect => {
     //     this.isConnected = isConnect
