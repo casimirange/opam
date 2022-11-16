@@ -63,7 +63,7 @@
                     <div class="col-md-12">
                       <div class="position-relative form-group">
 <!--                        <input id="idStore" placeholder="Magasin" type="text" name="idStore" class="form-control form-control-sm"  formControlName="idStore">-->
-                        <input type="text" id="clientref" class="form-control" formControlName="idStore" placeholder="choisir un magasin" list="storeListOption">
+                        <input type="text" autocomplete="off" id="clientref" class="form-control" formControlName="idStore" placeholder="choisir un magasin" list="storeListOption">
                         <datalist id="storeListOption">
                           <option *ngFor="let store of stores" [value]="store.localization"></option>
                         </datalist>

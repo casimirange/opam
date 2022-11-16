@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {StoreHouse} from "../../../_interfaces/storehouse";
@@ -7,6 +7,8 @@ import {StoreService} from "../../../_services/store/store.service";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";
 import {BehaviorSubject} from "rxjs";
+import {IClient} from "../../../_interfaces/client";
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-index-entrepot',
@@ -24,6 +26,8 @@ export class IndexEntrepotComponent implements OnInit {
   store: Store = new Store();
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
+  modalTitle = 'Enregistrer un nouvel entrepot'
+  magasin: string
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService, private storeService: StoreService, private notifService: NotifsService) {
     this.formStoreHouse();
@@ -71,7 +75,7 @@ export class IndexEntrepotComponent implements OnInit {
   //save store house
   saveStoreHouse(){
     this.isLoading.next(true);
-    this.store = this.stores.filter(store => store.localization === this.storeHouseForm.controls['store'].value)[0]
+    this.store = this.stores.find(store => store.localization === this.storeHouseForm.controls['store'].value)
     this.storeHouse.idStore = this.store.internalReference
     this.storeHouse.type = this.storeHouseForm.controls['type'].value
     this.storeHouseService.createStoreHouse(this.storeHouse).subscribe(
@@ -83,18 +87,96 @@ export class IndexEntrepotComponent implements OnInit {
       },
       error => {
         this.isLoading.next(false);
-        this.notifService.onError(error.error.message, 'Erreur lors de la création')
+        // this.notifService.onError(error.error.message, 'Erreur lors de la création')
       }
     )
   }
 
   annuler() {
     this.formStoreHouse();
+    this.storeHouse = new StoreHouse()
     this.modalService.dismissAll()
+    this.magasin = ''
   }
   //open modal
   open(content: any){
     const modal = true;
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
+  }
+
+  deleteStoreHouse(storeHouse: StoreHouse, index: number) {
+      Swal.fire({
+        title: 'Supprimer entrepot',
+        html: "Voulez-vous vraiment supprimer "+ storeHouse.internalReference.toString().bold() + " de la liste de vos entrepots ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#00ace6',
+        cancelButtonColor: '#f65656',
+        confirmButtonText: 'OUI',
+        cancelButtonText: 'NON',
+        allowOutsideClick: true,
+        focusConfirm: false,
+        focusCancel: true,
+        focusDeny: true,
+        backdrop: `rgba(0, 0, 0, 0.4)`,
+        showLoaderOnConfirm: true
+      }).then((result) => {
+        if (result.value) {
+          this.isLoading.next(true)
+          this.storeHouseService.deleteStoreHouse(storeHouse.internalReference).subscribe(
+            resp => {
+              this.storeHouses.splice(index, 1)
+              this.isLoading.next(false)
+              this.notifService.onSuccess(`entrepot ${storeHouse.internalReference.toString().bold()} supprimé avec succès !`)
+            },error => {
+              this.isLoading.next(false);
+              // if (error.error.message.includes('JWT expired')){
+              //
+              // }else {
+              //   this.notifService.onError(error.error.message, '')
+              // }
+            }
+          )
+        }
+      })
+  }
+
+  updateStoreHouseModal(mymodal: TemplateRef<any>, storeHouse: StoreHouse) {
+    this.modalService.open(mymodal, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
+    this.storeHouse = storeHouse
+    console.log('magasin', this.stores.find(store => store.internalReference === storeHouse.idStore))
+    this.magasin = this.stores.find(store => store.internalReference === storeHouse.idStore).localization
+    this.modalTitle = 'Modifier entrepot'
+  }
+
+  updateStoreHouse() {
+    this.isLoading.next(true);
+    this.store = this.stores.find(store => store.localization === this.storeHouseForm.controls['store'].value)
+    console.log(this.store)
+    const updateStoreHouse = {
+      "idStore" : 0,
+      "type" : ''
+    }
+    updateStoreHouse.type = this.storeHouseForm.controls['type'].value
+    updateStoreHouse.idStore = this.store.internalReference
+
+    this.storeHouseService.updateStoreHouse(updateStoreHouse, this.storeHouse.internalReference).subscribe(
+      resp => {
+        this.isLoading.next(false);
+        // on recherche l'index du client dont on veut faire la modification dans liste des clients
+        const index = this.storeHouses.findIndex(storeHouse => storeHouse.internalReference === resp.internalReference);
+        this.storeHouses[ index ] = resp;
+        this.notifService.onSuccess("entrepot modifié avec succès!")
+        this.annuler()
+      },
+      error => {
+        this.isLoading.next(false);
+        // if (error.error.message.includes('JWT expired')){
+        //
+        // }else {
+        //   this.notifService.onError(error.error.message, '')
+        // }
+      }
+    )
   }
 }

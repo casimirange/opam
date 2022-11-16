@@ -43,19 +43,31 @@
           <td>{{payment.internalReference}}</td>
           <td>{{payment.designation}} </td>
           <!--            <td>{{store.status.name}}</td>-->
-          <td> {{payment.createdAt | date: 'dd/MM/yyyy hh:mm'}}</td>
-          <td> {{payment.updateAt | date: 'dd/MM/yyyy hh:mm'}}</td>
+          <td> {{payment.createdAt | date: 'dd/MM/yyyy HH:mm'}}</td>
+          <td> {{payment.updateAt | date: 'dd/MM/yyyy HH:mm'}}</td>
           <td>
-            <a style="cursor: pointer"  class="delete text-danger" data-toggle="modal" (click)="delete(payment, i)">
-              <i class="pe-7s-trash" data-toggle="modal" title="delete"></i>
+            <a style="cursor: pointer"  class="delete text-danger" (click)="deletePayment(payment, i)" >
+              <i class="pe-7s-trash" title="supprimer"></i>
+            </a>&nbsp;
+            <a style="cursor: pointer"  class="text-primary" (click)="updatePaymentModal(mymodal, payment)">
+              <i class="pe-7s-eyedropper" title="modifier"></i>
             </a>
           </td>
         </tr>
         </tbody>
-        <tfoot style="padding: 10px">
-        <!--                Total Clients: {{clients.length}}-->
-        </tfoot>
       </table>
+      <div class="card-footer">
+        <div class="btn-actions-pane-left">
+          <div role="group" class="btn-group-sm btn-group">
+            Total : <b>{{ paiementMethods.length }} </b>
+          </div>
+        </div>
+        <div class="btn-actions-pane-right">
+          <div role="group" class="btn-group-sm btn-group">
+            <!--              <pagination-controls id="client" (pageChange)="pageChange($event)" ></pagination-controls>-->
+          </div>
+        </div>
+      </div>
 
       <div class="text-center">
         <p *ngIf="paiementMethods.length === 0" style="color: grey; font-size: 1.8rem;" class="mx-auto" >Aucune méthode de paiement trouvée !</p>
@@ -67,8 +79,8 @@
 
 <ng-template #mymodal let-modal >
   <div class="modal-header">
-    <h6 class="modal-title timeline-title" id="modal-basic-title"><b>Enregistrer nouvelle méthode</b> </h6>
-    <div class="close vertical-timeline-element-content bounce-in" (click)=" modal.close('save click')" >
+    <h6 class="modal-title timeline-title" id="modal-basic-title"><b>{{modalTitle}}</b> </h6>
+    <div class="close vertical-timeline-element-content bounce-in" (click)=" modal.close('save click'); annuler()" >
       <p><i class="fa fa-times"></i></p>
     </div>
   </div>
@@ -80,7 +92,7 @@
             <div class="col-md-12">
               <div class="position-relative form-group">
                 <label for="localisation" class="">Désignation</label>
-                <input name="amount" id="localisation" placeholder="désignation" type="text" class="form-control" formControlName="designation">
+                <input name="amount" ngModel="{{paiementMethod.designation}}" id="localisation" placeholder="désignation" type="text" class="form-control" formControlName="designation">
               </div>
               <div *ngIf="buyForm.controls['designation'].invalid && (buyForm.controls['designation'].dirty || buyForm.controls['designation'].touched)"
                    class="mb-2"  style="color: #f65656; font-style: italic;">
@@ -95,22 +107,14 @@
             </div>
           </div>
           <button class="mt-1 btn btn-secondary float-right ml-3" (click)="annuler()" ><i class="pe-7s-back"></i>Annuler</button>
-          <button class="mt-1 btn btn-primary float-right" (click)="createPaiementMethod()" [disabled]="buyForm.invalid || (isLoading$ | async)">
-              <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
-              <span *ngIf="isLoading$ | async">Enregistrement ...</span>
-              <span *ngIf="!(isLoading$ | async)">Enregistrer méthode</span>
+          <button class="mt-1 btn btn-primary float-right" [disabled]="buyForm.invalid || (isLoading$ | async)"
+                  (click)="modalTitle == 'Enregistrer méthode de paiement' ? createPaiementMethod() : updatePayment()">
+            <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
+            <span *ngIf="isLoading$ | async">Enregistrement ...</span>
+            <span *ngIf="!(isLoading$ | async)">{{modalTitle == 'Enregistrer méthode de paiement' ? 'Enregistrer méthode' : 'Modifier méthode'}}</span>
           </button>
         </form>
       </div>
     </div>
   </div>
 </ng-template>
-
-<!--<ng-template #deleteModal let-modal >-->
-
-<!--  <div class="modal-body">-->
-<!--    <h5 class="card-title">Voulez-vous supprimer cette méthode</h5>-->
-<!--    <button class="btn btn-dark" (click)="annuler()">non</button>-->
-<!--    <button class="btn btn-dark" (click)="delete()">oui</button>-->
-<!--  </div>-->
-<!--</ng-template>-->

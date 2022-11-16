@@ -47,8 +47,8 @@
                 <thead>
                 <tr>
                   <th ># </th>
-                  <th>Ref. interne&nbsp;<i class="fa fa-sort"></i></th>
-                  <th>Nom client&nbsp;<i class="fa fa-sort"></i></th>
+                  <th>Ref. interne</th>
+                  <th>Nom client&nbsp;</th>
                   <th>Nom compagnie</th>
                   <th>Addresse</th>
                   <th>Téléphone</th>
@@ -75,24 +75,29 @@
                   <td>{{client.rccm}}</td>
                   <td>
                     <a style="cursor: pointer"  class="delete text-danger" (click)="deleteClient(client, i)" >
-                      <i class="fa fa-trash" title="supprimer"></i>
+                      <i class="pe-7s-trash" title="supprimer"></i>
                     </a>&nbsp;
                     <a style="cursor: pointer"  class="text-primary" (click)="updateClientModal(mymodal, client)">
-                      <i class="fa fa-edit" title="modifier"></i>
+                      <i class="pe-7s-eyedropper" title="modifier"></i>
                     </a>
-
-
                   </td>
                 </tr>
                 </tbody>
               </table>
               <div class="text-center">
-                <p *ngIf="clients.length === 0" style="color: grey; font-size: 1.8rem;" class="mx-auto" >Aucun Client trouvé !</p>
+                <p *ngIf="(clients | clientNameFilter: name | clientRefFilter: internalRef | clientCompagnyFilter: compagny
+                  | clientDateFilter: date).length === 0" style="color: grey; font-size: 1.8rem;" class="mx-auto" >Aucun Client trouvé !</p>
               </div>
             </ng-container>
           </ng-container>
         </div>
         <div class="card-footer">
+          <div class="btn-actions-pane-left">
+            <div role="group" class="btn-group-sm btn-group">
+              Total: <b>{{ (clients | clientNameFilter: name | clientRefFilter: internalRef | clientCompagnyFilter: compagny
+              | clientDateFilter: date).length }} </b>
+            </div>
+          </div>
           <div class="btn-actions-pane-right">
             <div role="group" class="btn-group-sm btn-group">
 <!--              <pagination-controls id="client" (pageChange)="pageChange($event)" ></pagination-controls>-->

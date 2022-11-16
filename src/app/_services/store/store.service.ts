@@ -23,11 +23,16 @@ export class StoreService {
     return this.http.get<any>(environment.store + `/${internalRef}`)
   }
 
+  //liste des entrepots par magasin
+  getStoreHouseByStore(internalRef: number): Observable<any>{
+    return this.http.get<any>(environment.store + `/${internalRef}`)
+  }
+
   deleteStore(internalref: number): Observable<any>{
     return this.http.delete<any>(environment.store+`/${internalref}`)
   }
 
-  updateStore(store: any): Observable<any>{
-    return this.http.put<any>(environment.store, store)
+  updateStore(store: any, internalRef: number): Observable<any>{
+    return this.http.put<any>(environment.store+`/${internalRef}`, store);
   }
 }

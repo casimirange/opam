@@ -21,7 +21,7 @@ export class DetailsUserComponent implements OnInit {
   store: Store = new Store();
 
   updateUser: FormGroup ;
-  credentials: ICredentialsSignup = { }
+  credentials: ICredentialsSignup = new ICredentialsSignup()
 
   errorMessage = '';
   stores: Store[] = [];

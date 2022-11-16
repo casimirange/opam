@@ -24,4 +24,8 @@ export class OrderService {
   getOrderByRef(internalReference: number): Observable<any>{
     return this.http.get<any>(environment.order + `/${internalReference}`,)
   }
+
+  getOrderByClient(clientInternalReference: number): Observable<any>{
+    return this.http.get<any>(environment.order + `/client/${clientInternalReference}`,)
+  }
 }

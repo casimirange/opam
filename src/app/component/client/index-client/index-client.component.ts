@@ -66,11 +66,11 @@ export class IndexClientComponent implements OnInit {
       },
       error => {
         this.isLoading.next(false);
-        if (error.error.message.includes('JWT expired')){
-
-        }else {
-          this.notifService.onError(error.error.message, '')
-        }
+        // if (error.error.message.includes('JWT expired')){
+        //
+        // }else {
+        //   this.notifService.onError(error.error.message, '')
+        // }
 
       }
     )
@@ -109,18 +109,17 @@ export class IndexClientComponent implements OnInit {
       },
       error => {
         this.isLoading.next(false);
-        if (error.error.message.includes('JWT expired')){
-
-        }else {
-          this.notifService.onError(error.error.message, '')
-        }
+        // if (error.error.message.includes('JWT expired')){
+        //
+        // }else {
+        //   this.notifService.onError(error.error.message, '')
+        // }
       }
     )
   }
 
   annuler() {
     this.formClient();
-    // this.clientForm.reset()
     this.clientType = ''
     this.client = new IClient()
     this.modalService.dismissAll()
@@ -139,7 +138,6 @@ export class IndexClientComponent implements OnInit {
         html: "Voulez-vous vraiment supprimer "+ client.completeName.bold() + " de la liste de vos clients ?",
         icon: 'warning',
         showCancelButton: true,
-
         confirmButtonColor: '#00ace6',
         cancelButtonColor: '#f65656',
         confirmButtonText: 'OUI',
@@ -148,6 +146,7 @@ export class IndexClientComponent implements OnInit {
         focusConfirm: false,
         focusCancel: true,
         focusDeny: true,
+        backdrop: `rgba(0, 0, 0, 0.4)`,
         showLoaderOnConfirm: true
       }).then((result) => {
         if (result.value) {
@@ -159,11 +158,11 @@ export class IndexClientComponent implements OnInit {
               this.notifService.onSuccess(client.completeName.bold() +' supprimé avec succès !')
             },error => {
               this.isLoading.next(false);
-              if (error.error.message.includes('JWT expired')){
-
-              }else {
-                this.notifService.onError(error.error.message, '')
-              }
+              // if (error.error.message.includes('JWT expired')){
+              //
+              // }else {
+              //   this.notifService.onError(error.error.message, '')
+              // }
             }
           )
         }

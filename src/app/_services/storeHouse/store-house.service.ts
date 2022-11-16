@@ -18,7 +18,11 @@ export class StoreHouseService {
     return this.http.get<any>(environment.storeHouse)
   }
 
-  updateStoreHouse(storeHouse: any): Observable<any>{
-    return this.http.put<any>(environment.storeHouse, storeHouse)
+  updateStoreHouse(storeHouse: any, internalRef: number): Observable<any>{
+    return this.http.put<any>(environment.storeHouse+`/${internalRef}`, storeHouse)
+  }
+
+  deleteStoreHouse(internalref: number): Observable<any>{
+    return this.http.delete<any>(environment.storeHouse+`/${internalref}`)
   }
 }

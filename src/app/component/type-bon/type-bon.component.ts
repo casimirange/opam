@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, TemplateRef} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {VoucherService} from "../../_services/voucher/voucher.service";
 import {Status, TypeVoucher} from "../../_interfaces/typeVoucher";
 import {BehaviorSubject} from "rxjs";
 import {NotifsService} from "../../_services/notifications/notifs.service";
+import {StoreHouse} from "../../_interfaces/storehouse";
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-type-bon',
@@ -18,6 +20,7 @@ export class TypeBonComponent implements OnInit {
   voucher: TypeVoucher;
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
+  modalTitle: string = 'Enregistrer nouveau bon';
   constructor(private modalService: NgbModal, private fb: FormBuilder, private voucherService: VoucherService, private notifService: NotifsService) {
     this.formVoucherType();
     this.voucher = new class implements TypeVoucher {
@@ -85,6 +88,7 @@ export class TypeBonComponent implements OnInit {
 
   annuler() {
     this.formVoucherType();
+    this.voucher = new TypeVoucher()
     this.modalService.dismissAll()
   }
 
@@ -99,6 +103,53 @@ export class TypeBonComponent implements OnInit {
       },
       error => {
         // this.notifServices.onError(error.error.message,"échec de suppression")
+        this.isLoading.next(false);
+      }
+    )
+  }
+
+  deleteTypeVoucher(tVoucher: TypeVoucher, index: number) {
+    Swal.fire({
+      title: 'Supprimer Type de bon',
+      html: "Voulez-vous vraiment supprimer les bons de "+ tVoucher.amount.toString().bold() + " ?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#00ace6',
+      cancelButtonColor: '#f65656',
+      confirmButtonText: 'OUI',
+      cancelButtonText: 'NON',
+      allowOutsideClick: true,
+      focusConfirm: false,
+      focusCancel: true,
+      focusDeny: true,
+      backdrop: `rgba(0, 0, 0, 0.4)`,
+      showLoaderOnConfirm: true
+    }).then((result) => {
+      if (result.value) {
+        this.delete(tVoucher, index)
+      }
+    })
+  }
+
+  updateVoucherModal(mymodal: TemplateRef<any>, tVouvher: TypeVoucher) {
+    this.modalService.open(mymodal, {ariaLabelledBy: 'modal-basic-title', size: 'sm'});
+    this.voucher = tVouvher
+    this.modalTitle = 'Modifier type de bon'
+  }
+
+  updateTypeVoucher() {
+    this.isLoading.next(true);
+
+    this.voucherService.updateTypeVoucher(this.voucherForm.value, this.voucher.internalReference).subscribe(
+      resp => {
+        this.isLoading.next(false);
+        // on recherche l'index du client dont on veut faire la modification dans liste des clients
+        const index = this.vouchers.findIndex(tVoucher => tVoucher.internalReference === resp.internalReference);
+        this.vouchers[ index ] = resp;
+        this.notifService.onSuccess("type de bon modifié avec succès!")
+        this.annuler()
+      },
+      error => {
         this.isLoading.next(false);
       }
     )

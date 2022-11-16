@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, TemplateRef} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {StoreService} from "../../../../_services/store/store.service";
@@ -7,6 +7,7 @@ import {PaiementMethod} from "../../../../_interfaces/paiement";
 import {PaiementService} from "../../../../_services/paiement/paiement.service";
 import {NotifsService} from "../../../../_services/notifications/notifs.service";
 import {BehaviorSubject} from "rxjs";
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-index-paiement-method',
@@ -20,6 +21,7 @@ export class IndexPaiementMethodComponent implements OnInit {
   paiementMethod: PaiementMethod = new PaiementMethod();
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
+  modalTitle = 'Enregistrer méthode de paiement';
   constructor(private modalService: NgbModal, private fb: FormBuilder, private paiementService: PaiementService, private notifServices: NotifsService) {
     this.formPaiement()
   }
@@ -56,6 +58,7 @@ export class IndexPaiementMethodComponent implements OnInit {
   annuler() {
     this.formPaiement();
     this.modalService.dismissAll()
+    this.paiementMethod = new PaiementMethod()
   }
   getPaiements(){
     // console.log(this.storeForm.value)
@@ -65,7 +68,7 @@ export class IndexPaiementMethodComponent implements OnInit {
         console.log(resp)
         this.paiementMethods = resp.content
         this.isLoading.next(false);
-        this.notifServices.onSuccess('listes des méthodes de paiement')
+        this.notifServices.onSuccess('liste des méthodes de paiement')
       },
       error => {
         this.notifServices.onError(error.error.message, '')
@@ -92,6 +95,51 @@ export class IndexPaiementMethodComponent implements OnInit {
       },
       error => {
         // this.notifServices.onError(error.error.message,"échec de suppression")
+        this.isLoading.next(false);
+      }
+    )
+  }
+
+  deletePayment(payment: PaiementMethod, index: number) {
+    Swal.fire({
+      title: 'Supprimer Méthode de paiement',
+      html: "Voulez-vous vraiment supprimer la méthode par "+ payment.designation.toString().bold() + " ?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#00ace6',
+      cancelButtonColor: '#f65656',
+      confirmButtonText: 'OUI',
+      cancelButtonText: 'NON',
+      allowOutsideClick: true,
+      focusConfirm: false,
+      focusCancel: true,
+      focusDeny: true,
+      backdrop: `rgba(0, 0, 0, 0.4)`,
+      showLoaderOnConfirm: true
+    }).then((result) => {
+      if (result.value) {
+        this.delete(payment, index)
+      }
+    })
+  }
+
+  updatePaymentModal(mymodal: TemplateRef<any>, payment: PaiementMethod) {
+    this.modalService.open(mymodal, {ariaLabelledBy: 'modal-basic-title', size: 'sm'});
+    this.paiementMethod = payment
+    this.modalTitle = 'Modifier méthode de paiement'
+  }
+
+  updatePayment() {
+    this.isLoading.next(true);
+    this.paiementService.updatePaiementMethod(this.buyForm.value, this.paiementMethod.internalReference).subscribe(
+      resp => {
+        this.isLoading.next(false);
+        const index = this.paiementMethods.findIndex(store => store.internalReference === resp.internalReference);
+        this.paiementMethods[ index ] = resp;
+        this.notifServices.onSuccess("méthode modifiée avec succès!")
+        this.annuler()
+      },
+      error => {
         this.isLoading.next(false);
       }
     )

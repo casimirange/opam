@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, TemplateRef} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Status, TypeVoucher} from "../../../_interfaces/typeVoucher";
@@ -8,6 +8,7 @@ import {StoreService} from "../../../_services/store/store.service";
 import {BehaviorSubject} from "rxjs";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {PaiementMethod} from "../../../_interfaces/paiement";
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-dashboard-magasin',
@@ -21,6 +22,7 @@ export class DashboardMagasinComponent implements OnInit {
   store: Store;
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
+  modalTitle: string = 'Enregistrer nouveau magasin';
   constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService, private notifService: NotifsService) {
     this.formStore();
     this.store = new Store ()
@@ -68,17 +70,11 @@ export class DashboardMagasinComponent implements OnInit {
       resp => {
         this.stores = resp.content
       },
-      // error => {
-      //   if (error.error.message.includes('JWT expired')){
-      //     console.log('foutu tesst')
-      //   }else {
-      //     this.notifService.onError(error.error.message, '')
-      //   }
-      // }
     )
   }
   annuler() {
     this.formStore();
+    this.store = new Store()
     this.modalService.dismissAll()
   }
 
@@ -89,10 +85,56 @@ export class DashboardMagasinComponent implements OnInit {
         // console.log(resp)
         this.stores.splice(index, 1)
         this.isLoading.next(false);
-        this.notifService.onSuccess("magasin "+store.localization+" supprimé")
+        this.notifService.onSuccess("magasin de "+store.localization+" supprimé")
       },
       error => {
         // this.notifServices.onError(error.error.message,"échec de suppression")
+        this.isLoading.next(false);
+      }
+    )
+  }
+
+  deleteStore(store: Store, index: number) {
+    Swal.fire({
+      title: 'Supprimer Magasin',
+      html: "Voulez-vous vraiment supprimer le magasin de "+ store.localization.toString().bold() + " ?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#00ace6',
+      cancelButtonColor: '#f65656',
+      confirmButtonText: 'OUI',
+      cancelButtonText: 'NON',
+      allowOutsideClick: true,
+      focusConfirm: false,
+      focusCancel: true,
+      focusDeny: true,
+      backdrop: `rgba(0, 0, 0, 0.4)`,
+      showLoaderOnConfirm: true
+    }).then((result) => {
+      if (result.value) {
+        this.delete(store, index)
+      }
+    })
+  }
+
+  updateStoreModal(mymodal: TemplateRef<any>, store: Store) {
+    this.modalService.open(mymodal, {ariaLabelledBy: 'modal-basic-title', size: 'sm'});
+    this.store = store
+    this.modalTitle = 'Modifier magasin'
+  }
+
+  updateStore() {
+    this.isLoading.next(true);
+    console.log(this.storeForm.controls['localization'].value)
+    this.storeService.updateStore(this.storeForm.value, this.store.internalReference).subscribe(
+      resp => {
+        this.isLoading.next(false);
+        const index = this.stores.findIndex(store => store.internalReference === resp.internalReference);
+        this.stores[ index ] = resp;
+        this.notifService.onSuccess("magasin modifié avec succès!")
+        this.annuler()
+      },
+      error => {
         this.isLoading.next(false);
       }
     )

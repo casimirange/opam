@@ -25,7 +25,7 @@ export class SignupComponent implements OnInit {
   project = 'Gulfcam';
   socity = 'Gulfcam';
   signup: FormGroup ;
-  credentials: ICredentialsSignup = { }
+  credentials: ICredentialsSignup = new ICredentialsSignup()
   user?: IToken;
   errorMessage = '';
   stores: Store[] = [];

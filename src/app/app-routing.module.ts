@@ -6,13 +6,13 @@ import {AuthGuard} from "./_helpers/auth.guard";
 const routes: Routes = [
   // Dashboard
   { path: 'dashboard', loadChildren: () => import('./component/dashboard/dashboard.module').then(m => m.DashboardModule), canActivate: [AuthGuard]},
-  // Dashboard
+  // Type de bon
   { path: 'typeBon', loadChildren: () => import('./component/type-bon/type-bon.module').then(m => m.TypeBonModule), canActivate: [AuthGuard] },
   // Login / Register
   { path: 'auth', loadChildren: () => import('./component/auth/auth.module').then(m => m.AuthModule) },
   // Magasin
   { path: 'magasins', loadChildren: () => import('./component/magasin/magasin.module').then(m => m.MagasinModule), canActivate: [AuthGuard] },
-  // Command
+  // Caisse
   { path: 'caisse', loadChildren: () => import('./component/caisse/caisse.module').then(m => m.CaisseModule), canActivate: [AuthGuard]},
   // Command
   { path: 'commandes', loadChildren: () => import('./component/commande/commande.module').then(m => m.CommandeModule), canActivate: [AuthGuard]},

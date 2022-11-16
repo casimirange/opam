@@ -10,8 +10,8 @@ export class PaiementService {
 
   constructor(private http: HttpClient) { }
 
-  createPaymentMethod(store: any): Observable<any>{
-    return this.http.post<any>(environment.paymentMethod, store)
+  createPaymentMethod(payment: any): Observable<any>{
+    return this.http.post<any>(environment.paymentMethod, payment)
   }
 
   deletePaymentMethod(internalref: number): Observable<any>{
@@ -22,7 +22,7 @@ export class PaiementService {
     return this.http.get<any>(environment.paymentMethod)
   }
 
-  // getStoreByInternalref(internalRef: number): Observable<any>{
-  //   return this.http.get<any>(environment.paymentMethod + `/${internalRef}`)
-  // }
+  updatePaiementMethod(payment: any, internalRef: number): Observable<any>{
+    return this.http.put<any>(environment.paymentMethod+`/${internalRef}`, payment);
+  }
 }

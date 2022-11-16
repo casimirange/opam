@@ -23,7 +23,7 @@ export class ClientService {
   }
 
   findClient(internalRef: number): Observable<any>{
-    return this.http.get<any>(environment.client+`/${internalRef}`)
+    return this.http.get<any>(environment.client+`/ref/${internalRef}`)
   }
 
   deleteClient(internalref: number): Observable<any>{
