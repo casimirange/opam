@@ -12,6 +12,8 @@ const routes: Routes = [
   { path: 'auth', loadChildren: () => import('./component/auth/auth.module').then(m => m.AuthModule) },
   // Magasin
   { path: 'magasins', loadChildren: () => import('./component/magasin/magasin.module').then(m => m.MagasinModule), canActivate: [AuthGuard] },
+  // Magasin
+  { path: 'stations', loadChildren: () => import('./component/station/station.module').then(m => m.StationModule), canActivate: [AuthGuard] },
   // Caisse
   { path: 'caisse', loadChildren: () => import('./component/caisse/caisse.module').then(m => m.CaisseModule), canActivate: [AuthGuard]},
   // Command
@@ -24,6 +26,14 @@ const routes: Routes = [
   { path: 'paiement-method', loadChildren: () => import('./component/paiement-method/paiement-method.module').then(m => m.PaiementMethodModule), canActivate: [AuthGuard]},
   // Entrepot
   { path: 'entrepots', loadChildren: () => import('./component/entrepot/entrepot.module').then(m => m.EntrepotModule), canActivate: [AuthGuard]},
+  // Cartons
+  { path: 'cartons', loadChildren: () => import('./component/cartons/cartons.module').then(m => m.CartonsModule), canActivate: [AuthGuard]},
+  // Carnets
+  { path: 'carnets', loadChildren: () => import('./component/carnets/carnets.module').then(m => m.CarnetsModule), canActivate: [AuthGuard]},
+  // Coupons
+  { path: 'coupons', loadChildren: () => import('./component/coupons/coupons.module').then(m => m.CouponsModule), canActivate: [AuthGuard]},
+  // numéros de série
+  { path: 'serial-number', loadChildren: () => import('./component/serial-number/serial-number.module').then(m => m.SerialNumberModule), canActivate: [AuthGuard]},
   // Page not found
   { path: 'pageNotFound', component: Erreur404Component },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full'},

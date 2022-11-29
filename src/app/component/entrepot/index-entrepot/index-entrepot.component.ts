@@ -7,7 +7,6 @@ import {StoreService} from "../../../_services/store/store.service";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";
 import {BehaviorSubject} from "rxjs";
-import {IClient} from "../../../_interfaces/client";
 import Swal from "sweetalert2";
 
 @Component({

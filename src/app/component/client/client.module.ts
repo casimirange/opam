@@ -15,6 +15,7 @@ import { ClientNameFilterPipe } from './pipes/client-name-filter.pipe';
 import { ClientRefFilterPipe } from './pipes/client-ref-filter.pipe';
 import { ClientDateFilterPipe } from './pipes/client-date-filter.pipe';
 import { ClientCompagnyFilterPipe } from './pipes/client-compagny-filter.pipe';
+import {NgxPaginationModule} from "ngx-pagination";
 
 @NgModule({
     declarations: [
@@ -32,6 +33,7 @@ import { ClientCompagnyFilterPipe } from './pipes/client-compagny-filter.pipe';
         SharedModule,
         FormsModule,
         ReactiveFormsModule,
+        NgxPaginationModule,
         // Ng2OrderModule,
         // NgxPaginationModule,
         // Ng2SearchPipeModule,

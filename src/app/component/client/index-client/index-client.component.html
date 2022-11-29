@@ -60,7 +60,7 @@
                 </tr>
                 </thead>
                 <tbody *ngFor="let client of clients | clientNameFilter: name | clientRefFilter: internalRef | clientCompagnyFilter: compagny
-                 | clientDateFilter: date ; let i = index">
+                 | clientDateFilter: date | paginate: { itemsPerPage: size, currentPage: page, totalItems: totalElements } ; let i = index">
 
                 <tr (dblclick)="detailsClient(client)">
                   <td>{{i + 1}}</td>
@@ -101,6 +101,7 @@
           <div class="btn-actions-pane-right">
             <div role="group" class="btn-group-sm btn-group">
 <!--              <pagination-controls id="client" (pageChange)="pageChange($event)" ></pagination-controls>-->
+              <pagination-controls (pageChange)="pageChange($event)"></pagination-controls>
             </div>
           </div>
         </div>

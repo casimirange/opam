@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {Observable, Subject, throwError} from "rxjs";
-import {IClient} from "../../_interfaces/client";
+import {Client} from "../../_interfaces/client";
 import {catchError, tap} from "rxjs/operators";
 import {Clients} from "../../component/client/interface/clients";
 import {CustomResponseCliennts} from "../../_interfaces/custom-response-cliennts";
@@ -18,12 +18,20 @@ export class ClientService {
     return this.http.get<any>(environment.client)
   }
 
-  addClient(client: IClient): Observable<IClient>{
-    return this.http.post<IClient>(environment.client, client)
+  getAllClientsWithPagination(page: number, size: number): Observable<any>{
+    return this.http.get<any>(environment.client+ `?page=${page}&size=${size}`)
+  }
+
+  searchClient(completeName: string): Observable<any>{
+    return this.http.get<any>(environment.client+ '/search?name=' + completeName+ '&ref=0')
+  }
+
+  addClient(client: Client): Observable<Client>{
+    return this.http.post<Client>(environment.client, client)
   }
 
   findClient(internalRef: number): Observable<any>{
-    return this.http.get<any>(environment.client+`/ref/${internalRef}`)
+    return this.http.get<any>(environment.client+`/${internalRef}`)
   }
 
   deleteClient(internalref: number): Observable<any>{

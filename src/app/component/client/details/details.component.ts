@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ClientService} from "../../../_services/clients/client.service";
-import {IClient, TypeClient} from "../../../_interfaces/client";
+import {Client, TypeClient} from "../../../_interfaces/client";
 import {HttpParams} from "@angular/common/http";
 import {ActivatedRoute, Router} from "@angular/router";
 import {OrderService} from "../../../_services/order/order.service";
@@ -15,7 +15,7 @@ import {StoreService} from "../../../_services/store/store.service";
   styleUrls: ['./details.component.css']
 })
 export class DetailsComponent implements OnInit {
-  client: IClient;
+  client: Client;
   name = ''
   refCli = ''
   date = ''
@@ -25,7 +25,7 @@ export class DetailsComponent implements OnInit {
   stores: Store[] = [];
   constructor(private clientService: ClientService, private activatedRoute: ActivatedRoute, private router: Router,
               private orderService: OrderService, private notifService: NotifsService, private storeService: StoreService) {
-    this.client = new IClient()
+    this.client = new Client()
   }
 
   ngOnInit(): void {

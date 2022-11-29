@@ -11,7 +11,7 @@
     </div>
     <div class="page-title-actions">
               <div class="d-inline-block">
-                <div class="page-title-icon bg-primary btn btn-success" disabled="">
+                <div class="page-title-icon bg-primary btn btn-success" disabled="" (click)="acceptOrder()">
                   <i class="pe-7s-diskette icon-gradient bg-white">
                   </i>
                 </div>
@@ -22,7 +22,7 @@
             Etat de la commande
           </div>
           <div class="widget-heading">
-            <span class="text-success font-weight-bolder">{{order.status.name}}</span>
+            <span class="text-success font-weight-bolder">{{statut}}</span>
           </div>
         </div>
       </div>
@@ -36,23 +36,24 @@
       <div class="card-body">
         <div class="card-title">
           Commande N°: <span class="text-alternate">#{{order.internalReference}}</span>
+          <button (click)="getProforma()">pro</button>
           <div class="float-right">
             <select id="example-single" class="btn-primary">
               <option value="1">Facture</option>
-              <option value="2">Proforma</option>
+              <option value="2" >Proforma</option>
               <option value="3">Reçu de paiement</option>
               <option value="4">Bordereau de livraison</option>
             </select>
           </div>
         </div>
         <div class="card-body">
-          <form class="">
+          <form [formGroup]="editForm">
             <div class="row">
               <div class="col-md-4">
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Ref. commande</label>
                   <input name="email" id="exampleEmail" placeholder="with a placeholder" type="email" value="{{order.internalReference}}"
-                         class="form-control" disabled>
+                         class="form-control" disabled >
                 </div>
               </div>
               <div class="col-md-4">
@@ -96,9 +97,9 @@
               <div class="col-md-4">
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Mode de paiement</label>
-                  <select name="select" id="exampleSelect" class="form-control">
-                    <option>--Sélectionner un mode--</option>
-                    <option *ngFor="let payment of paymentMethods" >{{payment.designation}}</option>
+                  <select name="select" id="exampleSelect" ngModel="{{order.idPaymentMethod}}" class="form-control" formControlName="method">
+                    <option value="" selected hidden disabled>Sélectionner un mode de paiement</option>
+                    <option *ngFor="let payment of paymentMethods" value="{{payment.internalReference}}">{{payment.designation}}</option>
                   </select>
                 </div>
               </div>
@@ -106,7 +107,7 @@
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Ref. paeiment</label>
                   <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text"
-                         class="form-control">
+                         class="form-control" formControlName="peimentRef">
                 </div>
               </div>
               <div class="col-md-4">
@@ -121,28 +122,10 @@
               <div class="col-md-4">
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Piece justificative</label>
-                  <input name="file" id="exampleFile" type="file" class="form-control-file">
+                  <input name="file" id="exampleFile" type="file" class="form-control-file" formControlName="file" (change)="selectFile($event)">
                 </div>
               </div>
-              <div class="col-md-4">
-                <div class="position-relative form-group">
-                  <label for="exampleEmail" class="">Ref. paeiment</label>
-                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text"
-                         class="form-control">
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="position-relative form-group">
-                  <label for="exampleEmail" class="">Mode de paiement</label>
-                  <select name="select" id="exampleSelect" class="form-control">
-                    <option>--Sélectionner un mode--</option>
-                    <option>Paiement en espèce</option>
-                    <option>Virement bancaire (banque)</option>
-                    <option>Paiement par chèque (banque)</option>
-                    <option>Versement en espèce (banque)</option>
-                  </select>
-                </div>
-              </div>
+
             </div>
             <div class="divider"></div>
             <div class="row">
@@ -166,29 +149,70 @@
             </div>
             <div class="divider"></div>
             <div class="d-block text-right">
-              <button class="btn btn-success btn-lg">Save</button>
+              <button class="btn btn-success btn-lg" *ngIf="statut == 'ACCEPTED'" (click)="payOrder()">Save</button>
+              <button class="btn btn-success btn-lg" *ngIf="statut == 'PAID'" (click)="generateBoredereau()">Bordereau</button>
             </div>
             <!--              <button class="mt-1 btn btn-primary float-right">Enregistrer</button>-->
           </form>
         </div>
         <div class="divider"></div>
         <ul class="nav nav-tabs">
-          <li class="nav-item"><a data-toggle="tab" href="#tab-eg10-0" class="active nav-link">Produits</a></li>
-          <li class="nav-item"><a data-toggle="tab" href="#tab-eg10-1" class="nav-link">Etats de la commande</a>
-          </li>
-          <li class="nav-item"><a data-toggle="tab" href="#tab-eg10-2" class="nav-link">Caisse/Trésorerie</a></li>
+          <li class="nav-item"><a data-toggle="tab" href="#tab-eg10-0" class="active nav-link">Détails de la commande</a></li>
+          <li class="nav-item"><a data-toggle="tab" href="#tab-eg10-1" class="nav-link">Produits</a></li>
+          <li class="nav-item"><a data-toggle="tab" href="#tab-eg10-2" class="nav-link">Etats de la commande</a></li>
+          <li class="nav-item"><a data-toggle="tab" href="#tab-eg10-3" class="nav-link">Caisse/Trésorerie</a></li>
 <!--          <li class="nav-item"><a data-toggle="tab" href="#tab-eg10-3" class="nav-link">Caisse/Trésorerie</a></li>-->
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="tab-eg10-0" role="tabpanel">
+            <p>Liste des produits de la commande <span class="float-right btn btn-outline-primary" >
+              <i class="pe-7s-plus"></i> Ajouter</span></p>
+            <table class="mb-0 table table-sm">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Type de coupon</th>
+                <th>Quantité de carnets</th>
+                <th>Quantité de coupons</th>
+                <th>Montant total</th>
+                <th>Date création</th>
+                <th>Date modification</th>
+                <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let prod of products; let i = index">
+                <th scope="row">{{i + 1}}</th>
+                <td><span *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? voucher.amount : ''}}</span></td>
+                <td>{{prod.quantityNotebook}}</td>
+                <td>{{prod.quantityNotebook * 10}}</td>
+                <td><span *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? voucher.amount * prod.quantityNotebook * 10 : ''}}</span></td>
+                <td>{{prod.createdAt}}</td>
+                <td>{{prod.updateAt}}</td>
+                <td>
+                  <a style="cursor: pointer"  class="delete text-danger"  >
+                    <i class="pe-7s-trash" title="supprimer"></i>
+                  </a>&nbsp;
+                  <a style="cursor: pointer"  class="text-primary" >
+                    <i class="pe-7s-eyedropper" title="modifier"></i>
+                  </a>
+                </td>
+              </tr>
+              </tbody>
+              <tfoot>
+              <!--            <div class="float-right">Total: {{totalOrder}} Fcfa</div>-->
+              </tfoot>
+            </table>
+          </div>
+          <div class="tab-pane" id="tab-eg10-1" role="tabpanel">
             <p>Liste des produits de la commande</p>
             <table class="mb-0 table table-sm">
               <thead>
               <tr>
                 <th>#</th>
                 <th>Type de coupon</th>
-                <th>Quantité</th>
-                <th>Total</th>
+                <th>Quantité de carnets</th>
+                <th>Montant total</th>
                 <th>Date création</th>
                 <th>Date modification</th>
               </tr>
@@ -198,7 +222,7 @@
                 <th scope="row">{{i + 1}}</th>
                 <td><span *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? voucher.amount : ''}}</span></td>
                 <td>{{prod.quantityNotebook}}</td>
-                <td><span *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? voucher.amount * prod.quantityNotebook : ''}}</span></td>
+                <td><span *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? voucher.amount * prod.quantityNotebook * 10 : ''}}</span></td>
                 <td>{{prod.createdAt}}</td>
                 <td>{{prod.updateAt}}</td>
               </tr>
@@ -208,7 +232,7 @@
               </tfoot>
             </table>
           </div>
-          <div class="tab-pane" id="tab-eg10-1" role="tabpanel">
+          <div class="tab-pane" id="tab-eg10-2" role="tabpanel">
             <table class="mb-0 table table-sm">
               <thead>
               <tr>
@@ -264,7 +288,7 @@
               </tbody>
             </table>
           </div>
-          <div class="tab-pane" id="tab-eg10-2" role="tabpanel">
+          <div class="tab-pane" id="tab-eg10-3" role="tabpanel">
             <div class="row">
               <div class="col-md-4">
                 <div class="position-relative form-group">

@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {IClient, TypeClient} from "../../../_interfaces/client";
+import {Client, TypeClient} from "../../../_interfaces/client";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 import {ClientService} from "../../../_services/clients/client.service";
@@ -22,8 +22,8 @@ import Swal from "sweetalert2";
 })
 export class IndexClientComponent implements OnInit {
 
-  clients: IClient[] = [];
-  client: IClient = new IClient();
+  clients: Client[] = [];
+  client: Client = new Client();
   clientType: string;
   displaySearchBar: boolean = false;
   clientForm: FormGroup;
@@ -38,10 +38,10 @@ export class IndexClientComponent implements OnInit {
   internalRef = ''
   p: number = 1;
 
-  page: number = 0;
+  page: number = 1;
   totalPages: number;
   totalElements: number;
-  size: number;
+  size: number = 20;
 
   modalTitle = 'Enregistrer nouveau client'
 
@@ -53,31 +53,45 @@ export class IndexClientComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // this.isLoading.next(true);
+    // this.clientService.getAllClientsWithPagination(this.page, this.size).subscribe(
+    //   resp => {
+    //     this.clients = resp.content;
+    //     this.isLoading.next(false);
+    //     console.log(resp)
+    //     this.size = resp.size
+    //     this.totalPages = resp.totalPages
+    //     this.totalElements = resp.totalElements
+    //     this.notifService.onSuccess('Liste des clients')
+    //   },
+    //   error => {
+    //     this.isLoading.next(false);
+    //   }
+    // )
+    this.getClients()
+  }
+
+  getClients(){
     this.isLoading.next(true);
-    this.clientService.getAllClients().subscribe(
+    this.clientService.getAllClientsWithPagination(this.page-1, this.size).subscribe(
       resp => {
         this.clients = resp.content;
-        this.isLoading.next(false);
         console.log(resp)
         this.size = resp.size
         this.totalPages = resp.totalPages
         this.totalElements = resp.totalElements
+        this.isLoading.next(false);
         this.notifService.onSuccess('Liste des clients')
       },
       error => {
         this.isLoading.next(false);
-        // if (error.error.message.includes('JWT expired')){
-        //
-        // }else {
-        //   this.notifService.onError(error.error.message, '')
-        // }
-
       }
     )
   }
 
   pageChange(event: number){
     this.page = event
+    this.getClients()
   }
 
 //initialisation du formulaire de création client
@@ -100,7 +114,7 @@ export class IndexClientComponent implements OnInit {
 
   saveClient() {
     this.isLoading.next(true);
-    this.clientService.addClient(this.clientForm.value as IClient).subscribe(
+    this.clientService.addClient(this.clientForm.value as Client).subscribe(
       resp => {
         this.clients.push(resp)
         this.isLoading.next(false);
@@ -121,7 +135,7 @@ export class IndexClientComponent implements OnInit {
   annuler() {
     this.formClient();
     this.clientType = ''
-    this.client = new IClient()
+    this.client = new Client()
     this.modalService.dismissAll()
   }
 
@@ -131,7 +145,7 @@ export class IndexClientComponent implements OnInit {
     this.modalTitle = 'Enregistrer nouveau client'
   }
 
-  deleteClient(client: IClient, index: number) {
+  deleteClient(client: Client, index: number) {
 
       Swal.fire({
         title: 'Supprimer client',
@@ -170,11 +184,11 @@ export class IndexClientComponent implements OnInit {
 
   }
 
-  detailsClient(client: IClient) {
+  detailsClient(client: Client) {
     this.router.navigate(['/clients/', client.internalReference])
   }
 
-  updateClientModal(mymodal: TemplateRef<any>, client: IClient) {
+  updateClientModal(mymodal: TemplateRef<any>, client: Client) {
     this.modalService.open(mymodal, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
     this.client = client
     this.clientType = client.typeClient.name
@@ -183,7 +197,7 @@ export class IndexClientComponent implements OnInit {
 
   updateClient() {
     this.isLoading.next(true);
-    this.clientService.updatelient(this.clientForm.value as IClient, this.client.internalReference).subscribe(
+    this.clientService.updatelient(this.clientForm.value as Client, this.client.internalReference).subscribe(
       resp => {
         this.isLoading.next(false);
         // on recherche l'index du client dont on veut faire la modification dans liste des clients
@@ -202,4 +216,5 @@ export class IndexClientComponent implements OnInit {
       }
     )
   }
+
 }

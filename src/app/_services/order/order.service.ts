@@ -28,4 +28,42 @@ export class OrderService {
   getOrderByClient(clientInternalReference: number): Observable<any>{
     return this.http.get<any>(environment.order + `/client/${clientInternalReference}`,)
   }
+
+  getProforma(orderInternalReference: number): Observable<any>{
+    const httpOptions = {
+      responseType: 'arraybuffer' as 'json'
+      // 'responseType'  : 'blob' as 'json'        //This also worked
+    };
+    return this.http.get<any>(environment.order + `/invoice/${orderInternalReference}`, httpOptions)
+  }
+
+  getFile(orderInternalReference: number): Observable<any>{
+    const httpOptions = {
+      responseType: 'arraybuffer' as 'json'
+      // 'responseType'  : 'blob' as 'json'        //This also worked
+    };
+    return this.http.get<any>(environment.order + `/invoice/${orderInternalReference}`, httpOptions)
+  }
+
+  acceptOrder(orderInternalReference: number, idFund: number, idPaymentMethod: number, paymentRef: string, docType: string, file: File): Observable<any>{
+    const data: FormData = new FormData();
+    data.append('file', file);
+    const httpOptions = {
+      responseType: 'arraybuffer' as 'json'
+      // 'responseType'  : 'blob' as 'json'        //This also worked
+    };
+    return this.http.post<any>(environment.order + `/accept/${orderInternalReference}?idFund=${idFund}&idPaymentMethod=${idPaymentMethod}&paymentReference=${paymentRef}&docType=${docType}`, data, httpOptions)
+  }
+
+  payOrder(orderInternalReference: number, idManagerCoupon: number): Observable<any>{
+    return this.http.post<any>(environment.order + `/pay/${orderInternalReference}?idManagerCoupon=${idManagerCoupon}`, null)
+  }
+
+  deliveryOrder(orderInternalReference: number, idManagerCoupon: number): Observable<any>{
+    const httpOptions = {
+      responseType: 'arraybuffer' as 'json'
+      // 'responseType'  : 'blob' as 'json'        //This also worked
+    };
+    return this.http.post<any>(environment.order + `/delivery/${orderInternalReference}?idManagerCoupon=${idManagerCoupon}`, null, httpOptions)
+  }
 }

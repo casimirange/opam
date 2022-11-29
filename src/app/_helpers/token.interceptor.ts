@@ -24,13 +24,15 @@ export class TokenInterceptor implements HttpInterceptor {
       // on clone la requête d'origine
       let clone = request.clone({
         headers: request.headers.set('Authorization', 'Bearer ' + token),
+
+
         // params: request.params.set('code')
       })
       return next.handle(clone).pipe(
         catchError(err => {
           // si le token a expiré
           // if (err.status === 401){
-          //   console.log(err)
+            console.log('erreurs', err)
           //   // if(err.error.message === 'votre code d\'activation a expiré ou est invalide'){
           //   //   this.notifService.onError('temps', 'code expiré')
           //   // }

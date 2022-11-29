@@ -1,0 +1,133 @@
+
+<div class="app-page-title">
+  <div class="page-title-wrapper">
+    <div class="page-title-heading">
+      <div class="page-title-icon">
+        <i class="pe-7s-box1 icon-gradient bg-night-fade">
+        </i>
+      </div>
+      <div>Gestion des coupons
+        <div class="page-title-subheading">Managez vos coupons</div>
+      </div>
+    </div>
+    <div class="page-title-actions">
+      <div class="d-inline-block ">
+        <!--        <button type="button" data-toggle="tooltip" title="nouveau carton" class="btn-shadow mr-3 btn btn-primary" (click)="open(mymodal)">-->
+        <!--                                        <span class="btn-icon-wrapper pr-2 opacity-7">-->
+        <!--                                            <i class="fa fa-plus fa-w-20"></i>-->
+        <!--                                        </span>-->
+        <!--          Carton-->
+        <!--        </button>-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card " id="htmlData" #htmlData>
+      <div class="card-header">
+        Liste des coupons
+        <div class="btn-actions-pane-right">
+          <div role="group" class="btn-group-sm btn-group">
+            <!--              <form >-->
+            <!--                <input type="text" placeholder="Rechercher..." class="form-control form-control-sm">-->
+            <!--              </form>-->
+          </div>
+        </div>
+
+        <div class="btn-actions-pane-right">
+          <div role="group" class="btn-group-sm btn-group">
+            <div >
+              <!--                <form >-->
+              <!--                  <div class="form-row">-->
+
+              <!--                    <div class="col-md-5">-->
+              <!--                      <input type="date" placeholder="BCP002" class="form-control form-control-sm" formControlName="date1">-->
+              <!--                    </div>-->
+              <!--                    <div class="col-md-5">-->
+              <!--                      <input type="date" placeholder="Electricien" class="form-control form-control-sm" formControlName="date2">-->
+              <!--                    </div>-->
+              <!--                    <div class="col-md-2">-->
+              <!--                      <button class="btn-transition btn btn-sm btn-shadow btn-outline-primary form-control-sm form-control" type="submit"><i class="fa fa-search"></i></button>-->
+
+              <!--                    </div>-->
+
+              <!--                  </div>-->
+              <!--                </form>-->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive" >
+
+        <ng-container class="bg-white">
+          <!--            <ng-container *ngSwitchCase="DataState.LOADING_STATE" class="bg-white py-1 px-1">-->
+          <!--              <div class="col-md-12 single-note-item text-center bg-white">-->
+          <!--                <div class="spinner-border text-primary" role="status"></div>-->
+          <!--              </div>-->
+          <!--            </ng-container>-->
+          <ng-container class="bg-white py-1 px-1">
+            <table class="table table-hover bg-white" >
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Ref. interne</th>
+                <th>Numéro de série</th>
+                <th>Client</th>
+                <th>Ticket</th>
+                <th>Carton</th>
+                <th>Station</th>
+                <th>Statut</th>
+                <th>Date création</th>
+                <th>Date modification</th>
+                <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody *ngFor="let coupon of coupons | paginate: { itemsPerPage: size, currentPage: page, totalItems: totalElements }; let i = index">
+
+              <tr>
+                <td>{{i + 1}}</td>
+                <td>{{coupon.internalReference}}</td>
+                <td>{{coupon.serialNumber}}</td>
+                <td>{{coupon.idClient}}</td>
+                <td>{{coupon.idTicket}}</td>
+                <td >{{ coupon.idNotebook }}</td>
+                <td>{{coupon.idStation}}</td>
+                <td>{{coupon.status.name}}</td>
+                <td>{{coupon.createdAt}}</td>
+                <td>{{coupon.updateAt}}</td>
+                <td>
+                  <a style="cursor: pointer"  class="delete text-danger" (click)="deleteCoupon(coupon, i)" >
+                    <i class="pe-7s-trash" title="supprimer"></i>
+                  </a>&nbsp;
+                  <a style="cursor: pointer"  class="text-primary" >
+                    <i class="pe-7s-eyedropper" title="modifier"></i>
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <div class="text-center">
+              <p *ngIf="totalElements == 0" style="color: grey; font-size: 1.8rem;" class="mx-auto" >Aucun Coupon trouvé !</p>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+      <div class="card-footer">
+        <div class="btn-actions-pane-left">
+          <div role="group" class="btn-group-sm btn-group">
+            Total coupons: <b>{{ totalElements }} </b>
+          </div>
+        </div>
+        <div class="btn-actions-pane-right">
+          <div role="group" class="btn-group-sm btn-group">
+            <!--              <pagination-controls id="client" (pageChange)="pageChange($event)" ></pagination-controls>-->
+            <pagination-controls (pageChange)="pageChange($event)"></pagination-controls>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

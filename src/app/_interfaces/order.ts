@@ -8,7 +8,7 @@
     idManagerCoupon?:	number
     idManagerOrder?:	number
     idStorekeeper?:	number
-    tax?:	string
+    tax?:	number
     idStore?: number
     status?:	StatusOrder
     channel?:	string

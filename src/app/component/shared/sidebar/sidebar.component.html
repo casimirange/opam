@@ -52,18 +52,24 @@
             </i>Commandes
           </a>
         </li>
-<!--        <li>-->
-<!--          <a routerLink="/coupons" routerLinkActive="mm-active">-->
-<!--            <i class="metismenu-icon pe-7s-credit">-->
-<!--            </i>Coupons-->
-<!--          </a>-->
-<!--        </li>-->
-<!--        <li>-->
-<!--          <a routerLink="/carnets" routerLinkActive="mm-active">-->
-<!--            <i class="metismenu-icon pe-7s-photo-gallery">-->
-<!--            </i>Carnets-->
-<!--          </a>-->
-<!--        </li>-->
+        <li>
+          <a routerLink="/coupons" routerLinkActive="mm-active">
+            <i class="metismenu-icon pe-7s-credit">
+            </i>Coupons
+          </a>
+        </li>
+        <li>
+          <a routerLink="/carnets" routerLinkActive="mm-active">
+            <i class="metismenu-icon pe-7s-box1">
+            </i>Carnets
+          </a>
+        </li>
+        <li>
+          <a routerLink="/cartons" routerLinkActive="mm-active">
+            <i class="metismenu-icon pe-7s-box2">
+            </i>Cartons
+          </a>
+        </li>
         <li>
           <a routerLink="/caisse" routerLinkActive="mm-active">
             <i class="metismenu-icon pe-7s-photo-gallery">
@@ -71,10 +77,28 @@
           </a>
         </li>
         <li>
-          <a routerLink="/magasins" routerLinkActive="mm-active">
-            <i class="metismenu-icon pe-7s-server">
-            </i>Magasins
+          <a routerLink="/stations" routerLinkActive="mm-active">
+            <i class="metismenu-icon pe-7s-home">
+            </i>Stations
           </a>
+        </li>
+        <li routerLinkActive="mm-active">
+          <a routerLink="/magasins">
+            <i class="metismenu-icon pe-7s-home"></i>Magasins
+            <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
+          </a>
+          <ul routerLinkActive="mm-show">
+            <li>
+              <a [routerLink]="['/magasins/dashboard']" routerLinkActive="mm-active">
+                <i class="metismenu-icon"></i>Tous
+              </a>
+            </li>
+            <li>
+              <a [routerLink]="['/magasins/unites']" routerLinkActive="mm-active">
+                <i class="metismenu-icon"></i>Unités
+              </a>
+            </li>
+          </ul>
         </li>
         <li>
           <a routerLink="/typeBon" routerLinkActive="mm-active">
@@ -84,7 +108,7 @@
         </li>
         <li>
           <a routerLink="/entrepots" routerLinkActive="mm-active">
-            <i class="metismenu-icon pe-7s-cash">
+            <i class="metismenu-icon pe-7s-server">
             </i>Entrepots
           </a>
         </li>
@@ -93,6 +117,12 @@
           <a routerLink="/paiement-method" routerLinkActive="mm-active">
             <i class="metismenu-icon pe-7s-display2">
             </i>Méthodes de paiement
+          </a>
+        </li>
+        <li>
+          <a routerLink="/serial-number" routerLinkActive="mm-active">
+            <i class="metismenu-icon pe-7s-note">
+            </i>Numéros de série
           </a>
         </li>
         <li>

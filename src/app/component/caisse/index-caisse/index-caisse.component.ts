@@ -1,5 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {IClient} from "../../../_interfaces/client";
+import {Client} from "../../../_interfaces/client";
 import {Store} from "../../../_interfaces/store";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {TypeVoucher} from "../../../_interfaces/typeVoucher";
@@ -26,8 +26,8 @@ export class Product{
 export class IndexCaisseComponent implements OnInit {
 
   title = 'Enregistrer nouvelle commande';
-  clients: IClient[] = [];
-  client: IClient;
+  clients: Client[] = [];
+  client: Client;
   store: Store;
   showClientForm = false;
   clientForm: FormGroup ;
@@ -156,7 +156,7 @@ export class IndexCaisseComponent implements OnInit {
 
 
   saveClientt(){
-    this.clientService.addClient(this.clientForm.value as IClient).subscribe(
+    this.clientService.addClient(this.clientForm.value as Client).subscribe(
       resp => {
         this.clients.push(resp)
         this.notifsService.onSuccess('client rajouté avec succès')
@@ -173,7 +173,7 @@ export class IndexCaisseComponent implements OnInit {
     this.orderService.getOrders().subscribe(
       resp =>{
         // this.orders =
-        this.orders = resp.content.filter(order => order.status.name === 'ORDER_CREATED')
+        this.orders = resp.content.filter(order => order.status.name === 'CREATED' || order.status.name === 'ACCEPTED')
       },
       err => {
         this.notifsService.onError(err.error.message, 'échec chargement liste des commandes')

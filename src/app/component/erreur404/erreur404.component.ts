@@ -7,7 +7,7 @@ import {Location} from "@angular/common";
   styleUrls: ['./erreur404.component.css']
 })
 export class Erreur404Component implements OnInit {
-  socity = 'Gulfin';
+  socity = 'Gulfcam';
   constructor(private _location: Location) { }
 
   ngOnInit() {

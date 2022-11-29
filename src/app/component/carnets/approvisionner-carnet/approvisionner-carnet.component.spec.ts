@@ -1,20 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ApprovisionnerCarnetComponent} from "./approvisionner-carnet.component";
 
-import { ApprovisionnerComponent } from './approvisionner.component';
+
 
 describe('ApprovisionnerComponent', () => {
-  let component: ApprovisionnerComponent;
-  let fixture: ComponentFixture<ApprovisionnerComponent>;
+  let component: ApprovisionnerCarnetComponent;
+  let fixture: ComponentFixture<ApprovisionnerCarnetComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ApprovisionnerComponent ]
+      declarations: [ ApprovisionnerCarnetComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ApprovisionnerComponent);
+    fixture = TestBed.createComponent(ApprovisionnerCarnetComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

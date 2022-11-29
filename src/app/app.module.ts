@@ -14,6 +14,9 @@ import {TokenInterceptorProvider} from "./_helpers/token.interceptor";
 import { CopyAndPasteDirective } from './directive/copy-and-paste.directive';
 import {NgOtpInputModule} from "ng-otp-input";
 import {ClientService} from "./_services/clients/client.service";
+import {NgxPaginationModule} from "ngx-pagination";
+import { CouponLayoutComponent } from './component/coupons/coupon-layout/coupon-layout.component';
+import { IndexCouponComponent } from './component/coupons/index-coupon/index-coupon.component';
 // import {OnlineStatusModule} from "ngx-online-status";
 // import {Ng2SearchPipeModule} from "ng2-search-filter";
 // import {Ng2OrderModule} from "ng2-order-pipe";
@@ -24,6 +27,8 @@ import {ClientService} from "./_services/clients/client.service";
     PreloaderComponent,
     Erreur404Component,
     CopyAndPasteDirective,
+    CouponLayoutComponent,
+    IndexCouponComponent,
   ],
   imports: [
     BrowserModule,
@@ -33,6 +38,7 @@ import {ClientService} from "./_services/clients/client.service";
     HttpClientModule,
     NgbModule,
     NgOtpInputModule,
+    NgxPaginationModule
     // SweetAlert2Module.forRoot(),
     // Ng2SearchPipeModule,
     // Ng2OrderModule

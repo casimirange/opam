@@ -13,4 +13,5 @@ export const environment = {
   storeHouse: url + 'storehouse',
   users: url + 'users',
   paymentMethod: url + 'paymentmethode',
+  carton: url + 'carton',
 };

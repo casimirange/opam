@@ -12,8 +12,8 @@ const routes: Routes = [
       { path: 'index', component: IndexClientComponent},
       { path: ':id', component: DetailsComponent},
       { path: 'aadd', component: AddCommandComponent},
-      // { path: 'cartons', loadChildren: () => import('./cartons/cartons.module').then(m => m.CartonsModule) },
-    ]}
+    ]
+  }
 ];
 
 @NgModule({

@@ -100,8 +100,7 @@
 <!--              <td class="text-left">12</td>-->
 <!--              <td class="text-left" > type 1 </td>-->
               <td class="text-left" ><span *ngFor="let store of stores">{{store.internalReference == order.idStore ? store.localization : ''}}</span></td>
-              <td class="text-left" > <span class="text-focus">{{order.status.name === 'ORDER_CREATED' ? 'créée' : order.status.name === 'ORDER_COMPLETED'
-                ? 'terminée' : ''}}</span> </td>
+              <td class="text-left" > <span class="text-focus">{{order.status.name}}</span> </td>
             </tr>
 
             </tbody>
@@ -137,6 +136,13 @@
                       <div class="col-md-9">
                         <div class="position-relative form-group">
                           <label for="clientref" class="">Client *</label>
+<!--                          <input type="text" id="clientref" (ngModelChange)="findClients($event)" autocomplete="off" class="form-control" formControlName="client" list="clientsListOption" placeholder="cherchez un client">-->
+<!--                          <datalist id="clientsListOption">-->
+<!--&lt;!&ndash;                            <option value="aucun client trouvé" *ngIf="clients.length == 0">not found</option>&ndash;&gt;-->
+<!--                            <option *ngFor="let client of clients" [value]="client.completeName">-->
+<!--                              <span *ngIf="!client">not found</span>-->
+<!--                            </option>-->
+<!--                          </datalist>-->
                           <input type="text" id="clientref" autocomplete="off" class="form-control" formControlName="client" list="clientsListOption">
                           <datalist id="clientsListOption">
                             <option value="" selected disabled hidden>Sélectionner un client</option>
@@ -172,14 +178,14 @@
                   </div>
                   <div class="col-md-12">
                       <div class="position-relative form-group">
-                        <label for="tb" class="">Magasin</label>
+                        <label for="mg" class="">Magasin</label>
 <!--                        <select name="select" id="tb" class="form-control" formControlName="store">-->
 <!--                          <option>&#45;&#45;Sélectionner un magasin&#45;&#45;</option>-->
 <!--                          <option *ngFor="let store of stores">{{store.localization}}</option>-->
 <!--                        </select>-->
-                        <input type="text" id="tb" autocomplete="off" class="form-control" formControlName="store" list="storeListOption">
+                        <input placeholder="Sélectionner un magasin" type="text" id="mg" autocomplete="off" class="form-control" formControlName="store" list="storeListOption">
                         <datalist id="storeListOption">
-                          <option value="" selected disabled hidden>Sélectionner un magasin</option>
+                          <option value="" selected disabled hidden></option>
                           <option *ngFor="let store of stores" [value]="store.localization"></option>
                         </datalist>
                       </div>
@@ -194,7 +200,7 @@
                         <div class="position-relative form-group">
                           <label for="tb" class="">Type de coupon</label>
                           <select name="select" id="tb" class="form-control" formControlName="voucherType">
-                            <option>--Sélectionner un coupon--</option>
+                            <option value="" selected disabled hidden>Sélectionner un coupon</option>
                             <option *ngFor="let tVoucher of vouchers">{{tVoucher.amount}}</option>
                           </select>
                         </div>
@@ -382,7 +388,7 @@
               <div class="position-relative form-group">
                 <label for="typeClient" class="">Type de client</label>
                 <select name="select" id="typeClient" class="form-control" formControlName="typeClient">
-                  <option>--Sélectionner un type--</option>
+                  <option value="" selected disabled hidden>Sélectionner un type</option>
                   <option value="ENTREPRISE">Entreprise</option>
                   <option value="INSTITUTION">Institution</option>
                   <option value="PARTICULAR">Particulier</option>

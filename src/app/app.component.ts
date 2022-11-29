@@ -2,21 +2,21 @@ import {Component, OnInit} from '@angular/core';
 import {NotifsService} from "./_services/notifications/notifs.service";
 // import {ConnectionService} from "ng-connection-service";
 // import {OnlineStatusService, OnlineStatusType} from "ngx-online-status";
-import {fromEvent, merge, Observable, Observer} from "rxjs";
-import {map} from "rxjs/operators";
-
-
-// const Toast = Swal.mixin({
-//   toast: true,
-//   position: 'top-end',
-//   showConfirmButton: false,
-//   timer: 3000,
-//   timerProgressBar: true,
-//   didOpen: (toast) => {
-//     toast.addEventListener('mouseenter', Swal.stopTimer)
-//     toast.addEventListener('mouseleave', Swal.resumeTimer)
-//   }
-// })
+import {fromEvent, interval, merge, Observable, Observer} from "rxjs";
+import {first, map} from "rxjs/operators";
+import {HttpClient} from "@angular/common/http";
+import Swal from "sweetalert2";
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'bottom-end',
+  showConfirmButton: false,
+  // timer: 5000,
+  timerProgressBar: true,
+  // didOpen: (toast) => {
+  //   toast.addEventListener('mouseenter', Swal.stopTimer)
+  //   toast.addEventListener('mouseleave', Swal.resumeTimer)
+  // }
+})
 
 @Component({
   selector: 'app-root',
@@ -29,7 +29,61 @@ export class AppComponent implements OnInit{
   isConnected: boolean
   // status1: OnlineStatusType; //Enum provided by ngx-online-status
   // onlineStatusCheck: any = OnlineStatusType;
-  constructor(private notifsService: NotifsService) {
+  source = interval(1000)
+  constructor(private notifsService: NotifsService, private http: HttpClient) {
+    // const checkOnlinestatus = async () => {
+    //   try {
+    //     const online = await fetch('./assets/images/logo.png');
+    //     console.log('res',online)
+    //     Toast.fire({
+    //       title: 'en ligne',
+    //       icon: 'question',
+    //       iconHtml: '<img src="../assets/images/wifi.png" style="border-radius: 50px" width="25" height="25" >',
+    //       customClass: {
+    //         icon: 'no-border',
+    //         image: 'no-border'
+    //       },
+    //     });
+    //
+    //     return online.status >= 200 && online.status < 300 ;
+    //   }catch (e) {
+    //     console.log(e)
+    //       Toast.fire({
+    //         title: 'hors connexion',
+    //         // text: 'no connexion',
+    //         // iconHtml: '<img src="../assets/images/wifi.png">',
+    //         // customClass: {
+    //         //   icon: 'no-border'
+    //         // },
+    //         imageUrl: './assets/images/wifi.png',
+    //         imageWidth: 400,
+    //         imageHeight: 200,
+    //         imageAlt: 'Custom image',
+    //         // background: 'error'
+    //       });
+    //
+    //     return false;
+    //   }
+    // };
+    //
+    // setInterval(async () => {
+    //   const result = await checkOnlinestatus();
+    //   console.log("résultat", result)
+    // }, 3000)
+
+    // this.source.subscribe(() => {
+    //   this.http.get('https://hover.blog/wp-content/uploads/2015/08/dot-online-1280x720.png', { observe: 'response' })
+    //     .pipe(first())
+    //     .subscribe(resp => {
+    //       console.log('réponse', resp)
+    //       if (resp.status === 200 ) {
+    //         console.log(true)
+    //       } else {
+    //         console.log(false)
+    //       }
+    //     });
+    // });
+
     // this.connectionService.monitor().subscribe(
     //   isConnect => {
     //     this.isConnected = isConnect

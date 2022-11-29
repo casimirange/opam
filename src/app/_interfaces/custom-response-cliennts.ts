@@ -1,5 +1,5 @@
 import {Clients} from "./clients";
-import {IClient} from "./client";
+import {Client} from "./client";
 
 export interface CustomResponseCliennts {
   empty: boolean;
@@ -12,5 +12,5 @@ export interface CustomResponseCliennts {
   sort: any;
   totalElements: number;
   totalPages: number;
-  content: { clients?: IClient[], client?: IClient }; // ? signifie que la valeur peut être null
+  content: { clients?: Client[], client?: Client }; // ? signifie que la valeur peut être null
 }

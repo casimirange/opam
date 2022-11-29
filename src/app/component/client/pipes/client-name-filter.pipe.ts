@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {IClient} from "../../../_interfaces/client";
+// import {Client} from "../../../_interfaces/client";
 
 @Pipe({
   name: 'clientNameFilter'

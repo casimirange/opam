@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {TypeVoucher} from "../../_interfaces/typeVoucher";
 import {Observable} from "rxjs";
 import {environment} from "../../../environments/environment";
+import {Store} from "../../_interfaces/store";
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,8 @@ export class StoreService {
 
   constructor(private http: HttpClient) { }
 
-  createStore(store: any): Observable<any>{
-    return this.http.post<any>(environment.store, store)
+  createStore(store: Store): Observable<Store>{
+    return this.http.post<Store>(environment.store, store)
   }
 
   getStore(): Observable<any>{

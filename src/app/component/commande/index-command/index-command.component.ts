@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {IClient} from "../../../_interfaces/client";
+import {Client} from "../../../_interfaces/client";
 
 
 import {ClientService} from "../../../_services/clients/client.service";
@@ -30,8 +30,8 @@ export class Product{
 export class IndexCommandComponent implements OnInit {
 
   title = 'Enregistrer nouvelle commande';
-  clients: IClient[] = [];
-  client: IClient;
+  clients: Client[] = [];
+  client: Client;
   store: Store;
   showClientForm = false;
   clientForm: FormGroup ;
@@ -106,13 +106,25 @@ export class IndexCommandComponent implements OnInit {
     )
   }
 
+  findClients(event: any): void{
+    console.log(event)
+    this.clientService.searchClient(event) .subscribe(
+      resp => {
+        this.clients = resp;
+        console.log(resp)
+      }, error => {
+        this.clients = []
+      }
+    )
+  }
+
   getStores(){
     this.storeService.getStore().subscribe(
       resp => {
         this.stores = resp.content
       },
       error => {
-        this.notifsService.onError(error.error.message, 'échec chargement magasins')
+        // this.notifsService.onError(error.error.message, 'échec chargement magasins')
       }
     )
   }
@@ -130,7 +142,7 @@ export class IndexCommandComponent implements OnInit {
 
     this.tabProd.quantity = this.orF['quantity'].value;
     this.tabProd.voucher = this.orF['voucherType'].value;
-    this.tabProd.total = this.orF['quantity'].value * this.orF['voucherType'].value;
+    this.tabProd.total = this.orF['quantity'].value * this.orF['voucherType'].value * 10;
     this.tabProducts.push(this.tabProd)
     this.orF['quantity'].clear; this.orF['voucherType'].clear
     console.log('produit', this.tabProducts)
@@ -165,15 +177,15 @@ export class IndexCommandComponent implements OnInit {
 
 
   saveClientt(){
-    this.clientService.addClient(this.clientForm.value as IClient).subscribe(
+    this.clientService.addClient(this.clientForm.value as Client).subscribe(
       resp => {
         this.clients.push(resp)
         this.notifsService.onSuccess('client rajouté avec succès')
         this.showClientForms();
-        this.formClient()
+        this.annuler()
       },
       err => {
-        this.notifsService.onError(err.error.message, 'échec d\'enregistrement')
+        // this.notifsService.onError(err.error.message, 'échec d\'enregistrement')
       }
     )
   }
@@ -187,13 +199,14 @@ export class IndexCommandComponent implements OnInit {
       },
       err => {
         this.isLoading.next(false);
-        this.notifsService.onError(err.error.message, 'échec chargement liste des commandes')
+        // this.notifsService.onError(err.error.message, 'échec chargement liste des commandes')
       }
     )
   }
 
   annuler() {
     this.formOrder();
+    this.formClient()
     this.modalService.dismissAll()
   }
 
@@ -208,62 +221,61 @@ export class IndexCommandComponent implements OnInit {
     this.order.idClient = this.client.internalReference
     this.order.channel = this.orF['chanel'].value
     this.order.idManagerOrder = parseInt(localStorage.getItem('uid'))
-    this.order.ttcaggregateAmount = this.totalOrder;
+    this.order.tax = 0.1925;
+    this.order.ttcaggregateAmount = this.totalOrder * this.order.tax + this.totalOrder;
+    this.order.netAggregateAmount = this.totalOrder;
 
-    //on enregistre la commande
+
+    //on enregistre une nouvelle commande
     this.orderService.saveOrder(this.order).subscribe(
       resp => {
         console.log(resp)
+        this.isLoading.next(false);
         this.orders.push(resp)
-
-        //une fois la commande enregistrée, on enregistre les produits liés à cette commande
-        for(let prod of this.tabProducts){
-          this.voucher = this.vouchers.find(v => v.amount == prod.voucher)
-          this.Product.quantityNotebook = prod.quantity
-          this.Product.idTypeVoucher = this.voucher.internalReference
-          this.Product.idOrder = resp.internalReference
-
-          this.productService.saveProduct(this.Product).subscribe(
-            respProd => {
-              console.log('prod save', respProd)
-              this.isLoading.next(false);
-            },
-            err => {
-              this.notifsService.onError(err.error.message, 'err prod')
-            },
-            () => {
-              this.annuler()
-            }
-          )
-        }
+        this.saveProductsOrder(resp)
+        this.getProforma(resp)
+        this.notifsService.onSuccess('Nouvelle commande créée')
       },
       error => {
         this.isLoading.next(false);
-        this.notifsService.onError(error.error.message, 'erreur commande')
+        // this.notifsService.onError(error.error.message, 'erreur commande')
       }
     )
 
+  }
 
+  saveProductsOrder(order: Order){
+    //une fois la commande enregistrée, on enregistre les produits liés à cette commande
+    for(let prod of this.tabProducts){
+      this.voucher = this.vouchers.find(v => v.amount == prod.voucher)
+      this.Product.quantityNotebook = prod.quantity
+      this.Product.idTypeVoucher = this.voucher.internalReference
+      this.Product.idOrder = order.internalReference
 
-    //enregistrer la commande et les produits
+      this.productService.saveProduct(this.Product).subscribe(
+        respProd => {
+          console.log('prod save', respProd)
+          this.isLoading.next(false);
+        },
+        err => {
+          // this.notifsService.onError(err.error.message, 'err prod')
+        },
+        () => {
+          this.annuler()
+        }
+      )
+    }
+  }
 
-
-
-  // this.tabProducts.forEach(pro => {
-  //   this.Products
-  // })
-
-
-    /**
-     * enregistrer la commande en récupérant l'identifiant du gestionnaire
-     */
-
-
-
-    /**
-     * proforma: générer le client est une entreprise ou un particulier
-     * préfacture: générer si le client est une institution
-     */
+  getProforma(order: Order){
+    this.orderService.getProforma(order.internalReference).subscribe(
+      respProd => {
+        const file = new Blob([respProd], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        window.open(fileURL);
+        // this.isLoading.next(false);
+      },
+    )
   }
 
   openClientModal(content: any){

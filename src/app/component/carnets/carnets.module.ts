@@ -6,6 +6,9 @@ import { ApprovisionnerCarnetComponent } from './approvisionner-carnet/approvisi
 import { TransfererCarnetComponent } from './transferer-carnet/transferer-carnet.component';
 import { IndexCarnetComponent } from './index-carnet/index-carnet.component';
 import { AddCarnetComponent } from './add-carnet/add-carnet.component';
+import { CarnetLayoutComponent } from './carnet-layout/carnet-layout.component';
+import {SharedModule} from "../shared/shared.module";
+import {NgxPaginationModule} from "ngx-pagination";
 
 
 @NgModule({
@@ -13,11 +16,14 @@ import { AddCarnetComponent } from './add-carnet/add-carnet.component';
     ApprovisionnerCarnetComponent,
     TransfererCarnetComponent,
     IndexCarnetComponent,
-    AddCarnetComponent
+    AddCarnetComponent,
+    CarnetLayoutComponent
   ],
-  imports: [
-    CommonModule,
-    CarnetsRoutingModule
-  ]
+    imports: [
+        CommonModule,
+        CarnetsRoutingModule,
+        SharedModule,
+        NgxPaginationModule
+    ]
 })
 export class CarnetsModule { }

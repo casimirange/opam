@@ -1,6 +1,6 @@
 import {ClientTypeEnum} from "../_enum/clientTypeEnum";
 
-export class IClient {
+export class Client {
   id?: number;
   internalReference?: number;
   completeName: string;

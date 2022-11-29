@@ -6,12 +6,16 @@ import { MLayoutComponent } from './m-layout/m-layout.component';
 import {SharedModule} from "../shared/shared.module";
 import { DashboardMagasinComponent } from './dashboard-magasin/dashboard-magasin.component';
 import {ReactiveFormsModule} from "@angular/forms";
+import { UnitesComponent } from './unites/unites.component';
+import { DetailsMagasinComponent } from './details-magasin/details-magasin.component';
 
 
 @NgModule({
   declarations: [
     MLayoutComponent,
-    DashboardMagasinComponent
+    DashboardMagasinComponent,
+    UnitesComponent,
+    DetailsMagasinComponent
   ],
   imports: [
     CommonModule,

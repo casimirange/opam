@@ -9,6 +9,8 @@ import {BehaviorSubject} from "rxjs";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {PaiementMethod} from "../../../_interfaces/paiement";
 import Swal from "sweetalert2";
+import {UnitsService} from "../../../_services/units/units.service";
+import {Unite} from "../../../_interfaces/unite";
 
 @Component({
   selector: 'app-dashboard-magasin',
@@ -19,13 +21,15 @@ export class DashboardMagasinComponent implements OnInit {
 
   storeForm: FormGroup;
   stores: Store[] = [];
-  store: Store;
+  store: Store = new Store ();
+  unit: Unite = new Unite();
+  typeVouchers: TypeVoucher[]
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   modalTitle: string = 'Enregistrer nouveau magasin';
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService, private notifService: NotifsService) {
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService,
+              private notifService: NotifsService, private unitService: UnitsService, private voucherService: VoucherService) {
     this.formStore();
-    this.store = new Store ()
   }
 
   ngOnInit(): void {
@@ -47,11 +51,18 @@ export class DashboardMagasinComponent implements OnInit {
 
   createStore(){
     console.log(this.storeForm.value)
+    this.getVouchers()
     this.store.localization = this.storeForm.value
     this.isLoading.next(true);
-    this.storeService.createStore(this.storeForm.value).subscribe(
+    this.storeService.createStore(this.storeForm.value as Store).subscribe(
       resp => {
         console.log(resp)
+        this.unit.idStore = resp.internalReference
+        this.unit.quantityNotebook = 0
+        this.typeVouchers.forEach(tv => {
+          this.unit.idTypeVoucher = tv.internalReference
+          this.unitService.createUnit(this.unit).subscribe()
+        })
         this.stores.push(resp)
         this.annuler()
         this.isLoading.next(false);
@@ -69,6 +80,14 @@ export class DashboardMagasinComponent implements OnInit {
     this.storeService.getStore().subscribe(
       resp => {
         this.stores = resp.content
+      },
+    )
+  }
+
+  getVouchers(){
+    this.voucherService.getTypevoucher().subscribe(
+      resp => {
+        this.typeVouchers = resp.content
       },
     )
   }
