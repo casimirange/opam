@@ -14,4 +14,8 @@ export const environment = {
   users: url + 'users',
   paymentMethod: url + 'paymentmethode',
   carton: url + 'carton',
+  carnet: url + 'notebook',
+  coupon: url + 'coupon',
+  station: url + 'station',
+  unit: url + 'unit',
 };
