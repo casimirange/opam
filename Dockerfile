@@ -8,6 +8,8 @@ RUN npm cache clean --force
 
 COPY . .
 
+RUN rm package-lock.json
+
 #RUN yarn install --immutable --immutable-cache
 RUN yarn install
 
