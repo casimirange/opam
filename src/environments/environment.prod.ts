@@ -1,4 +1,4 @@
-const url = 'http://34.90.89.78:9009/api/v1.0/'
+const url = 'http://34.127.36.218:9009/api/v1.0/'
 export const environment = {
   production: true,
   signin: url + 'auth/sign-in',
