@@ -14,6 +14,10 @@ export class CartonService {
     return this.http.post<any>(environment.carton, carton)
   }
 
+  createCartonSupply(carton: any): Observable<any>{
+    return this.http.post<any>(environment.carton+'/supply', carton)
+  }
+
   getCartons(): Observable<any>{
     return this.http.get<any>(environment.carton)
   }

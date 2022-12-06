@@ -76,8 +76,8 @@
                 <th>Ref. interne</th>
                 <th>Numéro de série</th>
                 <th>Carton</th>
-                <th>Entrepôt</th>
-                <th>Magasinier</th>
+<!--                <th>Entrepôt</th>-->
+<!--                <th>Magasinier</th>-->
                 <th>Statut</th>
                 <th>Date création</th>
                 <th>Date modification</th>
@@ -95,10 +95,10 @@
                     {{(carton.internalReference === carnet.idCarton ? carton.number : '')}}
                   </span>
                 </td>
-                <td >
+<!--                <td >-->
 <!--                  <span *ngFor="let storeHouse of storeHouses">{{storeHouse.internalReference === carnet.idStoreHouse ? storeHouse.type : ''}}</span>-->
-                </td>
-                <td>{{carnet.idStoreKeeper}}</td>
+<!--                </td>-->
+<!--                <td>{{carnet.idStoreKeeper}}</td>-->
                 <td>{{carnet.status.name}}</td>
                 <td>{{carnet.createdAt}}</td>
                 <td>{{carnet.updateAt}}</td>

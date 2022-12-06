@@ -83,7 +83,7 @@
               <th class="">Date</th>
               <th class="">Nom Client</th>
               <th class="">Ref client</th>
-<!--              <th class="">Type de coupon</th>-->
+              <th class="">Canal</th>
               <th class="">Magasin</th>
               <th class="">Statut</th>
               <!--<th class="text-center">Actions</th>-->
@@ -95,11 +95,10 @@
                  | orderDateFilter: date ">
               <td class="text-left">{{order.internalReference}}</td>
               <td class="text-left">{{order.createdAt | date: 'dd/MM/yyyy'}}</td>
-              <td class="text-left"><span *ngFor="let cli of clients">{{cli.internalReference == order.idClient ? cli.completeName : ''}}</span></td>
-              <td class="text-left">{{order.idClient }}</td>
-<!--              <td class="text-left">12</td>-->
-<!--              <td class="text-left" > type 1 </td>-->
-              <td class="text-left" ><span *ngFor="let store of stores">{{store.internalReference == order.idStore ? store.localization : ''}}</span></td>
+              <td class="text-left">{{order.completeName }}</td>
+              <td class="text-left">{{order.client.internalReference }}</td>
+              <td class="text-left">{{order.channel }}</td>
+              <td class="text-left">{{order.localisation}}</td>
               <td class="text-left" > <span class="text-focus">{{order.status.name}}</span> </td>
             </tr>
 
@@ -412,7 +411,7 @@
             <span *ngIf="isLoading$ | async">Enregistrement ...</span>
             <span *ngIf="!(isLoading$ | async)">Enregistrer client</span>
           </button>
-          <button class="mt-1 btn btn-secondary float-right"><i class="pe-7s-back"></i>Annuler</button>
+          <button class="mt-1 btn btn-secondary float-right" (click)="showClientForms()"><i class="pe-7s-back"></i>Annuler</button>
         </form>
       </div>
     </div>

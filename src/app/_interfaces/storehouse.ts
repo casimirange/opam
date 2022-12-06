@@ -5,6 +5,8 @@ export class StoreHouse{
   internalReference?: number;
   idStore: number;
   type: string;
+  name: string;
+  localisationStore: string;
   createAt?: Date;
   updateAt?: Date;
   status?: Status;

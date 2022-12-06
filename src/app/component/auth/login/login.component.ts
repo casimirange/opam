@@ -100,8 +100,8 @@ export class LoginComponent implements OnInit {
         this.isLoggedIn = true;
       },
       (error: any) => {
-        this.errorMessage = error.error.error[0];
-        this.notifsService.onError(error.error.error[0], 'Echec de connexioon')
+        this.errorMessage = error.error.message;
+        // this.notifsService.onError(error.error.error[0], 'Echec de connexioon')
         this.isLoginFailed = true;
         this.isLoading.next(false);
       }

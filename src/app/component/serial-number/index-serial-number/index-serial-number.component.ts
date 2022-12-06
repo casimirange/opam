@@ -107,10 +107,10 @@ export class IndexSerialNumberComponent implements OnInit {
   saveCarton(){
     this.isLoading.next(true);
     this.store = this.stores.find(store => store.localization === this.cartonForm.controls['idStore'].value)
-    this.storeHouse = this.storeHouses.find(sth => sth.idStore == this.store.internalReference && sth.type === 'stockage')
+    this.storeHouse = this.storeHouses.find(sth => sth.name == this.cartonForm.controls['idStoreHouse'].value)
 
     this.carton.idStoreKeeper = parseInt(localStorage.getItem('uid').toString())
-    this.carton.idStoreHouse = this.storeHouse.internalReference
+    this.carton.idStoreHouseStockage = this.storeHouse.internalReference
     // this.carton.serialNumber = this.cartonForm.controls['serialNumber'].value
     this.cartonService.createCarton(this.carton).subscribe(
       resp => {

@@ -7,6 +7,9 @@ export class Coupon{
   idTicket?: number;
   idNotebook: number;
   idStation?: number;
+  idTypeVoucher?: number;
+  idRequestOpposition?: number;
+  idCreditNote?: number;
   serialNumber: string;
   createdAt?: Date;
   updateAt?: Date;

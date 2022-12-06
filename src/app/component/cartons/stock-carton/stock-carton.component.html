@@ -76,7 +76,7 @@
                 <th>Ref. interne</th>
                 <th>Numéro du carton</th>
                 <th>Numéro de série</th>
-                <th>Magasin</th>
+<!--                <th>Magasin</th>-->
                 <th>Entrepôt</th>
                 <th>Magasinier</th>
                 <th>Statut</th>
@@ -92,17 +92,15 @@
                 <td>{{carton.internalReference}}</td>
                 <td>{{carton.number}}</td>
                 <td>{{carton.serialFrom}} - {{carton.serialTo}}</td>
-                <td >
-                  <span *ngFor="let store of stores">
-                    <span *ngFor="let storeHouse of storeHouses">{{(storeHouse.internalReference === carton.idStoreHouse)
-                    && storeHouse.idStore === store.internalReference ? store.localization : ''}}</span>
+<!--                <td >-->
+<!--                  <span *ngFor="let store of stores">-->
+<!--                    <span *ngFor="let storeHouse of storeHouses">{{(storeHouse.internalReference === carton.idStoreHouse)-->
+<!--                    && storeHouse.idStore === store.internalReference ? store.localization : ''}}</span>-->
 
-                  </span>
-                </td>
-                <td >
-                  <span *ngFor="let storeHouse of storeHouses">{{storeHouse.internalReference === carton.idStoreHouse ? storeHouse.type : ''}}</span>
-                </td>
-                <td>{{carton.idStoreKeeper}}</td>
+<!--                  </span>-->
+<!--                </td>-->
+                <td>{{carton.nameStoreHouse}}</td>
+                <td>{{carton.storeKeeper.firstName}}</td>
                 <td>{{carton.status.name}}</td>
                 <td>{{carton.createdAt}}</td>
                 <td>{{carton.updateAt}}</td>
@@ -173,7 +171,7 @@
                 <input type="text"  autocomplete="off" ngModel="{{entrepot}}" id="storeHouse" class="form-control"
                        formControlName="idStoreHouse" placeholder="choisir un entrepot" list="storeHouseListOption">
                 <datalist id="storeHouseListOption">
-                  <option *ngFor="let storeHouse of storeHouses" [value]="storeHouse.internalReference">{{storeHouse.type}}</option>
+                  <option *ngFor="let storeHouse of storeHouses" [value]="storeHouse.name"></option>
                 </datalist>
               </div>
               <div *ngIf="cartonForm.controls['idStoreHouse'].invalid && (cartonForm.controls['idStoreHouse'].dirty || cartonForm.controls['idStoreHouse'].touched)"

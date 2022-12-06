@@ -11,7 +11,7 @@ export class ClientRefFilterPipe implements PipeTransform {
     }
     const clients = []
     for (const client of value){
-      if (client['idClient'].toString().includes(args.toString())){
+      if (client['client.internalReference'].toString().includes(args.toString())){
         clients.push(client)
       }
     }

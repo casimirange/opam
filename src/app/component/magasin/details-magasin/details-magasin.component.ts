@@ -11,6 +11,8 @@ import {StoreHouseService} from "../../../_services/storeHouse/store-house.servi
 import {UnitsService} from "../../../_services/units/units.service";
 import {Unite} from "../../../_interfaces/unite";
 import {Location} from "@angular/common";
+import {TypeVoucher} from "../../../_interfaces/typeVoucher";
+import {VoucherService} from "../../../_services/voucher/voucher.service";
 
 @Component({
   selector: 'app-details-magasin',
@@ -28,9 +30,11 @@ export class DetailsMagasinComponent implements OnInit {
   order: Order = new Order();
   storeHouses: StoreHouse[] = [];
   units: Unite[] = [];
+  vouchers: TypeVoucher[] = [];
   constructor(private clientService: ClientService, private activatedRoute: ActivatedRoute, private router: Router,
               private orderService: OrderService, private notifService: NotifsService, private storeService: StoreService,
-              private storeHouseService: StoreHouseService, private unitService: UnitsService, private _location: Location) {
+              private storeHouseService: StoreHouseService, private unitService: UnitsService, private _location: Location,
+              private voucherService: VoucherService) {
     this.store = new Store()
   }
 
@@ -39,6 +43,15 @@ export class DetailsMagasinComponent implements OnInit {
     // this.getStores()
     this.getStoreHousesByStore()
     this.getUnitByStore()
+    this.getVouchers()
+  }
+
+  getVouchers(){
+    this.voucherService.getTypevoucher().subscribe(
+      resp =>{
+        this.vouchers = resp.content
+      }
+    )
   }
 
   getStoreInfos(){

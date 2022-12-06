@@ -10,12 +10,12 @@
       </div>
     </div>
     <div class="page-title-actions">
-              <div class="d-inline-block">
-                <div class="page-title-icon bg-primary btn btn-success" disabled="" (click)="acceptOrder()">
-                  <i class="pe-7s-diskette icon-gradient bg-white">
-                  </i>
-                </div>
-            </div>
+<!--              <div class="d-inline-block">-->
+<!--                <div class="page-title-icon bg-primary btn btn-success" disabled="" (click)="acceptOrder()">-->
+<!--                  <i class="pe-7s-diskette icon-gradient bg-white">-->
+<!--                  </i>-->
+<!--                </div>-->
+<!--            </div>-->
       <div class="d-inline-block ">
         <div class="  ml-3 ">
           <div class="widget-subheading">
@@ -127,7 +127,12 @@
               </div>
 
             </div>
+            <button class="btn btn-outline-primary btn-lg" *ngIf="statut == 'CREATED'" (click)="acceptOrder()">Accepter</button>
+            <button class="btn btn-outline-primary btn-lg" *ngIf="statut == 'ACCEPTED'" (click)="payOrder()">Payer</button>
+            <button class="btn btn-outline-primary btn-lg" *ngIf="statut == 'PAID'" (click)="generateBoredereau()">Bordereau</button>
+
             <div class="divider"></div>
+
             <div class="row">
               <div class="col-md-12">
                 <div class="position-relative form-group">
@@ -149,7 +154,7 @@
             </div>
             <div class="divider"></div>
             <div class="d-block text-right">
-              <button class="btn btn-success btn-lg" *ngIf="statut == 'ACCEPTED'" (click)="payOrder()">Save</button>
+              <button class="btn btn-success btn-lg" *ngIf="statut == 'ACCEPTED'" (click)="payOrder()">Payer</button>
               <button class="btn btn-success btn-lg" *ngIf="statut == 'PAID'" (click)="generateBoredereau()">Bordereau</button>
             </div>
             <!--              <button class="mt-1 btn btn-primary float-right">Enregistrer</button>-->

@@ -1,10 +1,14 @@
 import {Store} from "./store";
+import {IUser} from "./user";
 
 export class Carton{
   id?: number;
   internalReference?: number;
-  idStoreHouse: number;
+  idStoreHouseStockage: number;
+  idStoreHouseSell?: number;
   idStoreKeeper: number;
+  storeKeeper?: IUser;
+  nameStoreHouse?: string;
   // serialNumber: string;
   createdAt?: Date;
   updateAt?: Date;

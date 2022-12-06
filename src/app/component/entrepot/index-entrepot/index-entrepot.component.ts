@@ -8,6 +8,7 @@ import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";
 import {BehaviorSubject} from "rxjs";
 import Swal from "sweetalert2";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-index-entrepot',
@@ -28,7 +29,8 @@ export class IndexEntrepotComponent implements OnInit {
   modalTitle = 'Enregistrer un nouvel entrepot'
   magasin: string
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService, private storeService: StoreService, private notifService: NotifsService) {
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService,
+              private storeService: StoreService, private notifService: NotifsService, private router: Router) {
     this.formStoreHouse();
   }
 
@@ -42,6 +44,7 @@ export class IndexEntrepotComponent implements OnInit {
     this.storeHouseForm = this.fb.group({
       store: ['', [Validators.required, Validators.minLength(3)]],
       type: ['', [Validators.required, Validators.minLength(3)]],
+      name: ['', [Validators.required, Validators.minLength(3)]],
     });
   }
 
@@ -77,9 +80,14 @@ export class IndexEntrepotComponent implements OnInit {
     this.store = this.stores.find(store => store.localization === this.storeHouseForm.controls['store'].value)
     this.storeHouse.idStore = this.store.internalReference
     this.storeHouse.type = this.storeHouseForm.controls['type'].value
+    this.storeHouse.name = this.storeHouseForm.controls['name'].value
     this.storeHouseService.createStoreHouse(this.storeHouse).subscribe(
       resp => {
-        this.storeHouses.push(resp)
+        /**
+         * je dois gérer cette partie
+         */
+        // this.storeHouses.push(resp)
+        this.getStoreHouses()
         this.isLoading.next(false);
         this.notifService.onSuccess('enregistrement effectué')
         this.annuler()
@@ -144,7 +152,7 @@ export class IndexEntrepotComponent implements OnInit {
     this.modalService.open(mymodal, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
     this.storeHouse = storeHouse
     console.log('magasin', this.stores.find(store => store.internalReference === storeHouse.idStore))
-    this.magasin = this.stores.find(store => store.internalReference === storeHouse.idStore).localization
+    // this.magasin = this.stores.find(store => store.internalReference === storeHouse.idStore).localization
     this.modalTitle = 'Modifier entrepot'
   }
 
@@ -154,17 +162,25 @@ export class IndexEntrepotComponent implements OnInit {
     console.log(this.store)
     const updateStoreHouse = {
       "idStore" : 0,
-      "type" : ''
+      "type" : '',
+      "name" : '',
     }
     updateStoreHouse.type = this.storeHouseForm.controls['type'].value
+    updateStoreHouse.name = this.storeHouseForm.controls['name'].value
     updateStoreHouse.idStore = this.store.internalReference
 
     this.storeHouseService.updateStoreHouse(updateStoreHouse, this.storeHouse.internalReference).subscribe(
       resp => {
+        console.log(resp)
         this.isLoading.next(false);
         // on recherche l'index du client dont on veut faire la modification dans liste des clients
         const index = this.storeHouses.findIndex(storeHouse => storeHouse.internalReference === resp.internalReference);
-        this.storeHouses[ index ] = resp;
+        // this.storeHouses[ index ] = resp;
+        this.storeHouses[ index ].internalReference = resp.internalReference;
+        this.storeHouses[ index ].localisationStore = resp.localisationStore;
+        this.storeHouses[ index ].name = resp.name;
+        this.storeHouses[ index ].updateAt = resp.updateAt;
+        this.getStoreHouses()
         this.notifService.onSuccess("entrepot modifié avec succès!")
         this.annuler()
       },
@@ -177,5 +193,10 @@ export class IndexEntrepotComponent implements OnInit {
         // }
       }
     )
+  }
+
+  showDetails(storeHouse: StoreHouse) {
+    this.router.navigate(['/entrepots/details', storeHouse.internalReference])
+    // [routerLink]=""
   }
 }

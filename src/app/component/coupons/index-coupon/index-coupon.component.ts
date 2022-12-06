@@ -114,6 +114,7 @@ export class IndexCouponComponent implements OnInit {
 
     this.couponService.getCoupons(this.page -1, this.size).subscribe(
       resp => {
+        console.log(resp.content)
         this.coupons = resp.content
         this.size = resp.size
         this.totalPages = resp.totalPages
@@ -141,10 +142,6 @@ export class IndexCouponComponent implements OnInit {
         this.notifService.onSuccess('chargement des entrepots')
       },
     )
-  }
-
-  padWithZero(num, targetLength) {
-    return String(num).padStart(targetLength, '0');
   }
 
   compare( a: Carnet, b: Carnet ) {
@@ -230,4 +227,7 @@ export class IndexCouponComponent implements OnInit {
     )
   }
 
+  padWithZero(num, targetLength) {
+    return String(num).padStart(targetLength, '0');
+  }
 }

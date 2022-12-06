@@ -11,6 +11,8 @@ import {PaiementMethod} from "../../../_interfaces/paiement";
 import Swal from "sweetalert2";
 import {UnitsService} from "../../../_services/units/units.service";
 import {Unite} from "../../../_interfaces/unite";
+import {StoreHouse} from "../../../_interfaces/storehouse";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-dashboard-magasin',
@@ -27,7 +29,7 @@ export class DashboardMagasinComponent implements OnInit {
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   modalTitle: string = 'Enregistrer nouveau magasin';
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService,
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService, private router: Router,
               private notifService: NotifsService, private unitService: UnitsService, private voucherService: VoucherService) {
     this.formStore();
   }
@@ -57,12 +59,12 @@ export class DashboardMagasinComponent implements OnInit {
     this.storeService.createStore(this.storeForm.value as Store).subscribe(
       resp => {
         console.log(resp)
-        this.unit.idStore = resp.internalReference
-        this.unit.quantityNotebook = 0
-        this.typeVouchers.forEach(tv => {
-          this.unit.idTypeVoucher = tv.internalReference
-          this.unitService.createUnit(this.unit).subscribe()
-        })
+        // this.unit.idStore = resp.internalReference
+        // this.unit.quantityNotebook = 0
+        // this.typeVouchers.forEach(tv => {
+        //   this.unit.idTypeVoucher = tv.internalReference
+        //   this.unitService.createUnit(this.unit).subscribe()
+        // })
         this.stores.push(resp)
         this.annuler()
         this.isLoading.next(false);
@@ -157,5 +159,10 @@ export class DashboardMagasinComponent implements OnInit {
         this.isLoading.next(false);
       }
     )
+  }
+
+  showDetails(store: Store) {
+    this.router.navigate(['/entrepots/details', store.internalReference])
+    // [routerLink]=""
   }
 }

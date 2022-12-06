@@ -18,4 +18,6 @@ export const environment = {
   coupon: url + 'coupon',
   station: url + 'station',
   unit: url + 'unit',
+  stock: url + 'stockmovement',
+  item: url + 'item',
 };

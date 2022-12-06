@@ -16,6 +16,8 @@ import {TypeVoucher} from "../../../_interfaces/typeVoucher";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
 import {Coupon} from "../../../_interfaces/coupon";
 import {CouponService} from "../../../_services/coupons/coupon.service";
+import {Stock} from "../../../_interfaces/stock";
+import {MvtStockService} from "../../../_services/stock/mvt-stock.service";
 
 @Component({
   selector: 'app-stock-carton',
@@ -30,6 +32,7 @@ export class StockCartonComponent implements OnInit {
   carton: Carton = new Carton();
   carnet: Carnet = new Carnet();
   coupon: Coupon = new Coupon();
+  mvtStock: Stock = new Stock();
   vouchers: TypeVoucher[] = [];
   @ViewChild('mymodal', { static: false }) viewMe?: ElementRef<HTMLElement>;
   cartonForm: FormGroup ;
@@ -43,22 +46,31 @@ export class StockCartonComponent implements OnInit {
   entrepot: string;
   typcoupon: any;
   sn: any;
+  page: number = 1;
+  totalPages: number;
+  totalElements: number;
+  size: number = 20;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService,
               private storeService: StoreService, private notifService: NotifsService, private cartonService: CartonService,
-              private carnetService: CarnetService, private voucherService: VoucherService, private couponService: CouponService) {
+              private carnetService: CarnetService, private voucherService: VoucherService, private couponService: CouponService,
+              private mvtStockService: MvtStockService) {
     this.formCarton();
   }
 
   ngOnInit(): void {
     this.getStores();
-    this.getTypeVoucher()
+    this.getTypeVoucher();
+    this.getStoreHousess();
+    this.getCartons();
+  }
+
+  getStoreHousess(){
     this.storeHouseService.getStoreHouses().subscribe(
       resp => {
         this.storeHouses = resp.content
       },
     )
-    this.getCartons();
   }
 
   //formulaire de création
@@ -89,7 +101,12 @@ export class StockCartonComponent implements OnInit {
 
     this.cartonService.getCartons().subscribe(
       resp => {
+        console.log('liste des cartons', resp)
         this.cartons = resp.content
+        this.size = resp.size
+        this.totalPages = resp.totalPages
+        this.totalElements = resp.totalElements
+        console.log(resp.content)
         this.notifService.onSuccess('chargement des cartons')
       },
     )
@@ -100,12 +117,17 @@ export class StockCartonComponent implements OnInit {
 
     this.storeHouseService.getStoreHouses().subscribe(
       resp => {
-        console.log(resp)
+        console.log('tous les entrpots',resp)
         const store = this.stores.find(st => st.localization === event)
-        console.log(store)
+        console.log('le mag', store)
+        // this.storeHouseService.getStoreHouses().subscribe(
+        //   resp => {
+        //     this.storeHouses = resp.content
+        //   },
+        // )
         if (event != ''){
-          this.storeHouses = resp.content.filter(sth => sth.idStore == store.internalReference && sth.type == 'stockage')
-          console.log('filtrées2',resp.content.filter(sth => sth.idStore == store.internalReference ))
+          this.storeHouses = resp.content.filter(sth => sth.type == 'stockage')
+          console.log('filtrées2',resp.content.filter(sth => sth.store.localization == store.internalReference ))
         }
 
         console.log('filtrées',this.storeHouses)
@@ -125,77 +147,33 @@ export class StockCartonComponent implements OnInit {
     console.log(this.cartonForm.controls['typeVoucher'].value)
     this.store = this.stores.find(store => store.localization === this.cartonForm.controls['idStore'].value)
     let typ = this.vouchers.find(tv => tv.amount == parseInt(this.cartonForm.controls['typeVoucher'].value))
-    this.storeHouse = this.storeHouses.find(sth => sth.idStore == this.store.internalReference && sth.type === 'stockage')
+    this.storeHouse = this.storeHouses.find(sth => sth.name == this.cartonForm.controls['idStoreHouse'].value)
 
     this.carton.idStoreKeeper = parseInt(localStorage.getItem('uid').toString())
-    this.carton.idStoreHouse = this.storeHouse.internalReference
+    this.carton.idStoreHouseStockage = this.storeHouse.internalReference
+    this.carton.idStoreHouseSell = this.storeHouse.internalReference
     this.carton.number = parseInt(this.cartonForm.controls['number'].value)
     this.carton.from = parseInt(this.cartonForm.controls['from'].value)
     this.carton.to = parseInt(this.cartonForm.controls['to'].value)
     this.carton.serialFrom = parseInt(this.cartonForm.controls['serialFrom'].value)
     this.carton.serialTo = parseInt(this.cartonForm.controls['serialTo'].value)
-    this.carton.typeVoucher = typ.amount == 10000 ? 1 : (typ.amount == 5000 ? 5 : 3)
+    this.carton.typeVoucher = typ.amount
 
-    console.log('carton', this.carton)
     this.cartonService.createCarton(this.carton).subscribe(
       resp => {
-        this.cartons.push(resp)
-        // this.carnet.idCarton = resp.internalReference
-        // this.carnet.idStoreKeeper = parseInt(localStorage.getItem('uid').toString())
-        // const tcoupon = this.cartonForm.controls['voucherType'].value
-        // for (let i = 1; i < 101; i++){
-        //   if (tcoupon == 10000){
-        //     console.log("1 - "+i.toString())
-        //     this.carnet.serialNumber = "1 - " + String(i).padStart(7, '0').replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-        //   }
-        //   if (tcoupon == 5000){
-        //     console.log("5 - "+i)
-        //     this.carnet.serialNumber = "5 - " + String(1000000 +i).padStart(7, '0').replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-        //   }
-        //   if (tcoupon == 3000){
-        //     console.log("3 - "+i)
-        //     this.carnet.serialNumber = "3 - " + String(1300000 +i).padStart(7, '0').replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-        //   }
-        //
-        //
-        //   this.carnetService.createCarnet(this.carnet).subscribe(
-        //     response => {
-        //       console.log('carnet', response)
-        //       for (let j = 1; j < 11; j++){
-        //         if (tcoupon == 10000){
-        //           this.coupon.idNotebook = response.internalReference
-        //           console.log("1 - "+i.toString())
-        //           this.coupon.serialNumber = "1 - " + String(i).padStart(7, '0').replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-        //         }
-        //         if (tcoupon == 5000){
-        //           this.coupon.idNotebook = response.internalReference
-        //           console.log("5 - "+i)
-        //           this.coupon.serialNumber = "5 - " + String(1000000 +i).padStart(7, '0').replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-        //         }
-        //         if (tcoupon == 3000){
-        //           this.coupon.idNotebook = response.internalReference
-        //           console.log("3 - "+i)
-        //           this.coupon.serialNumber = "3 - " + String(1300000 +i).padStart(7, '0').replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-        //         }
-        //
-        //         this.couponService.createCoupon(this.coupon).subscribe(
-        //           resp => {
-        //             console.log('coupon', resp)
-        //           }
-        //         )
-        //       }
-        //     }, error => {
-        //
-        //     }
-        //   )
-        // }
+        console.log('carton créé', resp)
+        /**
+         * je dois résoudre le fait de charger toute la liste des cartons car un soucis avec la réponse qui est retournée
+         */
+        // this.cartons.push(resp)
+        this.getCartons();
+        // this.mvtStockService.createStockMovement(this.mvtStock).subscribe()
         this.isLoading.next(false);
         this.notifService.onSuccess('enregistrement effectué')
         this.annuler()
       },
       error => {
         this.isLoading.next(false);
-        // this.notifService.onError(error.error.message, 'Erreur lors de la création')
       }
     )
   }
@@ -265,9 +243,9 @@ export class StockCartonComponent implements OnInit {
     this.modalService.open(mymodal, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
     this.carton = carton
     // this.sn = carton.serialNumber
-    console.log('magasin', this.stores.find(store => store.internalReference === carton.idStoreHouse))
-    this.storeHouse = this.storeHouses.find(store => store.internalReference === carton.idStoreHouse)
-    this.entrepot = this.storeHouse.type
+    console.log('magasin', this.stores.find(store => store.internalReference === carton.idStoreHouseStockage))
+    this.storeHouse = this.storeHouses.find(store => store.internalReference === carton.idStoreHouseStockage)
+    this.entrepot = this.storeHouse.name
     this.magasin = this.stores.find(store => store.internalReference === this.storeHouse.idStore).localization
     this.modalTitle = 'Modifier carton'
   }

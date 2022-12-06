@@ -75,9 +75,10 @@
                 <th>#</th>
                 <th>Ref. interne</th>
                 <th>Numéro de série</th>
+                <th>Coupon</th>
                 <th>Client</th>
                 <th>Ticket</th>
-                <th>Carton</th>
+                <th>Carnet</th>
                 <th>Station</th>
                 <th>Statut</th>
                 <th>Date création</th>
@@ -90,10 +91,11 @@
               <tr>
                 <td>{{i + 1}}</td>
                 <td>{{coupon.internalReference}}</td>
-                <td>{{coupon.serialNumber}}</td>
+                <td>{{ padWithZero(coupon.serialNumber, 7)}}</td>
+                <td><span *ngFor="let v of vouchers">{{v.internalReference == coupon.idTypeVoucher ? v.amount : ''}}</span></td>
                 <td>{{coupon.idClient}}</td>
                 <td>{{coupon.idTicket}}</td>
-                <td >{{ coupon.idNotebook }}</td>
+                <td ><span *ngFor="let v of carnets">{{v.internalReference == coupon.idNotebook ? v.serialNumber : ''}}</span></td>
                 <td>{{coupon.idStation}}</td>
                 <td>{{coupon.status.name}}</td>
                 <td>{{coupon.createdAt}}</td>

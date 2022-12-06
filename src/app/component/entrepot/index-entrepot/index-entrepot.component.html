@@ -75,6 +75,7 @@
                 <th>#</th>
                 <th>Ref. interne</th>
                 <th>Magasin</th>
+                <th>Nom</th>
                 <th>Type</th>
                 <th>Statut</th>
                 <th>Date création</th>
@@ -84,12 +85,11 @@
               </thead>
               <tbody *ngFor="let storeHouse of storeHouses; let i = index">
 
-              <tr>
+              <tr (dblclick)="showDetails(storeHouse)">
                 <td>{{i + 1}}</td>
                 <td>{{storeHouse.internalReference}}</td>
-                <td >
-                  <span *ngFor="let store of stores">{{store.internalReference === storeHouse.idStore ? store.localization : ''}}</span>
-                </td>
+                <td>{{storeHouse.localisationStore}}</td>
+                <td>{{storeHouse.name}}</td>
                 <td>{{storeHouse.type}}</td>
                 <td>{{storeHouse.status.name}}</td>
                 <td>{{storeHouse.createAt}}</td>
@@ -135,10 +135,10 @@
       <div class="">
         <form [formGroup]="storeHouseForm">
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
               <div class="position-relative form-group">
                 <label for="store" class="">Magasin</label>
-                <input type="text" ngModel="{{magasin}}" autocomplete="off" id="store" class="form-control" formControlName="store" placeholder="choisir un magasin" list="storeListOption">
+                <input type="text" ngModel="{{storeHouse.localisationStore}}" autocomplete="off" id="store" class="form-control" formControlName="store" placeholder="choisir un magasin" list="storeListOption">
                 <datalist id="storeListOption">
                   <option *ngFor="let store of stores" [value]="store.localization"></option>
                 </datalist>
@@ -154,7 +154,7 @@
 <!--                </div>-->
               </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               <div class="position-relative form-group">
                 <label for="type" class="">Type</label>
                 <select name="select" ngModel="{{storeHouse.type}}" id="type" class="form-control" formControlName="type">
@@ -170,6 +170,26 @@
                 </div>
                 <div *ngIf="storeHouseForm.controls['type'].errors?.['minLength']" class="ml-3">
                   entrez un nom valide : example@example.com
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="position-relative form-group">
+                <label for="name" class="">Nom de l'entrepôt</label>
+                <input type="text" ngModel="{{storeHouse.name}}" id="name" class="form-control" formControlName="name" placeholder="Entrer un nom">
+<!--                <select name="select" ngModel="{{storeHouse.name}}" id="name" class="form-control" formControlName="name">-->
+<!--                  <option value="" selected disabled hidden>Sélectionner un type</option>-->
+<!--                  <option *ngFor="let type of storeHouseType" value="{{type}}">{{type}}</option>-->
+<!--                </select>-->
+              </div>
+              <div *ngIf="storeHouseForm.controls['name'].invalid && (storeHouseForm.controls['name'].dirty || storeHouseForm.controls['name'].touched)"
+                   class="mb-2"  style="color: #f65656; font-style: italic;">
+
+                <div *ngIf="storeHouseForm.controls['name'].errors?.['required']" class="ml-3">
+                  le nom est obligatoire.
+                </div>
+                <div *ngIf="storeHouseForm.controls['name'].errors?.['minLength']" class="ml-3">
+                  entrez un nom d'au moins 4 lettres
                 </div>
               </div>
             </div>

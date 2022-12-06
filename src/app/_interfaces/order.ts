@@ -1,8 +1,11 @@
-  export class Order{
+import {Client} from "./client";
+
+export class Order{
     id?:	number
     internalReference?: number
     clientReference?:	number
     idClient?:	number
+    client?:	Client
     idFund?:	number
     idManagerStore?:	number
     idManagerCoupon?:	number
@@ -21,6 +24,8 @@
     idPaymentMethod?:	number
     netAggregateAmount?:	number
     ttcaggregateAmount?:	number
+    localisation?:	string
+    completeName?:	string
   }
 
   export class StatusOrder{

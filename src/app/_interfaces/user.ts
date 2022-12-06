@@ -2,6 +2,7 @@ export class IUser{
   id?: string;
   name?: string;
   firstname?: string;
+  firstName?: string;
   username?: string;
   password?: string;
   pinCode?: number;

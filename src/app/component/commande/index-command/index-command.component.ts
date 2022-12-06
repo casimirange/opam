@@ -195,6 +195,7 @@ export class IndexCommandComponent implements OnInit {
     this.orderService.getOrders().subscribe(
       resp =>{
         this.orders = resp.content
+        console.log(resp.content)
         this.isLoading.next(false);
       },
       err => {
@@ -231,7 +232,11 @@ export class IndexCommandComponent implements OnInit {
       resp => {
         console.log(resp)
         this.isLoading.next(false);
-        this.orders.push(resp)
+        /**
+         * je dois gérer cette partie
+         */
+        // this.orders.push(resp)
+        this.getOrders()
         this.saveProductsOrder(resp)
         this.getProforma(resp)
         this.notifsService.onSuccess('Nouvelle commande créée')

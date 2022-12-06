@@ -41,7 +41,7 @@ export class IndexClientComponent implements OnInit {
   page: number = 1;
   totalPages: number;
   totalElements: number;
-  size: number = 20;
+  size: number = 4;
 
   modalTitle = 'Enregistrer nouveau client'
 

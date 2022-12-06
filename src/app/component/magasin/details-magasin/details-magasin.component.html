@@ -35,7 +35,8 @@
           <div class="widget-progress-wrapper">
             <div class="progress-sub-label">
               <div class="sub-label-left">Type de coupon</div>
-              <div class="sub-label-right text-success font-weight-bold">{{unit.idTypeVoucher}}</div>
+              <div class="sub-label-right text-success font-weight-bold">
+                <span *ngFor="let voucher of vouchers">{{voucher.internalReference == unit.idTypeVoucher ? voucher.amount : ''}}</span></div>
             </div>
             <div class="progress-sub-label">
               <div class="sub-label-left">Quantité de carnet</div>
@@ -70,7 +71,7 @@
           <tr>
             <th class="">Ref#</th>
             <th class="">Date</th>
-            <!--            <th class="">Nom Client</th>-->
+            <th class="">Nom Entrepôt</th>
             <!--            <th class="">Ref client</th>-->
             <!--              <th class="">Type de coupon</th>-->
             <th class="">Type</th>
@@ -79,9 +80,10 @@
           </tr>
           </thead>
           <tbody>
-          <tr style="cursor: pointer" *ngFor="let storeHouse of storeHouses" routerLink="/commandes/edit/{{storeHouse.internalReference}}">
+          <tr style="cursor: pointer" *ngFor="let storeHouse of storeHouses" routerLink="/entrepots/details/{{storeHouse.internalReference}}">
             <td class="text-left">{{storeHouse.internalReference}}</td>
             <td class="text-left">{{storeHouse.createAt | date: 'dd/MM/yyyy'}}</td>
+            <td class="text-left">{{storeHouse.name}}</td>
             <!--            <td class="text-left"><span *ngFor="let cli of clients">{{cli.internalReference == order.idClient ? cli.completeName : ''}}</span></td>-->
             <!--            <td class="text-left">{{order.idClient }}</td>-->
             <!--              <td class="text-left">12</td>-->

@@ -6,12 +6,14 @@ import { EntrepotLayoutComponent } from './entrepot-layout/entrepot-layout.compo
 import { IndexEntrepotComponent } from './index-entrepot/index-entrepot.component';
 import {SharedModule} from "../shared/shared.module";
 import {ReactiveFormsModule} from "@angular/forms";
+import { DetailsEntrepotComponent } from './details-entrepot/details-entrepot.component';
 
 
 @NgModule({
   declarations: [
     EntrepotLayoutComponent,
-    IndexEntrepotComponent
+    IndexEntrepotComponent,
+    DetailsEntrepotComponent
   ],
   imports: [
     CommonModule,

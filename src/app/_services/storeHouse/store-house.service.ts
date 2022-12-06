@@ -18,6 +18,10 @@ export class StoreHouseService {
     return this.http.get<any>(environment.storeHouse)
   }
 
+  getStoreHouseByInternalRef(internalRef: number): Observable<any>{
+    return this.http.get<any>(environment.storeHouse + `/${internalRef}`)
+  }
+
   getStoreHousesByStore(internalRef: number): Observable<any>{
     return this.http.get<any>(environment.storeHouse + `/store/${internalRef}`)
   }
