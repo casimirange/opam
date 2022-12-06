@@ -13,6 +13,8 @@ RUN rm package-lock.json
 #RUN yarn install --immutable --immutable-cache
 RUN yarn install
 
+#RUN yarn add 
+
 #RUN yarn add crypto-js
 
 RUN yarn build
