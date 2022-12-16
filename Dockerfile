@@ -1,6 +1,6 @@
 ### STAGE 1:RUN ####
 
-FROM node:14-alpine AS build
+FROM node:16-alpine AS build
 # Create a Virtual directory inside the docker image
 WORKDIR /app
 
@@ -8,8 +8,12 @@ RUN npm cache clean --force
 
 COPY . .
 
+RUN rm package-lock.json
+
 #RUN yarn install --immutable --immutable-cache
 RUN yarn install
+
+RUN yarn add @angular/localize
 
 #RUN yarn add crypto-js
 
