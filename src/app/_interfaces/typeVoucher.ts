@@ -1,3 +1,5 @@
+import {Status} from "./status";
+
 export class TypeVoucher{
   id?: number;
   internalReference?: number;
@@ -6,10 +8,4 @@ export class TypeVoucher{
   createdAt?: Date;
   updateAt?: Date;
   status?: Status;
-}
-
-export class Status{
-  name: string;
-  description: string;
-  id: number
 }

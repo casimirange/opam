@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./user-layout.component.css']
 })
 export class UserLayoutComponent implements OnInit {
-
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor() { }
 
   ngOnInit(): void {

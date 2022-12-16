@@ -1,5 +1,6 @@
 import {Store} from "./store";
 import {IUser} from "./user";
+import {Status} from "./status";
 
 export class Carton{
   id?: number;
@@ -22,8 +23,3 @@ export class Carton{
   to: number;
 }
 
-export class Status{
-  name: string;
-  description: string;
-  id: number
-}

@@ -30,20 +30,12 @@ export class TokenInterceptor implements HttpInterceptor {
       })
       return next.handle(clone).pipe(
         catchError(err => {
-          // si le token a expiré
-          // if (err.status === 401){
-            console.log('erreurs', err)
-          //   // if(err.error.message === 'votre code d\'activation a expiré ou est invalide'){
-          //   //   this.notifService.onError('temps', 'code expiré')
-          //   // }
+          // console.log('erreurs', err)
           if (err.error.message.includes("JWT expired at")) {
             this.notifService.expiredSession()
           } else {
             this.notifService.onError(err.error.message, '')
           }
-          //   else {
-          //   this.notifService.onError(err.error.message, '')
-          // }
           return throwError(err)
         })
       )

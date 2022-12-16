@@ -57,6 +57,7 @@ export class IndexCommandComponent implements OnInit {
   internalRef = ''
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private fb: FormBuilder, private modalService: NgbModal, private clientService: ClientService,
               private voucherService: VoucherService, private notifsService: NotifsService, private storeService: StoreService,
               private productService: ProductService, private orderService: OrderService) {
@@ -171,8 +172,13 @@ export class IndexCommandComponent implements OnInit {
   }
 
   showClientForms(){
-    this.showClientForm = !this.showClientForm;
-    this.showClientForm ? this.title = 'Enregistrer nouveau client' : this.title = 'Enregistrer nouvelle commande';
+    this.showClientForm = true;
+    this.title = 'Enregistrer nouveau client';
+  }
+
+  showOrderForms(){
+    this.showClientForm = false;
+    this.title = 'Enregistrer nouvelle commande';
   }
 
 
@@ -181,8 +187,8 @@ export class IndexCommandComponent implements OnInit {
       resp => {
         this.clients.push(resp)
         this.notifsService.onSuccess('client rajouté avec succès')
-        this.showClientForms();
-        this.annuler()
+        this.showOrderForms();
+        this.annulerClient()
       },
       err => {
         // this.notifsService.onError(err.error.message, 'échec d\'enregistrement')
@@ -207,14 +213,20 @@ export class IndexCommandComponent implements OnInit {
 
   annuler() {
     this.formOrder();
-    this.formClient()
+    this.formClient();
+    this.showOrderForms();
     this.modalService.dismissAll()
+  }
+
+  annulerClient() {
+    this.formClient();
+    this.showOrderForms();
   }
 
   saveOrder(){
     this.isLoading.next(true);
     //on récupère les informations du client
-    this.client = this.clients.find(client => client.completeName === this.orF['client'].value)
+      this.client = this.clients.find(client => client.completeName === this.orF['client'].value)
     //on récupère les informations du magasin
     this.store = this.stores.find(store => store.localization === this.orF['store'].value)
 
@@ -236,10 +248,13 @@ export class IndexCommandComponent implements OnInit {
          * je dois gérer cette partie
          */
         // this.orders.push(resp)
-        this.getOrders()
+
         this.saveProductsOrder(resp)
-        this.getProforma(resp)
+        setTimeout(() => this.getProforma(resp) , 5000);
+
+        this.getOrders()
         this.notifsService.onSuccess('Nouvelle commande créée')
+        this.tabProducts = []
       },
       error => {
         this.isLoading.next(false);
@@ -277,7 +292,7 @@ export class IndexCommandComponent implements OnInit {
       respProd => {
         const file = new Blob([respProd], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
-        window.open(fileURL);
+        window.open(fileURL, 'Download');
         // this.isLoading.next(false);
       },
     )

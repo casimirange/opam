@@ -1,5 +1,6 @@
 import {Store} from "./store";
 import {IUser} from "./user";
+import {Status} from "./status";
 
 export class  Supply{
   id?: number;
@@ -16,10 +17,4 @@ export class  Supply{
   typeVoucher: number;
   from: number;
   to: number;
-}
-
-export class Status{
-  name: string;
-  description: string;
-  id: number
 }

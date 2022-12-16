@@ -16,6 +16,8 @@ import {VoucherService} from "../../../_services/voucher/voucher.service";
 import Swal from "sweetalert2";
 import {CouponService} from "../../../_services/coupons/coupon.service";
 import {Coupon} from "../../../_interfaces/coupon";
+import {StationService} from "../../../_services/stations/station.service";
+import {Station} from "../../../_interfaces/station";
 
 @Component({
   selector: 'app-index-coupon',
@@ -31,13 +33,14 @@ export class IndexCouponComponent implements OnInit {
   carnet: Carnet = new Carnet();
   carnets: Carnet[];
   coupons: Coupon[];
+  coupon: Coupon = new Coupon();
   vouchers: TypeVoucher[] = [];
-  cartonForm: FormGroup ;
+  couponForm: FormGroup ;
   stores: Store[] = [];
   store: Store = new Store();
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
-
+  roleUser = localStorage.getItem('userAccount').toString()
   magasin: string
   entrepot: string;
   typcoupon: any;
@@ -47,9 +50,11 @@ export class IndexCouponComponent implements OnInit {
   totalElements: number;
   size: number = 20;
 
+  stations: Station[] = []
   constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService,
               private storeService: StoreService, private notifService: NotifsService, private cartonService: CartonService,
-              private carnetService: CarnetService, private voucherService: VoucherService, private couponService: CouponService) {
+              private carnetService: CarnetService, private voucherService: VoucherService, private couponService: CouponService,
+              private stationService: StationService) {
     this.formCarton();
   }
 
@@ -64,15 +69,14 @@ export class IndexCouponComponent implements OnInit {
     this.getCartons();
     this.getCarnets();
     this.getCoupons();
+    this.getStations();
   }
 
   //formulaire de création
   formCarton(){
-    this.cartonForm = this.fb.group({
-      idStoreHouse: ['', [Validators.required]],
-      idStore: ['', [Validators.required]],
-      serialNumber: ['', [Validators.required, ]],
-      voucherType: ['', [Validators.required]],
+    this.couponForm = this.fb.group({
+      coupon: ['', [Validators.required]],
+      idStation: ['', [Validators.required]],
     });
   }
 
@@ -81,6 +85,15 @@ export class IndexCouponComponent implements OnInit {
     this.storeService.getStore().subscribe(
       resp => {
         this.stores = resp.content
+      },
+    )
+  }
+
+  //récupération de la liste des magasins
+  getStations(){
+    this.stationService.getStations().subscribe(
+      resp => {
+        this.stations = resp.content
       },
     )
   }
@@ -229,5 +242,28 @@ export class IndexCouponComponent implements OnInit {
 
   padWithZero(num, targetLength) {
     return String(num).padStart(targetLength, '0');
+  }
+
+  accepterCoupon() {
+    this.store.localization = this.couponForm.value
+    this.coupon.serialNumber = this.couponForm.controls['coupon'].value
+    const body = {
+      "idStation": 0,
+      "modulo": 0,
+      "productionDate": "2022-12-16"
+    }
+    body.idStation = this.couponForm.controls['idStation'].value
+    this.isLoading.next(true);
+    this.couponService.acceptCoupon(this.coupon.serialNumber, body).subscribe(
+      resp => {
+        console.log(resp)
+        this.getCoupons()
+        this.isLoading.next(false);
+        this.notifService.onSuccess('coupon accepté')
+      },
+      error => {
+        this.isLoading.next(false)
+      }
+    )
   }
 }

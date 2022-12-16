@@ -31,6 +31,7 @@ export class DetailsMagasinComponent implements OnInit {
   storeHouses: StoreHouse[] = [];
   units: Unite[] = [];
   vouchers: TypeVoucher[] = [];
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private clientService: ClientService, private activatedRoute: ActivatedRoute, private router: Router,
               private orderService: OrderService, private notifService: NotifsService, private storeService: StoreService,
               private storeHouseService: StoreHouseService, private unitService: UnitsService, private _location: Location,

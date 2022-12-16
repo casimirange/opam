@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {log} from "util";
 
 @Component({
   selector: 'app-dashboard',
@@ -7,9 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DashboardComponent implements OnInit {
 
+  roleUser = localStorage.getItem('userAccount').toString()
+  role: string[] = []
   constructor() { }
 
   ngOnInit(): void {
+    this.role.push(localStorage.getItem('Roles'))
+    console.log(this.role)
+    this.role.includes('ROLE_ADMIN') ? console.log('oui') : console.log('non')
   }
 
 }

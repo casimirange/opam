@@ -8,7 +8,7 @@ import {AuthGuard} from "../../_helpers/auth.guard";
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch:'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
+  // { path: 'signup', component: SignupComponent },
   { path: 'otp', component: OtpComponent, canActivate: [AuthGuard] },
 ];
 

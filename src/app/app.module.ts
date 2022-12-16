@@ -17,6 +17,9 @@ import {ClientService} from "./_services/clients/client.service";
 import {NgxPaginationModule} from "ngx-pagination";
 import { CouponLayoutComponent } from './component/coupons/coupon-layout/coupon-layout.component';
 import { IndexCouponComponent } from './component/coupons/index-coupon/index-coupon.component';
+import {BnNgIdleService} from "bn-ng-idle";
+import { CreditNoteLayoutComponent } from './component/creditNote/credit-note-layout/credit-note-layout.component';
+import {ReactiveFormsModule} from "@angular/forms";
 // import {OnlineStatusModule} from "ngx-online-status";
 // import {Ng2SearchPipeModule} from "ng2-search-filter";
 // import {Ng2OrderModule} from "ng2-order-pipe";
@@ -29,23 +32,26 @@ import { IndexCouponComponent } from './component/coupons/index-coupon/index-cou
     CopyAndPasteDirective,
     CouponLayoutComponent,
     IndexCouponComponent,
+    CreditNoteLayoutComponent,
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    SharedModule,
-    HttpClientModule,
-    NgbModule,
-    NgOtpInputModule,
-    NgxPaginationModule
-    // SweetAlert2Module.forRoot(),
-    // Ng2SearchPipeModule,
-    // Ng2OrderModule
-    // OnlineStatusModule
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        SharedModule,
+        HttpClientModule,
+        NgbModule,
+        NgOtpInputModule,
+        NgxPaginationModule,
+        ReactiveFormsModule,
+        // SweetAlert2Module.forRoot(),
+        // Ng2SearchPipeModule,
+        // Ng2OrderModule
+        // OnlineStatusModule
+    ],
   providers: [
     TokenInterceptorProvider,
+    BnNgIdleService
     // ClientService
   ],
   bootstrap: [AppComponent],

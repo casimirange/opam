@@ -44,6 +44,7 @@ export class ApprovisionnerCarnetComponent implements OnInit {
   storeHouse2: StoreHouse = new StoreHouse();
   storeHouses1: StoreHouse[] = [];
   storeHouses2: StoreHouse[] = [];
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private userService: UsersService,  private notifsService: NotifsService, private route: ActivatedRoute,
               private storeService: StoreService, private storeHouseService: StoreHouseService, private fb: FormBuilder,
               private voucherService: VoucherService, private cartonService: CartonService) {

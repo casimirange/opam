@@ -1,7 +1,7 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Status, TypeVoucher} from "../../../_interfaces/typeVoucher";
+import {TypeVoucher} from "../../../_interfaces/typeVoucher";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
 import {Store} from "../../../_interfaces/store";
 import {StoreService} from "../../../_services/store/store.service";
@@ -29,6 +29,7 @@ export class DashboardMagasinComponent implements OnInit {
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   modalTitle: string = 'Enregistrer nouveau magasin';
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService, private router: Router,
               private notifService: NotifsService, private unitService: UnitsService, private voucherService: VoucherService) {
     this.formStore();
@@ -162,7 +163,7 @@ export class DashboardMagasinComponent implements OnInit {
   }
 
   showDetails(store: Store) {
-    this.router.navigate(['/entrepots/details', store.internalReference])
+    this.router.navigate(['/magasins/details', store.internalReference])
     // [routerLink]=""
   }
 }

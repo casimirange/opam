@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { IndexStoreComponent } from './index-store.component';
+import { CreditNoteLayoutComponent } from './credit-note-layout.component';
 
-describe('IndexStoreComponent', () => {
-  let component: IndexStoreComponent;
-  let fixture: ComponentFixture<IndexStoreComponent>;
+describe('CreditNoteLayoutComponent', () => {
+  let component: CreditNoteLayoutComponent;
+  let fixture: ComponentFixture<CreditNoteLayoutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ IndexStoreComponent ]
+      declarations: [ CreditNoteLayoutComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(IndexStoreComponent);
+    fixture = TestBed.createComponent(CreditNoteLayoutComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

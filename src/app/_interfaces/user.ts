@@ -1,3 +1,5 @@
+import {Status} from "./status";
+
 export class IUser{
   id?: string;
   name?: string;
@@ -6,6 +8,7 @@ export class IUser{
   username?: string;
   password?: string;
   pinCode?: number;
+  internalReference?: number;
   email?: string;
   function?: string;
   phone?: number;
@@ -13,6 +16,6 @@ export class IUser{
   magasin?: string;
   crreatedAt?: Date;
   updatedAt?: Date;
-  status?: string;
+  status?: Status;
   access_token?: string;
 }

@@ -1,4 +1,5 @@
 import {Client} from "./client";
+import {Status} from "./status";
 
 export class Order{
     id?:	number
@@ -11,9 +12,11 @@ export class Order{
     idManagerCoupon?:	number
     idManagerOrder?:	number
     idStorekeeper?:	number
+    linkInvoice?: string
+    linkDelivery?: string
     tax?:	number
     idStore?: number
-    status?:	StatusOrder
+    status?:	Status
     channel?:	string
     deliveryTime?:	string
     paymentReference?:	string
@@ -28,12 +31,3 @@ export class Order{
     completeName?:	string
   }
 
-  export class StatusOrder{
-    id: number;
-    // description: string;
-    name: string;
-    // ORDER_CREATED = 'ORDER_CREATED',
-    // ORDER_COMPLETED = 'ORDER_COMPLETED',
-    // ORDER_PAYED = 'ORDER_PAYED',
-    // ORDER_CANCEL = 'ORDER_CANCEL'
-  }

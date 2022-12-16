@@ -23,6 +23,7 @@ export class DetailsComponent implements OnInit {
   orders: Order[] = [];
   order: Order = new Order();
   stores: Store[] = [];
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private clientService: ClientService, private activatedRoute: ActivatedRoute, private router: Router,
               private orderService: OrderService, private notifService: NotifsService, private storeService: StoreService) {
     this.client = new Client()
@@ -30,7 +31,7 @@ export class DetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getClientInfos()
-    this.getStores()
+    // this.getStores()
     this.getClientOrders()
   }
 

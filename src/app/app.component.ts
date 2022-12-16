@@ -6,6 +6,10 @@ import {fromEvent, interval, merge, Observable, Observer} from "rxjs";
 import {first, map} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
 import Swal from "sweetalert2";
+import {BnNgIdleService} from "bn-ng-idle";
+import {Router} from "@angular/router";
+import {TokenService} from "./_services/token/token.service";
+import {Location} from "@angular/common";
 const Toast = Swal.mixin({
   toast: true,
   position: 'bottom-end',
@@ -30,7 +34,11 @@ export class AppComponent implements OnInit{
   // status1: OnlineStatusType; //Enum provided by ngx-online-status
   // onlineStatusCheck: any = OnlineStatusType;
   source = interval(1000)
-  constructor(private notifsService: NotifsService, private http: HttpClient) {
+  url: string;
+  timer: number = 0;
+  constructor(private notifsService: NotifsService, private tokenService: TokenService,
+              private bnIdle: BnNgIdleService, private router: Router, private _location: Location) {
+
     // const checkOnlinestatus = async () => {
     //   try {
     //     const online = await fetch('./assets/images/logo.png');
@@ -122,17 +130,22 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit(): void {
-    // this.notifsService.apiError.subscribe(
-    //   data => {
-    //     console.log(data)
-    //     Toast.fire({
-    //       icon: 'error',
-    //       text: `${data}`,
-    //       title: "Echec de connexion"
-    //     })
-    //   }
-    // )
+    // this.router.events.subscribe((val) => {
+    //   // console.log(this._location.path())
+    //   this.url = this._location.path()
+    // });
+    // if (this.url != '/auth/login' && this.url != '/auth/otp'){
+      //vérifier l'inactivité de l'utilisateur pendant 15 minutes puis le déconnecter
+      // this.tokenService.userInactivity()
+      // this.notifsService.expiredSession()
+      // this.bnIdle.startWatching(10).subscribe((isTimedOut: boolean) => {
+      //   if (isTimedOut) {
+      //     this.bnIdle.stopTimer()
+      //   }
+      // });
+    // }
   }
+
 
   createOnline$() {
     return merge<boolean>(

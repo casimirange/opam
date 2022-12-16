@@ -16,6 +16,10 @@ const routes: Routes = [
   { path: 'stations', loadChildren: () => import('./component/station/station.module').then(m => m.StationModule), canActivate: [AuthGuard] },
   // Caisse
   { path: 'caisse', loadChildren: () => import('./component/caisse/caisse.module').then(m => m.CaisseModule), canActivate: [AuthGuard]},
+  // Note de credit
+  { path: 'credit-note', loadChildren: () => import('./component/creditNote/credit-note.module').then(m => m.CreditNoteModule), canActivate: [AuthGuard]},
+  // Demande d'opposition
+  { path: 'request-opposition', loadChildren: () => import('./component/opposition/opposition.module').then(m => m.OppositionModule), canActivate: [AuthGuard]},
   // Command
   { path: 'commandes', loadChildren: () => import('./component/commande/commande.module').then(m => m.CommandeModule), canActivate: [AuthGuard]},
   // Client

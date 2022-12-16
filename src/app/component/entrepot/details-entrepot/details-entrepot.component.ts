@@ -15,6 +15,10 @@ import {ItemService} from "../../../_services/items/item.service";
 import {Piece} from "../../../_interfaces/piece";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
 import {TypeVoucher} from "../../../_interfaces/typeVoucher";
+import {CartonService} from "../../../_services/cartons/carton.service";
+import {CarnetService} from "../../../_services/carnets/carnet.service";
+import {Carton} from "../../../_interfaces/carton";
+import {Carnet} from "../../../_interfaces/carnet";
 
 @Component({
   selector: 'app-details-entrepot',
@@ -35,19 +39,32 @@ export class DetailsEntrepotComponent implements OnInit {
   item: Piece = new Piece();
   storeHouses: StoreHouse[] = [];
   vouchers: TypeVoucher[] = [];
+  cartons: Carton[] = [];
+  carnets: Carnet[] = [];
   units: Unite[] = [];
+  page: number = 1;
+  totalPages: number;
+  totalElements: number;
+  size: number = 20;
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private clientService: ClientService, private activatedRoute: ActivatedRoute, private router: Router,
               private orderService: OrderService, private notifService: NotifsService, private storeService: StoreService,
               private storeHouseService: StoreHouseService, private unitService: UnitsService, private _location: Location,
-              private itemService: ItemService, private voucherService: VoucherService) {
+              private itemService: ItemService, private voucherService: VoucherService, private cartonService: CartonService,
+              private carnetService: CarnetService) {
     this.store = new Store()
   }
 
   ngOnInit(): void {
     // this.getStoreInfos()
-    this.getStoreHouseInfos()
+    this.getStoreHouseInfos(),
     // this.getStores()
     this.getVoucherType()
+
+      this.getCartonsByStoreHouse()
+
+      this.getCarnetsByStoreHouse()
+
     this.getItemsByStoreHouse()
     this.getUnitByStore()
   }
@@ -61,13 +78,28 @@ export class DetailsEntrepotComponent implements OnInit {
       )
   }
 
-  getStoreInfos(){
-    console.log(this.router.url)
+  getCartonsByStoreHouse(){
     this.activatedRoute.params.subscribe(params => {
-      this.storeService.getStoreByInternalref(params['id']).subscribe(
+      this.cartonService.getCartonsByStoreHouse(params['id'], this.page - 1).subscribe(
         res => {
-          this.store = res;
-          console.log(res)
+          this.cartons = res.content;
+          console.log('cartons', this.cartons)
+          this.size = res.size
+          this.totalPages = res.totalPages
+          this.totalElements = res.totalElements
+        }
+      )
+    })
+  }
+
+  getCarnetsByStoreHouse(){
+    this.activatedRoute.params.subscribe(params => {
+      this.carnetService.getCarnetsByStoreHouse(params['id'], this.page - 1).subscribe(
+        resp => {
+          this.carnets = resp.content;
+          this.size = resp.size
+          this.totalPages = resp.totalPages
+          this.totalElements = resp.totalElements
         }
       )
     })
@@ -126,6 +158,30 @@ export class DetailsEntrepotComponent implements OnInit {
 
   back() {
     this._location.back()
+  }
+
+  pageChangeCarnet(event: number){
+    this.page = event
+    this.carnetService.getCarnetsByStoreHouse(this.storeHouse.internalReference,this.page -1).subscribe(
+      resp => {
+        this.carnets = resp.content
+        this.size = resp.size
+        this.totalPages = resp.totalPages
+        this.totalElements = resp.totalElements
+      },
+    )
+  }
+
+  pageChangeCarton(event: number){
+    this.page = event
+    this.cartonService.getCartonsByStoreHouse(this.storeHouse.internalReference,this.page -1).subscribe(
+      resp => {
+        this.cartons = resp.content
+        this.size = resp.size
+        this.totalPages = resp.totalPages
+        this.totalElements = resp.totalElements
+      },
+    )
   }
 
 }

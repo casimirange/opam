@@ -2,7 +2,7 @@ import {Component, OnInit, TemplateRef} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {VoucherService} from "../../_services/voucher/voucher.service";
-import {Status, TypeVoucher} from "../../_interfaces/typeVoucher";
+import {TypeVoucher} from "../../_interfaces/typeVoucher";
 import {BehaviorSubject} from "rxjs";
 import {NotifsService} from "../../_services/notifications/notifs.service";
 import {StoreHouse} from "../../_interfaces/storehouse";
@@ -21,18 +21,12 @@ export class TypeBonComponent implements OnInit {
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   modalTitle: string = 'Enregistrer nouveau bon';
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private modalService: NgbModal, private fb: FormBuilder, private voucherService: VoucherService, private notifService: NotifsService) {
     this.formVoucherType();
-    this.voucher = new class implements TypeVoucher {
-      amount: 0;
-      createdAt: Date;
-      designation: string;
-      id: number;
-      internalReference: number;
-      status: Status;
-      updateAt: Date;
-    }
+    this.voucher = new TypeVoucher()
   }
+
 
   ngOnInit(): void {
     this.getVouchers();

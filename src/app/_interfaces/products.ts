@@ -1,4 +1,6 @@
-  export class Products{
+import {Status} from "./status";
+
+export class Products{
     id?:	number
     internalReference?: number
     idTypeVoucher?:	number
@@ -9,8 +11,3 @@
     status?:	Status
   }
 
-  export class Status{
-    name: string;
-    description: string;
-    id: number
-  }

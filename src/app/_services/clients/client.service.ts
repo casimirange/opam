@@ -23,7 +23,7 @@ export class ClientService {
   }
 
   searchClient(completeName: string): Observable<any>{
-    return this.http.get<any>(environment.client+ '/search?name=' + completeName+ '&ref=0')
+    return this.http.get<any>(environment.client+ `/like/${completeName}`)
   }
 
   addClient(client: Client): Observable<Client>{

@@ -3,19 +3,19 @@ import {IToken} from "../../_interfaces/token";
 import {Router} from "@angular/router";
 import {IUser} from "../../_interfaces/user";
 import {ISignup} from "../../_interfaces/signup";
+import {BnNgIdleService} from "bn-ng-idle";
 
 @Injectable({
   providedIn: 'root'
 })
 export class TokenService {
   private roles: string[] = [];
-  constructor(private router: Router) { }
+  constructor(private router: Router, private bnIdle: BnNgIdleService,) { }
 
   saveToken(token: IToken){
     localStorage.setItem('bearerToken', <string>token.access_token);
     const date = new Date();
     date.setMinutes(date.getMinutes() + 5);
-    console.log('nouvelle date', date)
     localStorage.setItem('exp', date.toString())
     this.router.navigate(['/auth/otp'])
   }
@@ -40,12 +40,22 @@ export class TokenService {
     localStorage.setItem('userAccount', user.typeAccount.name)
   }
 
+  userInactivity(){
+    this.bnIdle.startWatching(1500).subscribe((isTimedOut: boolean) => {
+      if (isTimedOut) {
+        localStorage.removeItem('bearerToken');
+        this.bnIdle.stopTimer()
+      }
+    });
+  }
+
   saveRefreshToken(token: string){
     // localStorage.removeItem('bearerToken');
     localStorage.setItem('bearerToken', <string>token);
     if (this.isRedirect()){
       this.router.navigate([localStorage.getItem('url').toString()])
       localStorage.removeItem('url')
+      this.userInactivity()
     }else {
       this.router.navigate(['/dashboard'])
     }
@@ -67,14 +77,23 @@ export class TokenService {
     localStorage.removeItem('bearerToken');
     localStorage.removeItem('username');
     localStorage.removeItem('Roles');
+    localStorage.removeItem('email');
+    localStorage.removeItem('exp');
+    localStorage.removeItem('url');
+    localStorage.removeItem('userAccount');
+    localStorage.removeItem('firstName')
+    localStorage.removeItem('lastName')
+    localStorage.removeItem('uid')
     // localStorage.setItem('roles', <string>token.roles);
     this.router.navigate(['auth']);
+    this.bnIdle.stopTimer()
   }
 
   clearTokenExpired(): void{
     localStorage.removeItem('bearerToken');
     localStorage.removeItem('email');
     localStorage.removeItem('firstName')
+    localStorage.removeItem('userAccount')
     localStorage.removeItem('lastName')
     localStorage.removeItem('uid')
     localStorage.removeItem('Roles')

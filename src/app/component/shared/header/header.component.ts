@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {TokenService} from "../../../_services/token/token.service";
+import {BnNgIdleService} from "bn-ng-idle";
 
 @Component({
   selector: 'app-header',
@@ -10,6 +11,7 @@ export class HeaderComponent implements OnInit {
   firstName: string | null = '';
   lastName: string | null = '';
   isLogged: boolean = false;
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private tokenService: TokenService) { }
 
   ngOnInit(): void {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ICredentialsSignup} from "../../../_interfaces/signup";
 import {IToken} from "../../../_interfaces/token";
-import {Status, Store} from "../../../_interfaces/store";
+import {Store} from "../../../_interfaces/store";
 import {BehaviorSubject, Observable} from "rxjs";
 import {AppState} from "../../../_interfaces/app-state";
 import {CustomResponseSignup} from "../../../_interfaces/custom-response-signup";

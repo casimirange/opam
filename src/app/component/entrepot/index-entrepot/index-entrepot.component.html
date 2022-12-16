@@ -80,7 +80,7 @@
                 <th>Statut</th>
                 <th>Date création</th>
                 <th>Date modification</th>
-                <th>Actions</th>
+                <th >Actions</th>
               </tr>
               </thead>
               <tbody *ngFor="let storeHouse of storeHouses; let i = index">
@@ -94,7 +94,7 @@
                 <td>{{storeHouse.status.name}}</td>
                 <td>{{storeHouse.createAt}}</td>
                 <td>{{storeHouse.updateAt}}</td>
-                <td>
+                <td >
                   <a style="cursor: pointer"  class="delete text-danger" (click)="deleteStoreHouse(storeHouse, i)" >
                     <i class="pe-7s-trash" title="supprimer"></i>
                   </a>&nbsp;
@@ -104,6 +104,9 @@
                 </td>
               </tr>
             </table>
+            <div class="text-center">
+            <p *ngIf="storeHouses.length === 0" style="color: grey; font-size: 1.8rem;" class="mx-auto" >Aucun entrepôt trouvé !</p>
+          </div>
             <div class="card-footer">
               <div class="btn-actions-pane-left">
                 <div role="group" class="btn-group-sm btn-group">

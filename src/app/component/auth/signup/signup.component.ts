@@ -13,7 +13,7 @@ import {catchError, map, startWith} from "rxjs/operators";
 import {CustomResponseSignup} from "../../../_interfaces/custom-response-signup";
 import {Router} from "@angular/router";
 import {StoreService} from "../../../_services/store/store.service";
-import {Status, Store} from "../../../_interfaces/store";
+import {Store} from "../../../_interfaces/store";
 
 @Component({
   selector: 'app-logout',
@@ -52,14 +52,7 @@ export class SignupComponent implements OnInit {
     });
 
     this.form = this.signup.controls;
-    this.findStore = new class implements Store {
-      createdAt: Date;
-      id: number;
-      internalReference: number;
-      localization: string;
-      status: Status;
-      updateAt: Date;
-    }
+    this.findStore = new Store()
   }
 
   ngOnInit(): void {

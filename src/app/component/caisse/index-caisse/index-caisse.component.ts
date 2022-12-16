@@ -46,6 +46,7 @@ export class IndexCaisseComponent implements OnInit {
   voucher: TypeVoucher = new TypeVoucher()
   orders: Order[] = [];
   order: Order = new Order();
+  roleUser = localStorage.getItem('userAccount').toString()
   @ViewChild('orderModal', { static: false }) commandModal?: ElementRef<HTMLElement>;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private clientService: ClientService,

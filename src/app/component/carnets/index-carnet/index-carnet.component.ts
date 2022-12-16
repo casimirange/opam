@@ -43,7 +43,7 @@ export class IndexCarnetComponent implements OnInit {
   totalPages: number;
   totalElements: number;
   size: number = 20;
-
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService,
               private storeService: StoreService, private notifService: NotifsService, private cartonService: CartonService,
               private carnetService: CarnetService, private voucherService: VoucherService) {

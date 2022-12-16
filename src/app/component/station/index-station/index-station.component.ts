@@ -21,7 +21,7 @@ export class IndexStationComponent implements OnInit {
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   modalTitle = 'Enregistrer une nouvelle station'
-
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private fb: FormBuilder, private modalService: NgbModal, private stationService: StationService, private notifService: NotifsService) {
     this.formStation();
   }

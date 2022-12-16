@@ -37,6 +37,7 @@ export class IndexMvtStockComponent implements OnInit {
   totalPages: number;
   totalElements: number;
   size: number = 20;
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService,
               private storeHouseService: StoreHouseService, private notifService: NotifsService, private unitService: UnitsService,
               private voucherService: VoucherService, private mvtStockService: MvtStockService) {

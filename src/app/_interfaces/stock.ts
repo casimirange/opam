@@ -1,4 +1,5 @@
 import {Store} from "./store";
+import {Status} from "./status";
 
 export class Stock {
   id?: number;
@@ -18,8 +19,3 @@ export class Stock {
   status?: Status;
 }
 
-export class Status{
-  name: string;
-  description: string;
-  id: number
-}

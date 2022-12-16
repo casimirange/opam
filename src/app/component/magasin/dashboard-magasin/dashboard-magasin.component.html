@@ -10,7 +10,7 @@
         </div>
       </div>
     </div>
-    <div class="page-title-actions">
+    <div class="page-title-actions" >
       <button (click)="open(mymodal)" type="button" data-toggle="tooltip" title="cartons" data-placement="bottom"
               class="btn-shadow mr-3 btn btn-primary">
            <span class="btn-icon-wrapper pr-2 opacity-7">
@@ -61,16 +61,16 @@
         </thead>
         <tbody *ngFor="let store of stores; let i = index">
 
-        <tr (dblclick)="showDetails(store)">
+        <tr >
           <td>{{i + 1}}</td>
           <td>{{store.internalReference}}</td>
           <td>{{store.localization}} </td>
-          <td><span class="badge"></span>{{store.status.name === 'STORE_ENABLE' ? 'Activé' : 'Désactivé'}}</td>
+          <td>{{store.status.name}}</td>
           <td> {{store.createdAt | date: 'dd/MM/yyyy HH:mm'}}</td>
           <td> {{store.updateAt | date: 'dd/MM/yyyy HH:mm'}}</td>
           <td>
             <a style="cursor: pointer" class=" text-success" data-toggle="modal"
-               (click)="delete(store, i)">
+               (click)="showDetails(store)">
               <i class="pe-7s-look" data-toggle="modal" title="delete"></i>
             </a>
             <a style="cursor: pointer" class="delete text-danger" (click)="deleteStore(store, i)">
@@ -83,6 +83,9 @@
         </tr>
         </tbody>
       </table>
+      <div class="text-center">
+      <p *ngIf="stores.length === 0" style="color: grey; font-size: 1.8rem;" class="mx-auto" >Aucun magasin trouvé !</p>
+    </div>
       <div class="card-footer">
         <div class="btn-actions-pane-left">
           <div role="group" class="btn-group-sm btn-group">

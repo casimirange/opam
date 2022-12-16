@@ -1,4 +1,4 @@
-import {Store} from "./store";
+import {Status} from "./status";
 
 export class Unite{
   id?: number;
@@ -9,10 +9,4 @@ export class Unite{
   createdAt?: Date;
   updatedAt?: Date;
   status?: Status;
-}
-
-export class Status{
-  name: string;
-  description: string;
-  id: number
 }

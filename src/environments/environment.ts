@@ -23,6 +23,9 @@ export const environment = {
   unit: url + 'unit',
   stock: url + 'stockmovement',
   item: url + 'item',
+  creditNote: url + 'creditnote',
+  requestOpposition: url + 'requestopposition',
+  ticket: url + 'ticket',
 };
 
 /*

@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./pm-layout.component.css']
 })
 export class PmLayoutComponent implements OnInit {
-
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor() { }
 
   ngOnInit(): void {

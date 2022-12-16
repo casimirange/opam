@@ -29,6 +29,10 @@ export class OrderService {
     return this.http.get<any>(environment.order + `/client/${clientInternalReference}`,)
   }
 
+  denyOrder(internalReference: number, idManager: number, reason: string): Observable<any>{
+    return this.http.post<any>(environment.order + `/cancel/${internalReference}?idManagerCoupon=${idManager}&reasonForCancellation=${reason}`, null)
+  }
+
   getProforma(orderInternalReference: number): Observable<any>{
     const httpOptions = {
       responseType: 'arraybuffer' as 'json'
@@ -37,12 +41,12 @@ export class OrderService {
     return this.http.get<any>(environment.order + `/invoice/${orderInternalReference}`, httpOptions)
   }
 
-  getFile(orderInternalReference: number): Observable<any>{
+  getFile(orderInternalReference: number, type: string, docType: string): Observable<any>{
     const httpOptions = {
       responseType: 'arraybuffer' as 'json'
       // 'responseType'  : 'blob' as 'json'        //This also worked
     };
-    return this.http.get<any>(environment.order + `/invoice/${orderInternalReference}`, httpOptions)
+    return this.http.get<any>(environment.order + `/file/${orderInternalReference}/downloadFile?type=${type}&docType=${docType}`, httpOptions)
   }
 
   acceptOrder(orderInternalReference: number, idFund: number, idPaymentMethod: number, paymentRef: string, docType: string, file: File): Observable<any>{
@@ -53,6 +57,16 @@ export class OrderService {
       // 'responseType'  : 'blob' as 'json'        //This also worked
     };
     return this.http.post<any>(environment.order + `/accept/${orderInternalReference}?idFund=${idFund}&idPaymentMethod=${idPaymentMethod}&paymentReference=${paymentRef}&docType=${docType}`, data, httpOptions)
+  }
+
+  validOrder(orderInternalReference: number, idManagerCoupon: number, file: File): Observable<any>{
+    const data: FormData = new FormData();
+    data.append('file', file);
+    const httpOptions = {
+      responseType: 'arraybuffer' as 'json'
+      // 'responseType'  : 'blob' as 'json'        //This also worked
+    };
+    return this.http.post<any>(environment.order + `/valid/delivery/${orderInternalReference}?idManagerCoupon=${idManagerCoupon}`, data, httpOptions)
   }
 
   payOrder(orderInternalReference: number, idManagerCoupon: number): Observable<any>{

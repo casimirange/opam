@@ -7,6 +7,7 @@ import { IndexEntrepotComponent } from './index-entrepot/index-entrepot.componen
 import {SharedModule} from "../shared/shared.module";
 import {ReactiveFormsModule} from "@angular/forms";
 import { DetailsEntrepotComponent } from './details-entrepot/details-entrepot.component';
+import {NgxPaginationModule} from "ngx-pagination";
 
 
 @NgModule({
@@ -15,11 +16,12 @@ import { DetailsEntrepotComponent } from './details-entrepot/details-entrepot.co
     IndexEntrepotComponent,
     DetailsEntrepotComponent
   ],
-  imports: [
-    CommonModule,
-    EntrepotRoutingModule,
-    SharedModule,
-    ReactiveFormsModule
-  ]
+    imports: [
+        CommonModule,
+        EntrepotRoutingModule,
+        SharedModule,
+        ReactiveFormsModule,
+        NgxPaginationModule
+    ]
 })
 export class EntrepotModule { }

@@ -13,6 +13,8 @@ import {StoreService} from "../../../_services/store/store.service";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
 import {CartonService} from "../../../_services/cartons/carton.service";
+import {MvtStockService} from "../../../_services/stock/mvt-stock.service";
+import {Stock} from "../../../_interfaces/stock";
 
 @Component({
   selector: 'app-transferer-carton',
@@ -26,6 +28,7 @@ export class TransfererCartonComponent implements OnInit {
   storeHouseStockage: StoreHouse = new StoreHouse();
   storeHouseSell: StoreHouse = new StoreHouse();
   supply: Supply = new Supply();
+  stock: Stock = new Stock();
 
   supplyForm: FormGroup ;
   credentials: ICredentialsSignup = new ICredentialsSignup()
@@ -42,20 +45,20 @@ export class TransfererCartonComponent implements OnInit {
   sn: any;
   storeHouse1: StoreHouse = new StoreHouse();
   storeHouse2: StoreHouse = new StoreHouse();
+  stores1: Store[] = [];
+  stores2: Store[] = [];
   storeHouses1: StoreHouse[] = [];
   storeHouses2: StoreHouse[] = [];
   constructor(private userService: UsersService,  private notifsService: NotifsService, private route: ActivatedRoute,
               private storeService: StoreService, private storeHouseService: StoreHouseService, private fb: FormBuilder,
-              private voucherService: VoucherService, private cartonService: CartonService) {
+              private voucherService: VoucherService, private cartonService: CartonService, private mvtService: MvtStockService) {
     this.supplyForm = this.fb.group({
-      idStoreHouseStockage: ['', [Validators.required]],
-      idStoreHouseSell: ['', [Validators.required]],
+      idStore1: ['', [Validators.required]],
+      idStore2: ['', [Validators.required]],
+      idStoreHouseStockage1: ['', [Validators.required]],
+      idStoreHouseStockage2: ['', [Validators.required]],
       typeVoucher: ['', [Validators.required]],
-      serialFrom: ['', [Validators.required]],
-      serialTo: ['', [Validators.required]],
-      number: ['', [Validators.required]],
-      from: ['', [Validators.required]],
-      to: ['', [Validators.required]],
+      qte: ['', [Validators.required]],
     });
 
     this.form = this.supplyForm.controls;
@@ -63,6 +66,7 @@ export class TransfererCartonComponent implements OnInit {
   ngOnInit() {
     this.getTypeVoucher()
     this.getStoreHouses()
+    this.getStores()
   }
 
   //on récupère la liste des types de coupon
@@ -78,41 +82,45 @@ export class TransfererCartonComponent implements OnInit {
     this.storeHouseService.getStoreHouses().subscribe(
       resp => {
         this.storeHouses1 = resp.content.filter(st => st.type == 'stockage')
-        this.storeHouses2 = resp.content.filter(st => st.type == 'vente')
         console.log("entrepots", resp.content)
         console.log("entrepots1", this.storeHouses1)
         console.log("entrepots2", this.storeHouses2)
       },
     )
   }
+
+  getStores(){
+    this.storeService.getStore().subscribe(
+      resp => {
+        this.stores1 = resp.content
+      },
+    )
+  }
   //save carton
-  supplyCarton(){
+  transfertCarton(){
     this.isLoading.next(true);
     console.log(this.supplyForm.controls['typeVoucher'].value)
     // this.store = this.stores.find(store => store.localization === this.supplyForm.controls['idStore'].value)
     let typ = this.vouchers.find(tv => tv.amount == parseInt(this.supplyForm.controls['typeVoucher'].value))
-    this.storeHouse1 = this.storeHouses1.find(sth => sth.name == this.supplyForm.controls['idStoreHouseStockage'].value)
-    this.storeHouse2 = this.storeHouses2.find(sth => sth.name == this.supplyForm.controls['idStoreHouseSell'].value)
 
-    this.supply.idStoreKeeper = parseInt(localStorage.getItem('uid').toString())
-    this.supply.idStoreHouseStockage = this.supplyForm.controls['idStoreHouseStockage'].value
-    this.supply.idStoreHouseSell = this.supplyForm.controls['idStoreHouseSell'].value
-    this.supply.number = parseInt(this.form['number'].value)
-    this.supply.from = parseInt(this.form['from'].value)
-    this.supply.to = parseInt(this.form['to'].value)
-    this.supply.serialFrom = parseInt(this.form['serialFrom'].value)
-    this.supply.serialTo = parseInt(this.form['serialTo'].value)
-    this.supply.typeVoucher = typ.amount
+    this.stock.idStoreKeeper = parseInt(localStorage.getItem('uid').toString())
+    this.stock.idStore1 = this.supplyForm.controls['idStore1'].value
+    this.stock.idStore2 = this.supplyForm.controls['idStore2'].value
+    this.stock.idStoreHouseStockage1 = this.supplyForm.controls['idStoreHouseStockage1'].value
+    this.stock.idStoreHouseStockage2 = this.supplyForm.controls['idStoreHouseStockage2'].value
+    this.stock.type = 'transfert'
+    this.stock.quantityCarton = this.supplyForm.controls['qte'].value
+    this.stock.typeVoucher = typ.amount
 
-    console.log('supply', this.supply)
+    console.log('supply', this.stock)
 
-    this.cartonService.createCartonSupply(this.supply).subscribe(
+    this.mvtService.createStockMovement(this.stock).subscribe(
       resp => {
         console.log('carton approvisionné', resp)
         // this.cartons.push(resp)
         // this.mvtStockService.createStockMovement(this.mvtStock).subscribe()
         this.isLoading.next(false);
-        this.notifsService.onSuccess('approvisionnement effectué')
+        this.notifsService.onSuccess('transfert effectué')
         // this.annuler()
       },
       error => {

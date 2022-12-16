@@ -1,3 +1,5 @@
+import {Status} from "./status";
+
 export class Store{
   id?: number;
   internalReference?: number;
@@ -5,10 +7,4 @@ export class Store{
   createdAt?: Date;
   updateAt?: Date;
   status?: Status;
-}
-
-export class Status{
-  name: string;
-  description: string;
-  id: number
 }

@@ -18,11 +18,19 @@ export class CouponService {
     return this.http.get<any>(environment.coupon+`?page=${page}&size=${size}`)
   }
 
+  acceptCoupon(serialNumber: string, stationId: any): Observable<any>{
+    return this.http.put<any>(environment.coupon+`/accept/serial/${serialNumber}`, stationId)
+  }
+
   updateCoupon(coupon: any, internalRef: number): Observable<any>{
     return this.http.put<any>(environment.coupon+`/${internalRef}`, coupon)
   }
 
   deleteCoupon(internalref: number): Observable<any>{
     return this.http.delete<any>(environment.coupon+`/${internalref}`)
+  }
+
+  affectCouponClient(serialNumber: string, idClient: number): Observable<any>{
+    return this.http.post<any>(environment.coupon+`/affect/serial/${serialNumber}?idClient=${idClient}`, null)
   }
 }

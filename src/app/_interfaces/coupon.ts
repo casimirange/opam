@@ -1,4 +1,5 @@
 import {Store} from "./store";
+import {Status} from "./status";
 
 export class Coupon{
   id?: number;
@@ -14,10 +15,4 @@ export class Coupon{
   createdAt?: Date;
   updateAt?: Date;
   status?: Status;
-}
-
-export class Status{
-  name: string;
-  description: string;
-  id: number
 }

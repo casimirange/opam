@@ -53,15 +53,6 @@
     <div class="main-card mb-3 card " id="htmlData">
       <div class="card-header">
         Liste de ses pièces
-        <!--        <div class="btn-actions-pane-right">-->
-        <!--          <div role="group" class="btn-group-sm btn-group">-->
-        <!--            <input type="text" placeholder="Rechercher nom client" [(ngModel)]="name"  class="form-control form-control-sm mr-3">-->
-        <!--            <input type="text" placeholder="Rechercher ref client" [(ngModel)]="refCli" class="form-control form-control-sm mr-3">-->
-        <!--            <input type="date" placeholder="Rechercher date" [(ngModel)]="date" class="form-control form-control-sm mr-3">-->
-        <!--            <input type="text" placeholder="Rechercher ref commande" [(ngModel)]="internalRef" class="form-control form-control-sm mr-3">-->
-        <!--            &lt;!&ndash;              <button class="btn btn-sm mr-3 text-primary" (click)="searchByName()"><i class="fa fa-search"></i></button>&ndash;&gt;-->
-        <!--          </div>-->
-        <!--        </div>-->
       </div>
 
       <div class="table-responsive" >
@@ -94,6 +85,117 @@
         <ng-template [ngIf]="!items.length">
           <p style="color: grey; font-size: 1.8rem;" class="text-center" >Aucune pièce trouvée pour cet entrepôt</p>
         </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="storeHouse.type === 'stockage'">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card " >
+      <div class="card-header">
+        Liste de ses cartons
+      </div>
+
+      <div class="table-responsive" >
+        <table class="table table-hover bg-white" >
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Ref. interne</th>
+            <th>Numéro du carton</th>
+            <th>Numéro de série</th>
+            <th>Magasinier</th>
+            <th>Statut</th>
+            <th>Date création</th>
+            <th>Date modification</th>
+          </tr>
+          </thead>
+          <tbody *ngFor="let carton of cartons; let i = index">
+
+          <tr>
+            <td>{{i + 1}}</td>
+            <td>{{carton.internalReference}}</td>
+            <td>{{carton.number}}</td>
+            <td>{{carton.serialFrom}} - {{carton.serialTo}}</td>
+            <td>{{carton.idStoreKeeper}}</td>
+            <td>{{carton.status.name}}</td>
+            <td>{{carton.createdAt}}</td>
+            <td>{{carton.updateAt}}</td>
+          </tr>
+        </table>
+        <div class="text-center">
+          <p *ngIf="cartons.length === 0" style="color: grey; font-size: 1.8rem;" class="mx-auto" >Aucun carton trouvé !</p>
+        </div>
+        <div class="card-footer">
+          <div class="btn-actions-pane-left">
+            <div role="group" class="btn-group-sm btn-group">
+              Total cartons: <b>{{ cartons.length }} </b>
+            </div>
+          </div>
+          <div class="btn-actions-pane-right">
+            <div role="group" class="btn-group-sm btn-group">
+              <pagination-controls id="carton" (pageChange)="pageChangeCarton($event)"></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="storeHouse.type === 'vente'">
+  <div class="col-md-12">
+    <div class="main-card mb-3 card " >
+      <div class="card-header">
+        Liste de ses carnets
+      </div>
+
+      <div class="table-responsive" >
+        <ng-container class="bg-white">
+          <ng-container class="bg-white py-1 px-1">
+            <table class="table table-hover bg-white" >
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Ref. interne</th>
+                <th>Numéro de série</th>
+                <th>Carton</th>
+                <th>Statut</th>
+                <th>Date création</th>
+                <th>Date modification</th>
+              </tr>
+              </thead>
+              <tbody *ngFor="let carnet of carnets | paginate: { itemsPerPage: size, currentPage: page, totalItems: totalElements }; let i = index">
+
+              <tr>
+                <td>{{i + 1}}</td>
+                <td>{{carnet.internalReference}}</td>
+                <td>{{carnet.serialNumber}}</td>
+                <td >{{carnet.idCarton}}</td>
+                <td>{{carnet.status.name}}</td>
+                <td>{{carnet.createdAt}}</td>
+                <td>{{carnet.updateAt}}</td>
+              </tr>
+            </table>
+            <div class="text-center">
+              <p *ngIf="totalElements == 0" style="color: grey; font-size: 1.8rem;" class="mx-auto" >Aucun Carnet trouvé !</p>
+            </div>
+          </ng-container>
+        </ng-container>
+      </div>
+      <div class="card-footer">
+        <div class="btn-actions-pane-left">
+          <div role="group" class="btn-group-sm btn-group">
+            Total carnets: <b>{{ totalElements }} </b>
+          </div>
+        </div>
+        <div class="btn-actions-pane-right">
+          <div role="group" class="btn-group-sm btn-group">
+            <!--              <pagination-controls id="client" (pageChange)="pageChange($event)" ></pagination-controls>-->
+            <pagination-controls id="carnet" (pageChange)="pageChangeCarnet($event)"></pagination-controls>
+          </div>
+        </div>
       </div>
     </div>
   </div>

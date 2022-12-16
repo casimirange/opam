@@ -1,3 +1,5 @@
+import {Status} from "./status";
+
 export class ICredentialsSignup{
   email?: string;
   telephone?: string;
@@ -25,7 +27,7 @@ export class ISignup{
   idStore?: number;
   typeAccount: TypeAccount;
   roles: IRole[];
-  status: StatusAccount;
+  status: Status;
 }
 
 export class IRole{
@@ -35,11 +37,6 @@ export class IRole{
 }
 
 export class TypeAccount{
-  name: string;
-  id: number
-}
-
-export class StatusAccount{
   name: string;
   id: number
 }

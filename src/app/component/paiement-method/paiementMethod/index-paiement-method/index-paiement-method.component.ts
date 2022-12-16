@@ -22,6 +22,7 @@ export class IndexPaiementMethodComponent implements OnInit {
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   modalTitle = 'Enregistrer méthode de paiement';
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private modalService: NgbModal, private fb: FormBuilder, private paiementService: PaiementService, private notifServices: NotifsService) {
     this.formPaiement()
   }
@@ -59,6 +60,7 @@ export class IndexPaiementMethodComponent implements OnInit {
     this.formPaiement();
     this.modalService.dismissAll()
     this.paiementMethod = new PaiementMethod()
+    this.modalTitle = 'Enregistrer méthode de paiement';
   }
   getPaiements(){
     // console.log(this.storeForm.value)

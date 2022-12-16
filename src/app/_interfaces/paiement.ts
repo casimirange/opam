@@ -1,3 +1,5 @@
+import {Status} from "./status";
+
 export class PaiementMethod{
   id?: number;
   internalReference?: number;
@@ -7,8 +9,3 @@ export class PaiementMethod{
   status?: Status;
 }
 
-export class Status{
-  name: string;
-  description: string;
-  id: number
-}

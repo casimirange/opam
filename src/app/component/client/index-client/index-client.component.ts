@@ -42,7 +42,7 @@ export class IndexClientComponent implements OnInit {
   totalPages: number;
   totalElements: number;
   size: number = 4;
-
+  roleUser = localStorage.getItem('userAccount').toString()
   modalTitle = 'Enregistrer nouveau client'
 
   @ViewChild('mymodal', {static: false}) viewMe?: ElementRef<HTMLElement>;

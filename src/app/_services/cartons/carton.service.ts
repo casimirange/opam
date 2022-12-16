@@ -22,6 +22,10 @@ export class CartonService {
     return this.http.get<any>(environment.carton)
   }
 
+  getCartonsByStoreHouse(idStoreHouse: number, page: number,): Observable<any>{
+    return this.http.get<any>(environment.carton+`/storehouse/${idStoreHouse}?page=${page}`)
+  }
+
   updateCarton(carton: any, internalRef: number): Observable<any>{
     return this.http.put<any>(environment.carton+`/${internalRef}`, carton)
   }

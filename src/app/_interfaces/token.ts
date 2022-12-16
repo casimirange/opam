@@ -1,3 +1,5 @@
+import {Status} from "./status";
+
 export interface IToken{
   // id?: string;
   // username?: string;
@@ -39,8 +41,3 @@ export interface IRefreshToken{
   roles?: string[]
 }
 
-export class Status{
-  name: string;
-  description: string;
-  id: number
-}

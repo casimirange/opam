@@ -3,6 +3,7 @@ import {AuthService} from "../../../_services/auth.service";
 import {TokenService} from "../../../_services/token/token.service";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {Router} from "@angular/router";
+import {BnNgIdleService} from "bn-ng-idle";
 
 @Component({
   selector: 'app-otp',
@@ -32,7 +33,8 @@ export class OtpComponent implements OnInit {
     containerClass: 'd-flex justify-content-between'
   }
 
-  constructor(private authService: AuthService, private token: TokenService, private notifService: NotifsService, private router: Router) {
+  constructor(private authService: AuthService, private token: TokenService, private notifService: NotifsService,
+              private router: Router, private bnIdle: BnNgIdleService,) {
   }
 
   ngOnInit() {
@@ -50,7 +52,9 @@ export class OtpComponent implements OnInit {
         this.minutes = parseInt(((this.timer % 3600) / 60).toString());
         this.seconds = this.timer % 60;
       } else {
-        // this.sendNewVerifyCode = true
+        this.sendNewVerifyCode = true
+        this.inputDigitLeft = "Reconnexion";
+        this.btnStatus = 'btn-danger';
       }
     },1000)
   }
@@ -68,7 +72,7 @@ export class OtpComponent implements OnInit {
     }
   }
 
-  verifier(){
+  verifyOtp(){
 
       this.authService.verifyOtp(this.otp).subscribe(
         (resp) => {
@@ -78,37 +82,39 @@ export class OtpComponent implements OnInit {
           this.token.saveUserInfo(resp.user)
           this.firstName = localStorage.getItem('firstName')
           this.notifService.onSuccess(`Bienvenue ${this.firstName}`)
+          // this.bnIdle.stopTimer()
+          this.bnIdle.resetTimer()
 
         }, (error) => {
-          console.log('error', error)
-          this.inputDigitLeft = "Reéssayer";
-          this.btnStatus = 'btn-danger';
-          // this.notifService.onError(error.error.message, 'échec de connexion')
+          // this.inputDigitLeft = "Reéssayer";
+          // this.btnStatus = 'btn-danger';
+          this.token.clearTokenExpired()
         }
       )
   }
 
-  sendNewCode(){
-    this.newOtp.appProvider = '';
-    this.newOtp.email = localStorage.getItem('email').toString();
-    this.authService.newOtpCode(this.newOtp).subscribe(
-      (resp) => {
-        // this.token.saveRefreshToken(resp.refreshToken);
-        // this.token.saveAuthorities(resp.roles)
-        // this.token.saveUserInfo(resp.user)
-        // console.log(resp)
-        this.sendNewVerifyCode = false;
-        this.setTimer()
-        this.token.saveToken(resp);
-        this.notifService.onSuccess(`Nouveau code envoyé`)
-        //
-      }, (error) => {
-        console.log('error', error)
-        this.inputDigitLeft = "Vérifier";
-        this.btnStatus = 'btn-danger';
-        // this.notifService.onError(error.error.message, 'échec de connexion')
-      }
-    )
+  reconnect(){
+    this.token.clearTokenExpired();
+    // this.newOtp.appProvider = '';
+    // this.newOtp.email = localStorage.getItem('email').toString();
+    // this.authService.newOtpCode(this.newOtp).subscribe(
+    //   (resp) => {
+    //     // this.token.saveRefreshToken(resp.refreshToken);
+    //     // this.token.saveAuthorities(resp.roles)
+    //     // this.token.saveUserInfo(resp.user)
+    //     // console.log(resp)
+    //     this.sendNewVerifyCode = false;
+    //     this.setTimer()
+    //     this.token.saveToken(resp);
+    //     this.notifService.onSuccess(`Nouveau code envoyé`)
+    //     //
+    //   }, (error) => {
+    //     console.log('error', error)
+    //     this.inputDigitLeft = "Vérifier";
+    //     this.btnStatus = 'btn-danger';
+    //     // this.notifService.onError(error.error.message, 'échec de connexion')
+    //   }
+    // )
   }
 
 }

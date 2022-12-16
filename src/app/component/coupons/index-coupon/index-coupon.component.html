@@ -12,12 +12,12 @@
     </div>
     <div class="page-title-actions">
       <div class="d-inline-block ">
-        <!--        <button type="button" data-toggle="tooltip" title="nouveau carton" class="btn-shadow mr-3 btn btn-primary" (click)="open(mymodal)">-->
-        <!--                                        <span class="btn-icon-wrapper pr-2 opacity-7">-->
-        <!--                                            <i class="fa fa-plus fa-w-20"></i>-->
-        <!--                                        </span>-->
-        <!--          Carton-->
-        <!--        </button>-->
+                <button type="button" data-toggle="tooltip" title="nouveau carton" class="btn-shadow mr-3 btn btn-primary" (click)="open(mymodal)">
+                                                <span class="btn-icon-wrapper pr-2 opacity-7">
+                                                    <i class="fa fa-plus fa-w-20"></i>
+                                                </span>
+                  Accepter Coupon
+                </button>
       </div>
     </div>
   </div>
@@ -95,7 +95,7 @@
                 <td><span *ngFor="let v of vouchers">{{v.internalReference == coupon.idTypeVoucher ? v.amount : ''}}</span></td>
                 <td>{{coupon.idClient}}</td>
                 <td>{{coupon.idTicket}}</td>
-                <td ><span *ngFor="let v of carnets">{{v.internalReference == coupon.idNotebook ? v.serialNumber : ''}}</span></td>
+                <td>{{coupon.idNotebook}}</td>
                 <td>{{coupon.idStation}}</td>
                 <td>{{coupon.status.name}}</td>
                 <td>{{coupon.createdAt}}</td>
@@ -133,3 +133,45 @@
   </div>
 </div>
 
+<ng-template #mymodal let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title timeline-title" id="modal-basic-title"><b>Accepter coupon</b></h6>
+    <div class="close vertical-timeline-element-content bounce-in" (click)=" modal.close('save click')">
+      <p><i class="fa fa-times"></i></p>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div class="">
+      <div class="">
+        <form [formGroup]="couponForm">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="position-relative form-group">
+                <label for="localisation" class="">Coupon</label>
+                <input name="amount" id="localisation" placeholder="localisation"
+                       type="text" class="form-control" formControlName="coupon">
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="position-relative form-group">
+                <label for="localisation" class="">Station</label>
+                <select class="form-control" formControlName="idStation">
+                  <option *ngFor="let station of stations" value="{{station.internalReference}}">{{station.designation}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <button class="mt-1 btn btn-secondary float-right ml-3" (click)="annuler()"><i class="pe-7s-back"></i>Annuler
+          </button>
+          <button class="mt-1 btn btn-primary float-right" [disabled]="couponForm.invalid || (isLoading$ | async)"
+                  (click)="accepterCoupon()">
+            <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
+            <span *ngIf="isLoading$ | async">Acceptation ...</span>
+            <span
+              *ngIf="!(isLoading$ | async)">Accepter coupon</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</ng-template>

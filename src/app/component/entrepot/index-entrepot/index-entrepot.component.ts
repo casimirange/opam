@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/co
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {StoreHouse} from "../../../_interfaces/storehouse";
-import {Status, Store} from "../../../_interfaces/store";
+import {Store} from "../../../_interfaces/store";
 import {StoreService} from "../../../_services/store/store.service";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";
@@ -28,7 +28,7 @@ export class IndexEntrepotComponent implements OnInit {
   isLoading$ = this.isLoading.asObservable();
   modalTitle = 'Enregistrer un nouvel entrepot'
   magasin: string
-
+  roleUser = localStorage.getItem('userAccount').toString()
   constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService,
               private storeService: StoreService, private notifService: NotifsService, private router: Router) {
     this.formStoreHouse();
@@ -196,7 +196,8 @@ export class IndexEntrepotComponent implements OnInit {
   }
 
   showDetails(storeHouse: StoreHouse) {
-    this.router.navigate(['/entrepots/details', storeHouse.internalReference])
-    // [routerLink]=""
+    if (this.roleUser == 'MANAGER_STORE' || this.roleUser == 'MANAGER_COUPON' || this.roleUser == 'STORE_KEEPER'){
+      this.router.navigate(['/entrepots/details', storeHouse.internalReference])
+    }
   }
 }

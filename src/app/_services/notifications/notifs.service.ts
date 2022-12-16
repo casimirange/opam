@@ -4,6 +4,8 @@ import {Subject} from "rxjs";
 import {TokenService} from "../token/token.service";
 import {Router} from "@angular/router";
 import Swal from "sweetalert2";
+import {BnNgIdleService} from "bn-ng-idle";
+import {Location} from "@angular/common";
 const Toast = Swal.mixin({
   toast: true,
   position: 'top-end',
@@ -22,7 +24,9 @@ const Toast = Swal.mixin({
 export class NotifsService {
 
   apiError = new Subject()
-  constructor(private tokenService: TokenService, private router: Router) { }
+  private url: string;
+  constructor(private tokenService: TokenService, private router: Router, private bnIdle: BnNgIdleService,
+              private _location: Location) { }
 
   onDefault(message: string): void{
     Toast.fire({
@@ -66,6 +70,13 @@ export class NotifsService {
     }).then((result) => {
       if (result.value) {
         this.tokenService.clearTokenExpired();
+        // this.router.events.subscribe((val) => {
+        //   console.log(this._location.path())
+        //   this.url = this._location.path()
+        // });
+        // if (this.url != '/auth/login' && this.url != '/auth/otp') {
+        //   this.bnIdle.resetTimer()
+        // }
         localStorage.setItem('url', this.router.url)
       }
     })

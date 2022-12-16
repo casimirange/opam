@@ -1,4 +1,4 @@
-import {Store} from "./store";
+import {Status} from "./status";
 
 export class Carnet{
   id?: number;
@@ -11,8 +11,3 @@ export class Carnet{
   status?: Status;
 }
 
-export class Status{
-  name: string;
-  description: string;
-  id: number
-}

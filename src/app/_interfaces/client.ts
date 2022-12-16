@@ -1,4 +1,5 @@
 import {ClientTypeEnum} from "../_enum/clientTypeEnum";
+import {Status} from "./status";
 
 export class Client {
   id?: number;
@@ -13,7 +14,7 @@ export class Client {
   typeClient: TypeClient;
   createdAt?: Date
   updateAt?: Date
-
+  status: Status
 }
 
 export class TypeClient{
