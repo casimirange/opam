@@ -13,6 +13,7 @@ import {UnitsService} from "../../../_services/units/units.service";
 import {Unite} from "../../../_interfaces/unite";
 import {StoreHouse} from "../../../_interfaces/storehouse";
 import {Router} from "@angular/router";
+import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";
 
 @Component({
   selector: 'app-dashboard-magasin',
@@ -23,6 +24,7 @@ export class DashboardMagasinComponent implements OnInit {
 
   storeForm: FormGroup;
   stores: Store[] = [];
+  storeHouses: StoreHouse[] = [];
   store: Store = new Store ();
   unit: Unite = new Unite();
   typeVouchers: TypeVoucher[]
@@ -31,7 +33,8 @@ export class DashboardMagasinComponent implements OnInit {
   modalTitle: string = 'Enregistrer nouveau magasin';
   roleUser = localStorage.getItem('userAccount').toString()
   constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService, private router: Router,
-              private notifService: NotifsService, private unitService: UnitsService, private voucherService: VoucherService) {
+              private notifService: NotifsService, private unitService: UnitsService, private voucherService: VoucherService,
+              private storehouseService: StoreHouseService) {
     this.formStore();
   }
 
@@ -102,18 +105,24 @@ export class DashboardMagasinComponent implements OnInit {
 
   delete(store: Store, index:number) {
     this.isLoading.next(true);
+    //on supprime les entrepôts rattachés au magasin
+    this.storehouseService.getStoreHousesByStore(store.internalReference).subscribe(
+      resp => {
+        this.storeHouses = resp.content
+        this.deleteStoreHousesByStore(this.storeHouses);
+      }
+    )
+
     this.storeService.deleteStore(store.internalReference).subscribe(
       resp => {
         // console.log(resp)
         this.stores.splice(index, 1)
         this.isLoading.next(false);
         this.notifService.onSuccess("magasin de "+store.localization+" supprimé")
-      },
-      error => {
-        // this.notifServices.onError(error.error.message,"échec de suppression")
-        this.isLoading.next(false);
       }
     )
+
+
   }
 
   deleteStore(store: Store, index: number) {
@@ -165,5 +174,12 @@ export class DashboardMagasinComponent implements OnInit {
   showDetails(store: Store) {
     this.router.navigate(['/magasins/details', store.internalReference])
     // [routerLink]=""
+  }
+
+  private deleteStoreHousesByStore(storeHouses: StoreHouse[]) {
+    for (let storeHouse of storeHouses){
+      this.storehouseService.deleteStoreHouse(storeHouse.internalReference).subscribe()
+      this.notifService.onSuccess("entrepôt "+storeHouse.name+" supprimé")
+    }
   }
 }
