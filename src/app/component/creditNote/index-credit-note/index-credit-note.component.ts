@@ -96,7 +96,7 @@ export class IndexCreditNoteComponent implements OnInit {
   getCreditNote(){
     this.creditNoteService.getCreditNote().subscribe(
       resp => {
-        console.log(resp.content)
+        console.log('note',resp.content)
         this.creditNotes = resp.content
       },
     )

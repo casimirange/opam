@@ -18,6 +18,10 @@ export class StoreHouseService {
     return this.http.get<any>(environment.storeHouse)
   }
 
+  getAllStoreHousesWithPagination(page: number, size: number): Observable<any>{
+    return this.http.get<any>(environment.storeHouse+ `?page=${page}&size=${size}`)
+  }
+
   getStoreHouseByInternalRef(internalRef: number): Observable<any>{
     return this.http.get<any>(environment.storeHouse + `/${internalRef}`)
   }
@@ -32,5 +36,10 @@ export class StoreHouseService {
 
   deleteStoreHouse(internalref: number): Observable<any>{
     return this.http.delete<any>(environment.storeHouse+`/${internalref}`)
+  }
+
+  //liste des unités par magasin
+  getItemByStoreHouse(internalRef: number): Observable<any>{
+    return this.http.get<any>(environment.storeHouse + `/group/${internalRef}`)
   }
 }

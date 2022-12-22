@@ -4,8 +4,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 import {ClientService} from "../../../_services/clients/client.service";
 import {BehaviorSubject, Observable, of} from "rxjs";
-import {AppState} from "../interface/app-state";
-import {DataState} from "../enum/data.state.enum";
+// import {AppState} from "../interface/app-state";
 import {CustomResponseCliennts} from "../../../_interfaces/custom-response-cliennts";
 import {catchError, map, startWith} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
@@ -27,9 +26,8 @@ export class IndexClientComponent implements OnInit {
   clientType: string;
   displaySearchBar: boolean = false;
   clientForm: FormGroup;
-  appState$: Observable<AppState<CustomResponseCliennts>>;
-  readonly DataState = DataState;
-  private dataSubjects = new BehaviorSubject<CustomResponseCliennts>(null);
+  // appState$: Observable<AppState<CustomResponseCliennts>>;
+  // private dataSubjects = new BehaviorSubject<CustomResponseCliennts>(null);
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   name = ''
@@ -41,7 +39,7 @@ export class IndexClientComponent implements OnInit {
   page: number = 1;
   totalPages: number;
   totalElements: number;
-  size: number = 4;
+  size: number = 10;
   roleUser = localStorage.getItem('userAccount').toString()
   modalTitle = 'Enregistrer nouveau client'
 
@@ -73,7 +71,7 @@ export class IndexClientComponent implements OnInit {
 
   getClients(){
     this.isLoading.next(true);
-    this.clientService.getAllClientsWithPagination(this.page-1, this.size).subscribe(
+    this.clientService.getAllClients().subscribe(
       resp => {
         this.clients = resp.content;
         console.log(resp)
@@ -89,9 +87,24 @@ export class IndexClientComponent implements OnInit {
     )
   }
 
+  getClientsPaginate(){
+    this.isLoading.next(true);
+    this.clientService.getAllClientsWithPagination(this.page-1, this.size).subscribe(
+      resp => {
+        this.clients = resp.content;
+        this.size = resp.size
+        this.totalPages = resp.totalPages
+        this.totalElements = resp.totalElements
+      },
+      error => {
+        this.isLoading.next(false);
+      }
+    )
+  }
+
   pageChange(event: number){
     this.page = event
-    this.getClients()
+    this.getClientsPaginate()
   }
 
 //initialisation du formulaire de création client
@@ -137,6 +150,7 @@ export class IndexClientComponent implements OnInit {
     this.clientType = ''
     this.client = new Client()
     this.modalService.dismissAll()
+    this.modalTitle = 'Enregistrer nouveau client'
   }
 
   open(content: any) {

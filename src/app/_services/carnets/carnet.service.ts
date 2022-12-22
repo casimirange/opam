@@ -19,7 +19,7 @@ export class CarnetService {
   }
 
   getCarnetsByStoreHouse(idStoreHouse: number, page: number,): Observable<any>{
-    return this.http.get<any>(environment.carnet+`/storekeeper/${idStoreHouse}?page=${page}`)
+    return this.http.get<any>(environment.carnet+`/storehouse/${idStoreHouse}?page=${page}`)
   }
 
   updateCarnet(carnet: any, internalRef: number): Observable<any>{

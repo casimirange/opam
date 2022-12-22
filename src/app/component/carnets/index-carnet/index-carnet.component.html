@@ -81,10 +81,10 @@
                 <th>Statut</th>
                 <th>Date création</th>
                 <th>Date modification</th>
-                <th>Actions</th>
+<!--                <th>Actions</th>-->
               </tr>
               </thead>
-              <tbody *ngFor="let carnet of carnets | paginate: { itemsPerPage: size, currentPage: page, totalItems: totalElements }; let i = index">
+              <tbody *ngFor="let carnet of carnets | paginate: { id: 'carnet', itemsPerPage: size, currentPage: page, totalItems: totalElements }; let i = index">
 
               <tr>
                 <td>{{i + 1}}</td>
@@ -99,17 +99,17 @@
 <!--                  <span *ngFor="let storeHouse of storeHouses">{{storeHouse.internalReference === carnet.idStoreHouse ? storeHouse.type : ''}}</span>-->
 <!--                </td>-->
 <!--                <td>{{carnet.idStoreKeeper}}</td>-->
-                <td>{{carnet.status.name}}</td>
+                <td>{{getStatuts(carnet.status.name)}}</td>
                 <td>{{carnet.createdAt}}</td>
                 <td>{{carnet.updateAt}}</td>
-                <td>
-                  <a style="cursor: pointer"  class="delete text-danger" (click)="deleteCarnet(carnet, i)" >
-                    <i class="pe-7s-trash" title="supprimer"></i>
-                  </a>&nbsp;
-                  <a style="cursor: pointer"  class="text-primary" >
-                    <i class="pe-7s-eyedropper" title="modifier"></i>
-                  </a>
-                </td>
+<!--                <td>-->
+<!--                  <a style="cursor: pointer"  class="delete text-danger" (click)="deleteCarnet(carnet, i)" >-->
+<!--                    <i class="pe-7s-trash" title="supprimer"></i>-->
+<!--                  </a>&nbsp;-->
+<!--                  <a style="cursor: pointer"  class="text-primary" >-->
+<!--                    <i class="pe-7s-eyedropper" title="modifier"></i>-->
+<!--                  </a>-->
+<!--                </td>-->
               </tr>
             </table>
             <div class="text-center">
@@ -127,7 +127,11 @@
         <div class="btn-actions-pane-right">
           <div role="group" class="btn-group-sm btn-group">
             <!--              <pagination-controls id="client" (pageChange)="pageChange($event)" ></pagination-controls>-->
-            <pagination-controls (pageChange)="pageChange($event)"></pagination-controls>
+            <pagination-controls
+              id="carnet"
+              previousLabel="Précédent"
+              nextLabel="Suivant"
+              (pageChange)="pageChange($event)"></pagination-controls>
           </div>
         </div>
       </div>

@@ -14,11 +14,13 @@ import {Unite} from "../../../_interfaces/unite";
 import {StoreHouse} from "../../../_interfaces/storehouse";
 import {Router} from "@angular/router";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";
+import {environment} from "../../../../environments/environment";
+import {StatusService} from "../../../_services/status/status.service";
 
 @Component({
   selector: 'app-dashboard-magasin',
   templateUrl: './dashboard-magasin.component.html',
-  styleUrls: ['./dashboard-magasin.component.css']
+  styleUrls: ['./dashboard-magasin.component.scss']
 })
 export class DashboardMagasinComponent implements OnInit {
 
@@ -31,10 +33,14 @@ export class DashboardMagasinComponent implements OnInit {
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   modalTitle: string = 'Enregistrer nouveau magasin';
+  page: number = 1;
+  totalPages: number;
+  totalElements: number;
+  size: number = 10;
   roleUser = localStorage.getItem('userAccount').toString()
   constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService, private router: Router,
               private notifService: NotifsService, private unitService: UnitsService, private voucherService: VoucherService,
-              private storehouseService: StoreHouseService) {
+              private storehouseService: StoreHouseService, private statusService: StatusService) {
     this.formStore();
   }
 
@@ -83,9 +89,13 @@ export class DashboardMagasinComponent implements OnInit {
 
   getStores(){
     console.log(this.storeForm.value)
-    this.storeService.getStore().subscribe(
+    this.storeService.getAllStoresWithPagination(this.page-1, this.size).subscribe(
       resp => {
         this.stores = resp.content
+        this.size = resp.size
+        this.totalPages = resp.totalPages
+        this.totalElements = resp.totalElements
+        this.notifService.onSuccess('Chargement des magasins')
       },
     )
   }
@@ -101,6 +111,7 @@ export class DashboardMagasinComponent implements OnInit {
     this.formStore();
     this.store = new Store()
     this.modalService.dismissAll()
+    this.modalTitle = 'Enregistrer nouveau magasin'
   }
 
   delete(store: Store, index:number) {
@@ -163,6 +174,7 @@ export class DashboardMagasinComponent implements OnInit {
         const index = this.stores.findIndex(store => store.internalReference === resp.internalReference);
         this.stores[ index ] = resp;
         this.notifService.onSuccess("magasin modifié avec succès!")
+        this.modalTitle = 'Enregistrer nouveau magasin'
         this.annuler()
       },
       error => {
@@ -181,5 +193,14 @@ export class DashboardMagasinComponent implements OnInit {
       this.storehouseService.deleteStoreHouse(storeHouse.internalReference).subscribe()
       this.notifService.onSuccess("entrepôt "+storeHouse.name+" supprimé")
     }
+  }
+
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
+  }
+
+  pageChange(event: number){
+    this.page = event
+    this.getStores()
   }
 }

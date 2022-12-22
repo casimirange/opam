@@ -53,13 +53,13 @@
                   <td>{{voucher.internalReference}}</td>
                   <td>{{voucher.designation}} </td>
                   <td>{{voucher.amount}} <small>Fcfa</small></td>
-                  <td> {{voucher.status.name}}</td>
+                  <td> {{getStatuts(voucher.status.name)}}</td>
                   <td> {{voucher.createdAt | date: 'dd/MM/yyyy hh:mm'}}</td>
                   <td> {{voucher.updateAt | date: 'dd/MM/yyyy hh:mm'}}</td>
                   <td>
-                    <a style="cursor: pointer"  class="delete text-danger" (click)="deleteTypeVoucher(voucher, i)" >
-                    <i class="pe-7s-trash" title="supprimer"></i>
-                    </a>&nbsp;
+<!--                    <a style="cursor: pointer"  class="delete text-danger" (click)="deleteTypeVoucher(voucher, i)" >-->
+<!--                    <i class="pe-7s-trash" title="supprimer"></i>-->
+<!--                    </a>&nbsp;-->
                     <a style="cursor: pointer"  class="text-primary" (click)="updateVoucherModal(mymodal, voucher)">
                       <i class="pe-7s-eyedropper" title="modifier"></i>
                     </a>

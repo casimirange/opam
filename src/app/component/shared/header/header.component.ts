@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {TokenService} from "../../../_services/token/token.service";
 import {BnNgIdleService} from "bn-ng-idle";
+import {StatusAccountService} from "../../../_services/status/status-account.service";
 
 @Component({
   selector: 'app-header',
@@ -12,7 +13,7 @@ export class HeaderComponent implements OnInit {
   lastName: string | null = '';
   isLogged: boolean = false;
   roleUser = localStorage.getItem('userAccount').toString()
-  constructor(private tokenService: TokenService) { }
+  constructor(private tokenService: TokenService, private statusAccountSercive: StatusAccountService) { }
 
   ngOnInit(): void {
     this.isLogged = this.tokenService.isLogged();
@@ -22,6 +23,10 @@ export class HeaderComponent implements OnInit {
 
   logout(){
     this.tokenService.clearToken();
+  }
+
+  getStatusAccount(status: string): string {
+    return this.statusAccountSercive.allStatus(status)
   }
 
 }

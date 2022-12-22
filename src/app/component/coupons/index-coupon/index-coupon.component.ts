@@ -18,11 +18,12 @@ import {CouponService} from "../../../_services/coupons/coupon.service";
 import {Coupon} from "../../../_interfaces/coupon";
 import {StationService} from "../../../_services/stations/station.service";
 import {Station} from "../../../_interfaces/station";
+import {StatusService} from "../../../_services/status/status.service";
 
 @Component({
   selector: 'app-index-coupon',
   templateUrl: './index-coupon.component.html',
-  styleUrls: ['./index-coupon.component.css']
+  styleUrls: ['./index-coupon.component.scss']
 })
 export class IndexCouponComponent implements OnInit {
 
@@ -54,7 +55,7 @@ export class IndexCouponComponent implements OnInit {
   constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService,
               private storeService: StoreService, private notifService: NotifsService, private cartonService: CartonService,
               private carnetService: CarnetService, private voucherService: VoucherService, private couponService: CouponService,
-              private stationService: StationService) {
+              private stationService: StationService, private statusService: StatusService) {
     this.formCarton();
   }
 
@@ -238,6 +239,10 @@ export class IndexCouponComponent implements OnInit {
         this.totalElements = resp.totalElements
       },
     )
+  }
+
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
   }
 
   padWithZero(num, targetLength) {

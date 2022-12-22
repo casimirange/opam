@@ -17,12 +17,16 @@ export class UsersService {
     return this.http.get<any>(environment.users);
   }
 
+  getAllUsersWithPagination(page: number, size: number): Observable<any>{
+    return this.http.get<any>(environment.users+ `?page=${page}&size=${size}`)
+  }
+
   getUser(internalRef: number): Observable<any>{
     return this.http.get<any>(environment.users + `/${internalRef}`);
   }
 
   enableDesable(internalRef: number, status: number): Observable<any>{
-    return this.http.put<any>(environment.users, internalRef+'/'+status);
+    return this.http.put<any>(environment.users + `/${internalRef}`, status);
   }
 
   updateUser(user: any): Observable<any>{

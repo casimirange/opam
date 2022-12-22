@@ -14,7 +14,6 @@ export class RequestOpposition{
     updateAt?:	string
     serialCoupons: number[]
     nameClient?: string
-    channel?: string
     nameManagerCoupon?: string
     nzmeServiceClient?: string
   }

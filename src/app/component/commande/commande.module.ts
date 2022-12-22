@@ -15,6 +15,7 @@ import { ClientNameFilterPipe } from './pipes/client-name-filter.pipe';
 import { ClientRefFilterPipe } from './pipes/client-ref-filter.pipe';
 import { OrderRefFilterPipe } from './pipes/order-ref-filter.pipe';
 import { OrderDateFilterPipe } from './pipes/order-date-filter.pipe';
+import {NgxPaginationModule} from "ngx-pagination";
 
 
 @NgModule({
@@ -28,14 +29,15 @@ import { OrderDateFilterPipe } from './pipes/order-date-filter.pipe';
     OrderRefFilterPipe,
     OrderDateFilterPipe,
   ],
-  imports: [
-    CommonModule,
-    CommandeRoutingModule,
-    SharedModule,
-    // SweetAlert2Module.forChild(),
-    ReactiveFormsModule,
-    FormsModule
-  ],
+    imports: [
+        CommonModule,
+        CommandeRoutingModule,
+        SharedModule,
+        // SweetAlert2Module.forChild(),
+        ReactiveFormsModule,
+        FormsModule,
+        NgxPaginationModule
+    ],
   providers: [
     // ClientService
   ]

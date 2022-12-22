@@ -16,6 +16,8 @@ import {Order} from "../../../_interfaces/order";
 import {ProductService} from "../../../_services/product/product.service";
 import {OrderService} from "../../../_services/order/order.service";
 import {BehaviorSubject} from "rxjs";
+import {StatusService} from "../../../_services/status/status.service";
+import {StatusOrderService} from "../../../_services/status/status-order.service";
 
 export class Product{
   quantity: number;
@@ -25,7 +27,7 @@ export class Product{
 @Component({
   selector: 'app-index-command',
   templateUrl: './index-command.component.html',
-  styleUrls: ['./index-command.component.css']
+  styleUrls: ['./index-command.component.scss']
 })
 export class IndexCommandComponent implements OnInit {
 
@@ -55,12 +57,16 @@ export class IndexCommandComponent implements OnInit {
   refCli = ''
   date = ''
   internalRef = ''
+  page: number = 1;
+  totalPages: number;
+  totalElements: number;
+  size: number = 10;
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   roleUser = localStorage.getItem('userAccount').toString()
   constructor(private fb: FormBuilder, private modalService: NgbModal, private clientService: ClientService,
               private voucherService: VoucherService, private notifsService: NotifsService, private storeService: StoreService,
-              private productService: ProductService, private orderService: OrderService) {
+              private productService: ProductService, private orderService: OrderService, private statusService: StatusOrderService) {
     this.formClient();
     this.formOrder();
     this.clF = this.clientForm.controls;
@@ -89,6 +95,9 @@ export class IndexCommandComponent implements OnInit {
       chanel: ['', [Validators.required, ]],
       quantity: ['', [Validators.required, Validators.pattern('^[0-9 ]*$')]],
       voucherType: ['', [Validators.required]],
+      delais: ['', [Validators.required]],
+      description: ['', [Validators.required]],
+      refCli: ['', [Validators.required]],
     });
   }
 
@@ -188,7 +197,7 @@ export class IndexCommandComponent implements OnInit {
         this.clients.push(resp)
         this.notifsService.onSuccess('client rajouté avec succès')
         this.showOrderForms();
-        this.annulerClient()
+        this.annulerCommande()
       },
       err => {
         // this.notifsService.onError(err.error.message, 'échec d\'enregistrement')
@@ -201,13 +210,19 @@ export class IndexCommandComponent implements OnInit {
     this.orderService.getOrders().subscribe(
       resp =>{
         this.orders = resp.content
-        console.log(resp.content)
+        this.isLoading.next(false);
+        this.notifsService.onSuccess('Cahrgement des commandes')
+      },
+    )
+  }
+
+  getOrdersPaginate(){
+    this.isLoading.next(true);
+    this.orderService.getOrdersWithPagination(this.page-1, this.size).subscribe(
+      resp =>{
+        this.orders = resp.content
         this.isLoading.next(false);
       },
-      err => {
-        this.isLoading.next(false);
-        // this.notifsService.onError(err.error.message, 'échec chargement liste des commandes')
-      }
     )
   }
 
@@ -218,7 +233,7 @@ export class IndexCommandComponent implements OnInit {
     this.modalService.dismissAll()
   }
 
-  annulerClient() {
+  annulerCommande() {
     this.formClient();
     this.showOrderForms();
   }
@@ -233,6 +248,9 @@ export class IndexCommandComponent implements OnInit {
     this.order.idStore = this.store.internalReference
     this.order.idClient = this.client.internalReference
     this.order.channel = this.orF['chanel'].value
+    this.order.description = this.orF['description'].value
+    this.order.deliveryTime = this.orF['delais'].value
+    this.order.clientReference = this.orF['refCli'].value
     this.order.idManagerOrder = parseInt(localStorage.getItem('uid'))
     this.order.tax = 0.1925;
     this.order.ttcaggregateAmount = this.totalOrder * this.order.tax + this.totalOrder;
@@ -308,4 +326,12 @@ export class IndexCommandComponent implements OnInit {
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-titles', size: 'xl', });
   }
 
+  pageChange(event: number){
+    this.page = event
+    this.getOrdersPaginate()
+  }
+
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
+  }
 }

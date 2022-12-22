@@ -7,6 +7,7 @@ import {BehaviorSubject} from "rxjs";
 import {NotifsService} from "../../_services/notifications/notifs.service";
 import {StoreHouse} from "../../_interfaces/storehouse";
 import Swal from "sweetalert2";
+import {StatusService} from "../../_services/status/status.service";
 
 @Component({
   selector: 'app-type-bon',
@@ -22,7 +23,8 @@ export class TypeBonComponent implements OnInit {
   isLoading$ = this.isLoading.asObservable();
   modalTitle: string = 'Enregistrer nouveau bon';
   roleUser = localStorage.getItem('userAccount').toString()
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private voucherService: VoucherService, private notifService: NotifsService) {
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private voucherService: VoucherService,
+              private statusService: StatusService, private notifService: NotifsService) {
     this.formVoucherType();
     this.voucher = new TypeVoucher()
   }
@@ -84,6 +86,7 @@ export class TypeBonComponent implements OnInit {
     this.formVoucherType();
     this.voucher = new TypeVoucher()
     this.modalService.dismissAll()
+    this.modalTitle = 'Enregistrer nouveau bon'
   }
 
   delete(voucher: TypeVoucher, index: number) {
@@ -147,5 +150,9 @@ export class TypeBonComponent implements OnInit {
         this.isLoading.next(false);
       }
     )
+  }
+
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
   }
 }

@@ -9,6 +9,7 @@ import { ReceptionnerCartonComponent } from './receptionner-carton/receptionner-
 import { CartonLayoutComponent } from './carton-layout/carton-layout.component';
 import {SharedModule} from "../shared/shared.module";
 import {ReactiveFormsModule} from "@angular/forms";
+import {NgxPaginationModule} from "ngx-pagination";
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import {ReactiveFormsModule} from "@angular/forms";
         CommonModule,
         CartonsRoutingModule,
         SharedModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        NgxPaginationModule
     ]
 })
 export class CartonsModule { }

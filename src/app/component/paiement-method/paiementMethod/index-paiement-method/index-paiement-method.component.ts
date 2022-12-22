@@ -139,6 +139,7 @@ export class IndexPaiementMethodComponent implements OnInit {
         const index = this.paiementMethods.findIndex(store => store.internalReference === resp.internalReference);
         this.paiementMethods[ index ] = resp;
         this.notifServices.onSuccess("méthode modifiée avec succès!")
+        this.modalTitle = 'Enregistrer méthode de paiement'
         this.annuler()
       },
       error => {

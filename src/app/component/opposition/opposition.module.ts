@@ -7,6 +7,7 @@ import { IndexRequestOppositionComponent } from './index-request-opposition/inde
 import {SharedModule} from "../shared/shared.module";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { DetailsRequestOppositionComponent } from './details-request-opposition/details-request-opposition.component';
+import {NgxPaginationModule} from "ngx-pagination";
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { DetailsRequestOppositionComponent } from './details-request-opposition/
         OppositionRoutingModule,
         SharedModule,
         ReactiveFormsModule,
-        FormsModule
+        FormsModule,
+        NgxPaginationModule
     ]
 })
 export class OppositionModule { }

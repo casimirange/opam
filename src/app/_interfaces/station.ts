@@ -8,6 +8,8 @@ export class Station{
   designation: string;
   pinCode: number;
   balance: number;
+  managerStagion: number;
+  idManagerStation: number;
   createdAt?: Date;
   updateAt?: Date;
   status?: Status;

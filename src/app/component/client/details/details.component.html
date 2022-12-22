@@ -13,14 +13,14 @@
     <div class="page-title-actions" >
       <div class="d-inline-block ">
         <button type="button" data-toggle="tooltip" title="envoyer la liste des commandes au client"
-                class="btn-shadow mr-3 btn btn-success">
+                class="btn-shadow mr-3 btn btn-success" (click)="sendClientOrders()">
                                         <span class="btn-icon-wrapper pr-2 opacity-7">
                                             <i class="fa fa-file-excel fa-w-20"></i>
                                         </span>
           Envoyer commandes
         </button>
         <button type="button" data-toggle="tooltip" title="envoyer la liste des commandes au client"
-                class="btn-shadow mr-3 btn btn-success">
+                class="btn-shadow mr-3 btn btn-success" (click)="sendClientCoupons()">
                                         <span class="btn-icon-wrapper pr-2 opacity-7">
                                             <i class="fa fa-file-excel fa-w-20"></i>
                                         </span>
@@ -78,9 +78,9 @@
 
         </table>
         <!--          dans le cas où aucune commande n'est trouvée-->
-        <ng-template>
+        <div *ngIf="orders.length == 0">
           <p style="color: grey; font-size: 1.8rem;" class="text-center" >Aucune commande trouvée !</p>
-        </ng-template>
+        </div>
       </div>
     </div>
   </div>

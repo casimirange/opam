@@ -17,6 +17,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import Swal from "sweetalert2";
 import {BehaviorSubject} from "rxjs";
 import {CouponService} from "../../../_services/coupons/coupon.service";
+import {StatusOrderService} from "../../../_services/status/status-order.service";
 
 export class Product{
   coupon: number;
@@ -31,6 +32,7 @@ export class EditComponent implements OnInit {
 
   order: Order = new Order();
   vouchers: TypeVoucher[] = []
+  voucher: TypeVoucher = new TypeVoucher()
   client: Client = new Client();
   store: Store = new Store();
   products: Products[] = []
@@ -63,7 +65,8 @@ export class EditComponent implements OnInit {
 
   constructor(private orderService: OrderService,  private notifsService: NotifsService, private route: ActivatedRoute,
               private clientService: ClientService, private storeService: StoreService, private productService: ProductService,
-              private voucherService: VoucherService, private paymentService: PaiementService, private fb: FormBuilder, private couponService: CouponService) {
+              private voucherService: VoucherService, private paymentService: PaiementService, private fb: FormBuilder,
+              private statusService: StatusOrderService, private couponService: CouponService) {
     this.formOrder()
     this.formAddCarnet()
     this.orF = this.addCouponClientForm.controls;
@@ -74,7 +77,7 @@ export class EditComponent implements OnInit {
 
   ngOnInit(): void {
     this.getOrder()
-    this.getVouchers()
+    // this.getVouchers(591577792)
     this.getPaymentMethods()
   }
 
@@ -127,18 +130,6 @@ export class EditComponent implements OnInit {
 
   }
 
-  getVouchers(): void{
-    console.log(this.order)
-    this.voucherService.getTypevoucher().subscribe(
-      resp => {
-        this.vouchers = resp.content;
-        // for (let voucher of this.vouchers){
-        //   voucher.internalReference === ord.idTypeVoucher ? voucher.amount * prod.quantityNotebook : ''
-        // }
-      }
-    )
-  }
-
   getPaymentMethods(){
     this.paymentService.getPaymentMethods().subscribe(
       resp => {
@@ -164,6 +155,7 @@ export class EditComponent implements OnInit {
       resp => {
         this.notifsService.onSuccess('Commande Acceptée')
         this.refreshOrder()
+        this.formOrder()
       }
     )
   }
@@ -177,6 +169,7 @@ export class EditComponent implements OnInit {
     this.orderService.validOrder(this.order.internalReference, this.order.idManagerCoupon, this.currentFileUpload).subscribe(
       resp => {
         this.notifsService.onSuccess('Commande Terminée')
+        this.formOrder()
         this.refreshOrder()
       }
     )
@@ -188,6 +181,7 @@ export class EditComponent implements OnInit {
     this.orderService.payOrder(this.order.internalReference, this.order.idManagerCoupon).subscribe(
       resp => {
         this.refreshOrder()
+        this.formOrder()
         this.notifsService.onSuccess('Commande Payée')
       }
     )
@@ -236,7 +230,7 @@ export class EditComponent implements OnInit {
     )
   }
 
-  generateReçu(){
+  generatePreuve(){
     const docType = 'pdf'
     const type = 'INVOICE'
     this.orderService.getFile(this.order.internalReference, type, docType).subscribe(
@@ -250,12 +244,36 @@ export class EditComponent implements OnInit {
     )
   }
 
+  generateReçu(){
+    const type = 'INVOICE'
+    this.orderService.getReçu(this.order.internalReference, type).subscribe(
+      respProd => {
+        const file = new Blob([respProd], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        window.open(fileURL);
+        // this.isLoading.next(false);
+      },
+    )
+  }
+
+  generateBonLivraison(){
+    const type = 'DELIVERY'
+    this.orderService.getReçu(this.order.internalReference, type).subscribe(
+      respProd => {
+        const file = new Blob([respProd], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        window.open(fileURL);
+        // this.isLoading.next(false);
+      },
+    )
+  }
+
   generateBonCommande(){
     const docType = 'pdf'
     const type = 'DELIVERY'
     this.orderService.getFile(this.order.internalReference, type, docType).subscribe(
       respProd => {
-        console.log('reçu', respProd)
+
         const file = new Blob([respProd], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
         window.open(fileURL);
@@ -320,23 +338,58 @@ export class EditComponent implements OnInit {
 
   generatePDF($event){
     const select = $event.target.value
-    if (select == 'facture'){
-      this.getProforma();
+    // if (select == 'facture'){
+    //   this.getProforma();
+    // }
+    // if (select == 'proforma'){
+    //   this.getProforma();
+    // }
+    switch (select) {
+      case 'bordereau': this.generateBoredereau();
+        break;
+      case 'preuve': this.generatePreuve();
+        break;
+      case 'préfacture': this.getProforma();
+        break;
+      case 'bonCommand': this.generateBonCommande();
+        break;
+      case 'reçu': this.generateReçu();
+        break;
+      // case 'bonLivraison': this.generateBonLivraison();
+      //   break;
     }
-    if (select == 'proforma'){
-      this.getProforma();
-    }
-    if (select == 'bordereau'){
-      this.generateBoredereau();
-    }
-    if (select == 'reçu'){
-      this.generateReçu()
-    }
-    if (select == 'préfacture'){
-      //this.generateBoredereau();
-    }
-    if (select == 'bonCommand'){
-      this.generateBonCommande();
-    }
+    // if (select == 'bordereau'){
+    //
+    // }
+    // if (select == 'preuve'){
+    //   this.generatePreuve()
+    // }
+    // if (select == 'préfacture'){
+    //   this.getProforma();
+    // }
+    // if (select == 'bonCommand'){
+    //   this.generateBonCommande();
+    // }
+  }
+
+  getVouchers(): void{
+      this.voucherService.getTypevoucher().subscribe(
+      resp => {
+        this.vouchers = resp;
+        console.log(resp)
+      })
+  }
+
+  // getVouchers(internalRef: Products): void{
+  //
+  // }
+
+  getAmount(amount: number): number {
+    console.log('amount', amount)
+    return amount
+  }
+
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
   }
 }

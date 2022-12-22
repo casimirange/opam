@@ -8,6 +8,7 @@ import { DashboardMagasinComponent } from './dashboard-magasin/dashboard-magasin
 import {ReactiveFormsModule} from "@angular/forms";
 import { UnitesComponent } from './unites/unites.component';
 import { DetailsMagasinComponent } from './details-magasin/details-magasin.component';
+import {NgxPaginationModule} from "ngx-pagination";
 
 
 @NgModule({
@@ -17,11 +18,12 @@ import { DetailsMagasinComponent } from './details-magasin/details-magasin.compo
     UnitesComponent,
     DetailsMagasinComponent
   ],
-  imports: [
-    CommonModule,
-    MagasinRoutingModule,
-    ReactiveFormsModule,
-    SharedModule
-  ]
+    imports: [
+        CommonModule,
+        MagasinRoutingModule,
+        ReactiveFormsModule,
+        SharedModule,
+        NgxPaginationModule
+    ]
 })
 export class MagasinModule { }

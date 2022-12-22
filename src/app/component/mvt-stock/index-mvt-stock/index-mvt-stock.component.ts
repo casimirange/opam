@@ -64,29 +64,29 @@ export class IndexMvtStockComponent implements OnInit {
   }
 
   createStore(){
-    console.log(this.storeForm.value)
-    this.getVouchers()
-    this.store.localization = this.storeForm.value
-    this.isLoading.next(true);
-    this.storeService.createStore(this.storeForm.value as Store).subscribe(
-      resp => {
-        console.log(resp)
-        this.unit.idStore = resp.internalReference
-        this.unit.quantityNotebook = 0
-        this.typeVouchers.forEach(tv => {
-          this.unit.idTypeVoucher = tv.internalReference
-          this.unitService.createUnit(this.unit).subscribe()
-        })
-        this.stores.push(resp)
-        this.annuler()
-        this.isLoading.next(false);
-        this.notifService.onSuccess('enregistrement effectué')
-      },
-      error => {
-        this.notifService.onError(error.error.message, '')
-        this.isLoading.next(false);
-      }
-    )
+    // console.log(this.storeForm.value)
+    // this.getVouchers()
+    // this.store.localization = this.storeForm.value
+    // this.isLoading.next(true);
+    // this.storeService.createStore(this.storeForm.value as Store).subscribe(
+    //   resp => {
+    //     console.log(resp)
+    //     this.unit.idStore = resp.internalReference
+    //     this.unit.quantityNotebook = 0
+    //     this.typeVouchers.forEach(tv => {
+    //       this.unit.idTypeVoucher = tv.internalReference
+    //       this.unitService.createUnit(this.unit).subscribe()
+    //     })
+    //     this.stores.push(resp)
+    //     this.annuler()
+    //     this.isLoading.next(false);
+    //     this.notifService.onSuccess('enregistrement effectué')
+    //   },
+    //   error => {
+    //     this.notifService.onError(error.error.message, '')
+    //     this.isLoading.next(false);
+    //   }
+    // )
   }
 
   getStores(){

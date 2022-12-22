@@ -21,12 +21,20 @@ export class OrderService {
     return this.http.get<any>(environment.order,)
   }
 
+  getOrdersWithPagination(page: number, size: number): Observable<any>{
+    return this.http.get<any>(environment.order+ `?page=${page}&size=${size}`)
+  }
+
   getOrderByRef(internalReference: number): Observable<any>{
     return this.http.get<any>(environment.order + `/${internalReference}`,)
   }
 
   getOrderByClient(clientInternalReference: number): Observable<any>{
     return this.http.get<any>(environment.order + `/client/${clientInternalReference}`,)
+  }
+
+  sendOrderByClient(clientInternalReference: number): Observable<any>{
+    return this.http.get<any>(environment.order + `/export/excel/client/${clientInternalReference}`,)
   }
 
   denyOrder(internalReference: number, idManager: number, reason: string): Observable<any>{
@@ -47,6 +55,14 @@ export class OrderService {
       // 'responseType'  : 'blob' as 'json'        //This also worked
     };
     return this.http.get<any>(environment.order + `/file/${orderInternalReference}/downloadFile?type=${type}&docType=${docType}`, httpOptions)
+  }
+
+  getReçu(orderInternalReference: number, type: string): Observable<any>{
+    const httpOptions = {
+      responseType: 'arraybuffer' as 'json'
+      // 'responseType'  : 'blob' as 'json'        //This also worked
+    };
+    return this.http.post<any>(environment.order + `/document/${orderInternalReference}?type=${type}`,null, httpOptions)
   }
 
   acceptOrder(orderInternalReference: number, idFund: number, idPaymentMethod: number, paymentRef: string, docType: string, file: File): Observable<any>{

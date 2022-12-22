@@ -6,19 +6,23 @@ import { StationLayoutComponent } from './station-layout/station-layout.componen
 import { IndexStationComponent } from './index-station/index-station.component';
 import {SharedModule} from "../shared/shared.module";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {NgxPaginationModule} from "ngx-pagination";
+import { DetailsStationComponent } from './details-station/details-station.component';
 
 
 @NgModule({
   declarations: [
     StationLayoutComponent,
-    IndexStationComponent
+    IndexStationComponent,
+    DetailsStationComponent
   ],
     imports: [
         CommonModule,
         StationRoutingModule,
         SharedModule,
         ReactiveFormsModule,
-        FormsModule
+        FormsModule,
+        NgxPaginationModule
     ]
 })
 export class StationModule { }

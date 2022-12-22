@@ -9,11 +9,12 @@ import {StoreHouseService} from "../../../_services/storeHouse/store-house.servi
 import {BehaviorSubject} from "rxjs";
 import Swal from "sweetalert2";
 import {Router} from "@angular/router";
+import {StatusService} from "../../../_services/status/status.service";
 
 @Component({
   selector: 'app-index-entrepot',
   templateUrl: './index-entrepot.component.html',
-  styleUrls: ['./index-entrepot.component.css']
+  styleUrls: ['./index-entrepot.component.scss']
 })
 export class IndexEntrepotComponent implements OnInit {
 
@@ -29,8 +30,13 @@ export class IndexEntrepotComponent implements OnInit {
   modalTitle = 'Enregistrer un nouvel entrepot'
   magasin: string
   roleUser = localStorage.getItem('userAccount').toString()
+  page: number = 1;
+  totalPages: number;
+  totalElements: number;
+  size: number = 10;
   constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService,
-              private storeService: StoreService, private notifService: NotifsService, private router: Router) {
+              private storeService: StoreService, private notifService: NotifsService, private router: Router,
+              private statusService: StatusService) {
     this.formStoreHouse();
   }
 
@@ -62,10 +68,13 @@ export class IndexEntrepotComponent implements OnInit {
 
   //récupération de la liste des entrepots
   getStoreHouses(){
-    this.storeHouseService.getStoreHouses().subscribe(
+    this.storeHouseService.getAllStoreHousesWithPagination(this.page-1, this.size).subscribe(
       resp => {
         console.log(resp)
         this.storeHouses = resp.content
+        this.size = resp.size
+        this.totalPages = resp.totalPages
+        this.totalElements = resp.totalElements
         this.notifService.onSuccess('chargement des entrepots')
       },
       // error => {
@@ -182,6 +191,7 @@ export class IndexEntrepotComponent implements OnInit {
         this.storeHouses[ index ].updateAt = resp.updateAt;
         this.getStoreHouses()
         this.notifService.onSuccess("entrepot modifié avec succès!")
+        this.modalTitle = 'Enregistrer un nouvel entrepot'
         this.annuler()
       },
       error => {
@@ -199,5 +209,14 @@ export class IndexEntrepotComponent implements OnInit {
     if (this.roleUser == 'MANAGER_STORE' || this.roleUser == 'MANAGER_COUPON' || this.roleUser == 'STORE_KEEPER'){
       this.router.navigate(['/entrepots/details', storeHouse.internalReference])
     }
+  }
+
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
+  }
+
+  pageChange(event: number){
+    this.page = event
+    this.getStores()
   }
 }

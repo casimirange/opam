@@ -14,6 +14,7 @@ import {CartonService} from "../../../_services/cartons/carton.service";
 import {CarnetService} from "../../../_services/carnets/carnet.service";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
 import Swal from "sweetalert2";
+import {StatusService} from "../../../_services/status/status.service";
 
 @Component({
   selector: 'app-index-carnet',
@@ -46,7 +47,7 @@ export class IndexCarnetComponent implements OnInit {
   roleUser = localStorage.getItem('userAccount').toString()
   constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService,
               private storeService: StoreService, private notifService: NotifsService, private cartonService: CartonService,
-              private carnetService: CarnetService, private voucherService: VoucherService) {
+              private carnetService: CarnetService, private voucherService: VoucherService, private statusService: StatusService) {
     this.formCarton();
   }
 
@@ -96,6 +97,7 @@ export class IndexCarnetComponent implements OnInit {
 
     this.carnetService.getCarnets(this.page -1, this.size).subscribe(
       resp => {
+        console.log(resp)
         this.carnets = resp.content
         this.size = resp.size
         this.totalPages = resp.totalPages
@@ -210,5 +212,9 @@ export class IndexCarnetComponent implements OnInit {
         this.totalElements = resp.totalElements
       },
     )
+  }
+
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
   }
 }

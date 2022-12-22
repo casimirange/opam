@@ -8,6 +8,7 @@ import {Order} from "../../../_interfaces/order";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {Store} from "../../../_interfaces/store";
 import {StoreService} from "../../../_services/store/store.service";
+import {CouponService} from "../../../_services/coupons/coupon.service";
 
 @Component({
   selector: 'app-details',
@@ -25,7 +26,8 @@ export class DetailsComponent implements OnInit {
   stores: Store[] = [];
   roleUser = localStorage.getItem('userAccount').toString()
   constructor(private clientService: ClientService, private activatedRoute: ActivatedRoute, private router: Router,
-              private orderService: OrderService, private notifService: NotifsService, private storeService: StoreService) {
+              private orderService: OrderService, private notifService: NotifsService, private storeService: StoreService,
+              private couponService: CouponService) {
     this.client = new Client()
   }
 
@@ -58,6 +60,20 @@ export class DetailsComponent implements OnInit {
           this.notifService.onSuccess('chargement des commandes du client')
         }
       )
+    })
+  }
+
+  sendClientOrders(){
+    this.activatedRoute.params.subscribe(params => {
+      this.orderService.sendOrderByClient(params['id']).subscribe()
+      this.notifService.onSuccess('Mail des commandes envoyé au client')
+    })
+  }
+
+  sendClientCoupons(){
+    this.activatedRoute.params.subscribe(params => {
+      this.couponService.sendCouponByClient(params['id']).subscribe()
+      this.notifService.onSuccess('Mail des coupons envoyé au client')
     })
   }
 

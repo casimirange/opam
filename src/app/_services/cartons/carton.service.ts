@@ -14,12 +14,16 @@ export class CartonService {
     return this.http.post<any>(environment.carton, carton)
   }
 
-  createCartonSupply(carton: any): Observable<any>{
-    return this.http.post<any>(environment.carton+'/supply', carton)
+  createCartonSupply(carton: number, storeHouse: number): Observable<any>{
+    return this.http.post<any>(environment.carton+`/supply?idCarton=${carton}&idStoreHouseSell=${storeHouse}`, carton)
   }
 
   getCartons(): Observable<any>{
     return this.http.get<any>(environment.carton)
+  }
+
+  getAllCartonWithPagination(page: number, size: number): Observable<any>{
+    return this.http.get<any>(environment.carton+ `?page=${page}&size=${size}`)
   }
 
   getCartonsByStoreHouse(idStoreHouse: number, page: number,): Observable<any>{

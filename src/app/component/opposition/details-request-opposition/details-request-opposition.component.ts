@@ -1,16 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import {Client} from "../../../_interfaces/client";
-import {Order} from "../../../_interfaces/order";
-import {Store} from "../../../_interfaces/store";
-import {ClientService} from "../../../_services/clients/client.service";
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
-import {OrderService} from "../../../_services/order/order.service";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
-import {StoreService} from "../../../_services/store/store.service";
 import {RequestOpposition} from "../../../_interfaces/requestOpposition";
 import {OppositionService} from "../../../_services/opposition/opposition.service";
 import {Ticket} from "../../../_interfaces/ticket";
 import {TicketService} from "../../../_services/ticket/ticket.service";
+import {StatusService} from "../../../_services/status/status.service";
+import {BehaviorSubject} from "rxjs";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-details-request-opposition',
@@ -22,8 +19,18 @@ export class DetailsRequestOppositionComponent implements OnInit {
   request: RequestOpposition = new RequestOpposition();
   tickets: Ticket[] = [];
   roleUser = localStorage.getItem('userAccount').toString()
+  private isLoading = new BehaviorSubject<boolean>(false);
+  isLoading$ = this.isLoading.asObservable();
+  page: number = 1;
+  totalPages: number;
+  totalElements: number;
+  size: number = 10;
+  statut: string;
+
+
   constructor(private requestService: OppositionService, private activatedRoute: ActivatedRoute, private router: Router,
-              private ticketService: TicketService, private notifService: NotifsService) {
+              private ticketService: TicketService, private notifService: NotifsService, private statusService: StatusService,
+              private _location: Location) {
   }
 
   ngOnInit(): void {
@@ -31,29 +38,55 @@ export class DetailsRequestOppositionComponent implements OnInit {
     this.getTicketsByRequestOpposition()
   }
 
-  getRequestInfos(){
-    console.log(this.router.url)
+  getRequestInfos() {
     this.activatedRoute.params.subscribe(params => {
       this.requestService.getRequestByInternalRef(params['id']).subscribe(
         res => {
           this.request = res;
-          console.log(res)
+          this.statut = this.request.status.name
         }
       )
     })
   }
 
-  getTicketsByRequestOpposition(){
-    console.log(this.router.url)
+  getTicketsByRequestOpposition() {
     this.activatedRoute.params.subscribe(params => {
-      this.ticketService.getTicketByRequestOpposition(params['id']).subscribe(
+      this.ticketService.getTicketByRequestOpposition(params['id'], this.page-1, this.size).subscribe(
         res => {
-          console.log(res)
           this.tickets = res.content;
+          this.size = res.size
+          this.totalPages = res.totalPages
+          this.totalElements = res.totalElements
           this.notifService.onSuccess('chargement des tickets')
         }
       )
     })
   }
 
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
+  }
+
+  validRequest() {
+    this.isLoading.next(true);
+    this.activatedRoute.params.subscribe(params => {
+      this.requestService.validOppositionRequest(params['id']).subscribe(
+        resp => {
+          this.isLoading.next(false);
+          this.getRequestInfos()
+          this.getTicketsByRequestOpposition()
+          this.notifService.onSuccess("requête d'opposition validée")
+        },
+      )
+    })
+  }
+
+  back() {
+    this._location.back()
+  }
+
+  pageChange(event: number){
+    this.page = event
+    this.getTicketsByRequestOpposition()
+  }
 }

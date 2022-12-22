@@ -1,5 +1,5 @@
 
-<div class="app-page-title">
+<div class="app-page-title" *ngIf="user">
   <div class="page-title-wrapper">
     <div class="page-title-heading">
       <div class="page-title-icon">
@@ -10,22 +10,22 @@
         <div class="page-title-subheading">Aperçu</div>
       </div>
     </div>
-    <div class="page-title-actions">
-      <div class="d-inline-block ">
-        <button  type="button" data-toggle="tooltip" title="supprimer utilisateur" class="btn-shadow btn btn-danger mr-3">
-                                        <span class="btn-icon-wrapper pr-2 opacity-7">
-                                            <i class="fa fa-times fa-w-20"></i>
-                                        </span>
-          supprimer
-        </button>
-        <button  type="button" data-toggle="tooltip" title="modifier utilisateur" class="btn-shadow btn btn-primary mr-3">
-                                        <span class="btn-icon-wrapper pr-2 opacity-7">
-                                            <i class="fa fa-times fa-w-20"></i>
-                                        </span>
-          modifier
-        </button>
-      </div>
-    </div>
+<!--    <div class="page-title-actions">-->
+<!--      <div class="d-inline-block ">-->
+<!--        <button  type="button" data-toggle="tooltip" title="supprimer utilisateur" class="btn-shadow btn btn-danger mr-3">-->
+<!--                                        <span class="btn-icon-wrapper pr-2 opacity-7">-->
+<!--                                            <i class="fa fa-times fa-w-20"></i>-->
+<!--                                        </span>-->
+<!--          supprimer-->
+<!--        </button>-->
+<!--        <button  type="button" data-toggle="tooltip" title="modifier utilisateur" class="btn-shadow btn btn-primary mr-3">-->
+<!--                                        <span class="btn-icon-wrapper pr-2 opacity-7">-->
+<!--                                            <i class="fa fa-times fa-w-20"></i>-->
+<!--                                        </span>-->
+<!--          modifier-->
+<!--        </button>-->
+<!--      </div>-->
+<!--    </div>-->
   </div>
 </div>
 
@@ -40,11 +40,11 @@
       <span>Modifier</span>
     </a>
   </li>
-  <li class="nav-item">
-    <a role="tab" class="nav-link" id="tab-2" data-toggle="tab" href="#tab-content-2">
-      <span>Supprimer</span>
-    </a>
-  </li>
+<!--  <li class="nav-item">-->
+<!--    <a role="tab" class="nav-link" id="tab-2" data-toggle="tab" href="#tab-content-2">-->
+<!--      <span>Supprimer</span>-->
+<!--    </a>-->
+<!--  </li>-->
 </ul>
 
 <div class="tab-content">
@@ -140,8 +140,7 @@
                       </span>
                       <div class="vertical-timeline-element-content bounce-in">
                         <h4 class="timeline-title">Type de compte</h4>
-                        <p>{{user.typeAccount.name}}
-                        </p>
+                        <p>{{getStatusAccount(typeAccount)}}</p>
                       </div>
                     </div>
                   </div>
@@ -152,7 +151,7 @@
 </span>
                       <div class="vertical-timeline-element-content bounce-in">
                         <h4 class="timeline-title">Statut</h4>
-                        <p>{{user.status.name}}
+                        <p>{{getStatus(statusUser)}}
                         </p>
                       </div>
                     </div>
@@ -164,7 +163,7 @@
 </span>
                       <div class="vertical-timeline-element-content bounce-in">
                         <h4 class="timeline-title">Rôle</h4>
-                        <p *ngFor="let role of user.roles">{{role.name}}
+                        <p *ngFor="let role of user.roles">{{getRole(role.name)}}
                         </p>
                       </div>
                     </div>
@@ -173,7 +172,7 @@
               </div>
             </div>
 
-            <button class="btn btn-warning text-center mt-3" (click)="enableDesable()">{{user.status.name === "USER_ENABLED" ? 'Désactiver' : 'Activer'}}</button>
+            <button class="btn btn-warning text-center mt-3" (click)="enableDesable()">{{statusUser === "USER_ENABLED" ? 'Désactiver' : 'Activer'}}</button>
 
           </div>
         </div>
@@ -328,8 +327,8 @@
                     <label>Type de compte</label>
 <!--                    <input  id="position" placeholder="Poste occupé" type="text" class="form-control form-control-sm"-->
 <!--                            [(ngModel)]="user.position" formControlName="position">-->
-                    <select  [(ngModel)]="user.typeAccount.name" formControlName="typeAccount" class="form-control form-control-sm">
-                      <option >{{user.typeAccount.name}}</option>
+                    <select  [(ngModel)]="typeAccount" formControlName="typeAccount" class="form-control form-control-sm">
+                      <option >{{typeAccount}}</option>
                     </select>
                   </div>
                   <div *ngIf="form['position'].invalid && (form['position'].dirty || form['position'].touched)"
@@ -353,32 +352,6 @@
                 </div>
               </div>
             </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="tab-pane tabs-animation fade" id="tab-content-2" role="tabpanel">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="main-card mb-3 card">
-          <div class="card-body">
-            <h5 class="card-title">Suppression Utilisateur</h5>
-            <div class="scroll-area-sm">
-              <div class="scrollbar-container">
-                <div class="">
-                  <div class="">
-                    <div>
-                        <h4 class="timeline-title">Voulez-vous supprimer {{user.firstName}} de votre liste d'utilisateurs?</h4>
-
-                        <button class="btn btn-focus mr-3">Annuler</button>
-                        <button class="btn btn-danger">supprimer</button>
-
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

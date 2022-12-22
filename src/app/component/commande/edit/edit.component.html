@@ -22,7 +22,7 @@
             Etat de la commande
           </div>
           <div class="widget-heading">
-            <span class="text-success font-weight-bolder">{{statut}}</span>
+            <span class="text-success font-weight-bolder">{{getStatuts(statut)}}</span>
           </div>
         </div>
       </div>
@@ -43,10 +43,12 @@
               <select (change)="generatePDF($event)" name="" id="" formControlName="pdf" class="form-control form-control-sm">
                 <option value="" selected disabled hidden>Générer pdf</option>
                 <option *ngIf="statut == 'PAID' " value="bordereau">Bordereau de livraison</option>
-                <option  value="facture">Facture</option>
-                <option  value="préfacture" >Préfacture</option>
-                <option  value="proforma" >Proforma</option>
+<!--                <option *ngIf="statut == 'PAID' " value="bonLivraison">Bon de livraison</option>-->
+<!--                <option  value="facture">Facture</option>-->
+                <option  value="préfacture" >Préfacture/Proforma</option>
+<!--                <option  value="proforma"  ></option>-->
                 <option  value="bonCommand" >Bon de Commande</option>
+                <option *ngIf="statut != 'CREATED'" value="preuve">Preuve de paiement</option>
                 <option *ngIf="statut != 'CREATED'" value="reçu">Reçu de paiement</option>
 
               </select>
@@ -54,7 +56,11 @@
           </div>
           <div class="float-right">
             <button class="btn btn-outline-danger btn-lg mr-3" *ngIf="statut != 'ORDER_CANCEL' && statut != 'CLOSED' " (click)="deny(order)">Annuler</button>
-            <button class="btn btn-outline-primary btn-lg mr-3" *ngIf="statut == 'CREATED' " (click)="acceptOrder()">Accepter paiement</button>
+            <button class="btn btn-outline-primary btn-lg mr-3" *ngIf="statut == 'CREATED' " (click)="acceptOrder()"
+                    [disabled]="editForm.controls['file'].invalid"
+                    [disabled]="editForm.controls['peimentRef'].invalid"
+                    [disabled]="editForm.controls['method'].invalid"
+            >Accepter paiement</button>
             <button class="btn btn-outline-primary btn-lg mr-3" *ngIf="statut == 'ACCEPTED' " (click)="payOrder()">Confirmer paiement</button>
             <button class="btn btn-outline-primary btn-lg mr-3" *ngIf="statut == 'PAID'" (click)="generateBoredereau()">Générer le Bordereau</button>
             <button class="btn btn-outline-primary btn-lg mr-3" *ngIf="statut == 'IN_PROCESS_OF_DELIVERY'" (click)="endOrder()">Valider BL</button>
@@ -67,21 +73,21 @@
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Ref. commande</label>
                   <input name="email" id="exampleEmail" placeholder="with a placeholder" type="email" value="{{order.internalReference}}"
-                         class="form-control" disabled >
+                         class="form-control"  >
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Ref. client</label>
                   <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text"
-                         value="{{client.internalReference}}"
+                         value="{{order.clientReference}}"
                          class="form-control">
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Nom client</label>
-                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text" value="{{client.completeName}}" disabled
+                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text" value="{{client.completeName}}"
                          class="form-control">
                 </div>
               </div>
@@ -90,20 +96,20 @@
               <div class="col-md-4">
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Magasin</label>
-                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text" value="{{store.localization}}" disabled
+                  <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text" value="{{store.localization}}"
                          class="form-control">
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Delai de livraison</label>
-                  <input name="email" id="exampleEmail"  placeholder="2 jours" type="text" class="form-control">
+                  <input name="email" id="exampleEmail" value="{{order.deliveryTime}}"  placeholder="2 jours" type="text" class="form-control">
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Canal</label>
-                  <input name="email" id="exampleEmail" disabled placeholder="appel" type="text" class="form-control" value="{{order.channel}}">
+                  <input name="email" id="exampleEmail" placeholder="appel" type="text" class="form-control" value="{{order.channel}}">
                 </div>
               </div>
             </div>
@@ -121,7 +127,7 @@
               <div class="col-md-4"  >
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Ref. paeiment</label>
-                  <input name="email" id="exampleEmail" placeholder="entrer la référence" type="text"
+                  <input name="email" id="exampleEmail" placeholder="entrer la référence" type="text" value="{{order.paymentReference}}"
                          [disabled]="statut != 'CREATED'"
                          class="form-control" formControlName="peimentRef">
                 </div>
@@ -130,7 +136,7 @@
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Montant</label>
                   <input name="email" id="exampleEmail" placeholder="with a placeholder" type="text" value="{{order.ttcaggregateAmount}}"
-                         class="form-control" disabled>
+                         class="form-control">
                 </div>
               </div>
             </div>
@@ -158,7 +164,7 @@
               <div class="col-md-12">
                 <div class="position-relative form-group">
                   <label for="exampleEmail" class="">Description</label>
-                  <textarea name="text" id="exampleText" class="form-control"
+                  <textarea name="text" id="exampleText" class="form-control" value="{{order.description}}"
                             placeholder="description de la commande"></textarea>
                 </div>
               </div>
@@ -205,12 +211,18 @@
               </tr>
               </thead>
               <tbody>
-              <tr *ngFor="let prod of products; let i = index">
+              <tr *ngFor="let prod of products; let i = index" >
                 <th scope="row">{{i + 1}}</th>
-                <td><span *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? voucher.amount : ''}}</span></td>
+                <td>
+                  <span *ngFor="let voucher of vouchers">
+                    {{voucher.internalReference === prod.idTypeVoucher ? voucher.amount : ''}}
+                  </span>
+<!--                  <span>{{getVouchers(prod)}}</span>-->
+                </td>
                 <td>{{prod.quantityNotebook}}</td>
                 <td>{{prod.quantityNotebook * 10}}</td>
                 <td><span *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? voucher.amount * prod.quantityNotebook * 10 : ''}}</span></td>
+<!--                <td></td>-->
                 <td>{{prod.createdAt}}</td>
                 <td>{{prod.updateAt}}</td>
                 <td>

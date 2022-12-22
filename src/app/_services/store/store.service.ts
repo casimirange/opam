@@ -20,6 +20,10 @@ export class StoreService {
     return this.http.get<any>(environment.store)
   }
 
+  getAllStoresWithPagination(page: number, size: number): Observable<any>{
+    return this.http.get<any>(environment.store+ `?page=${page}&size=${size}`)
+  }
+
   getStoreByInternalref(internalRef: number): Observable<any>{
     return this.http.get<any>(environment.store + `/${internalRef}`)
   }
@@ -35,5 +39,10 @@ export class StoreService {
 
   updateStore(store: any, internalRef: number): Observable<any>{
     return this.http.put<any>(environment.store+`/${internalRef}`, store);
+  }
+
+  //liste des unités par magasin
+  getUnitByStore(internalRef: number): Observable<any>{
+    return this.http.get<any>(environment.store + `/group/${internalRef}`)
   }
 }

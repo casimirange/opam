@@ -18,11 +18,19 @@ export class StationService {
     return this.http.get<any>(environment.station)
   }
 
+  getAllStationWithPagination(page: number, size: number): Observable<any>{
+    return this.http.get<any>(environment.station+ `?page=${page}&size=${size}`)
+  }
+
   updateStation(storeHouse: any, internalRef: number): Observable<any>{
     return this.http.put<any>(environment.station+`/${internalRef}`, storeHouse)
   }
 
   deleteStation(internalref: number): Observable<any>{
     return this.http.delete<any>(environment.station+`/${internalref}`)
+  }
+
+  getStationByInternalref(internalref: number): Observable<any>{
+    return this.http.get<any>(environment.station+`/${internalref}`)
   }
 }

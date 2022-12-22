@@ -18,11 +18,12 @@ import {Coupon} from "../../../_interfaces/coupon";
 import {CouponService} from "../../../_services/coupons/coupon.service";
 import {Stock} from "../../../_interfaces/stock";
 import {MvtStockService} from "../../../_services/stock/mvt-stock.service";
+import {StatusService} from "../../../_services/status/status.service";
 
 @Component({
   selector: 'app-stock-carton',
   templateUrl: './stock-carton.component.html',
-  styleUrls: ['./stock-carton.component.css']
+  styleUrls: ['./stock-carton.component.scss']
 })
 export class StockCartonComponent implements OnInit {
 
@@ -39,6 +40,14 @@ export class StockCartonComponent implements OnInit {
   storeHouseType = ['stockage', 'vente']
   stores: Store[] = [];
   store: Store = new Store();
+  private isLoadingDataStore = new BehaviorSubject<boolean>(false);
+  isLoadingDataStore$ = this.isLoadingDataStore.asObservable();
+  private isLoadingDataVoucher = new BehaviorSubject<boolean>(false);
+  isLoadingDataVoucher$ = this.isLoadingDataVoucher.asObservable();
+  private isLoadingDataStoreHouse = new BehaviorSubject<boolean>(false);
+  isLoadingDataStoreHouse$ = this.isLoadingDataStoreHouse.asObservable();
+  private isLoadingDataCarton = new BehaviorSubject<boolean>(false);
+  isLoadingDataCarton$ = this.isLoadingDataCarton.asObservable();
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   modalTitle = 'Enregistrer un nouveau carton'
@@ -55,23 +64,15 @@ export class StockCartonComponent implements OnInit {
   constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService,
               private storeService: StoreService, private notifService: NotifsService, private cartonService: CartonService,
               private carnetService: CarnetService, private voucherService: VoucherService, private couponService: CouponService,
-              private mvtStockService: MvtStockService) {
+              private mvtStockService: MvtStockService, private statusService: StatusService) {
     this.formCarton();
   }
 
   ngOnInit(): void {
     this.getStores();
     this.getTypeVoucher();
-    this.getStoreHousess();
+    // this.getStoreHousess();
     this.getCartons();
-  }
-
-  getStoreHousess(){
-    this.storeHouseService.getStoreHouses().subscribe(
-      resp => {
-        this.storeHouses = resp.content
-      },
-    )
   }
 
   //formulaire de création
@@ -100,7 +101,7 @@ export class StockCartonComponent implements OnInit {
   //récupération de la liste des entrepots
   getCartons(){
 
-    this.cartonService.getCartons().subscribe(
+    this.cartonService.getAllCartonWithPagination(this.page-1, this.size).subscribe(
       resp => {
         console.log('liste des cartons', resp)
         this.cartons = resp.content
@@ -115,27 +116,18 @@ export class StockCartonComponent implements OnInit {
   //récupération de la liste des entrepots
   getStoreHouses(event: any){
     console.log('event', event)
+    const store = this.stores.find(st => st.localization === event)
+    console.log('le mag', store)
+    if(event != ''){
+      this.storeHouses = []
+      this.storeHouseService.getStoreHousesByStore(store.internalReference).subscribe(
+        resp => {
+            this.storeHouses = resp.content.filter(sth => sth.type == 'stockage')
+          this.notifService.onSuccess('chargement des entrepots')
+        },
+      )
+    }
 
-    this.storeHouseService.getStoreHouses().subscribe(
-      resp => {
-        console.log('tous les entrpots',resp)
-        const store = this.stores.find(st => st.localization === event)
-        console.log('le mag', store)
-        // this.storeHouseService.getStoreHouses().subscribe(
-        //   resp => {
-        //     this.storeHouses = resp.content
-        //   },
-        // )
-        if (event != ''){
-          this.storeHouses = resp.content.filter(sth => sth.type == 'stockage')
-          console.log('filtrées2',resp.content.filter(sth => sth.store.localization == store.internalReference ))
-        }
-
-        console.log('filtrées',this.storeHouses)
-
-        this.notifService.onSuccess('chargement des entrepots')
-      },
-    )
   }
 
   padWithZero(num, targetLength) {
@@ -152,26 +144,45 @@ export class StockCartonComponent implements OnInit {
 
     this.carton.idStoreKeeper = parseInt(localStorage.getItem('uid').toString())
     this.carton.idStoreHouseStockage = this.storeHouse.internalReference
-    this.carton.idStoreHouseSell = this.storeHouse.internalReference
+    // this.carton.idStoreHouseSell = this.storeHouse.internalReference
     this.carton.number = parseInt(this.cartonForm.controls['number'].value)
     this.carton.from = parseInt(this.cartonForm.controls['from'].value)
     this.carton.to = parseInt(this.cartonForm.controls['to'].value)
     this.carton.serialFrom = parseInt(this.cartonForm.controls['serialFrom'].value)
     this.carton.serialTo = parseInt(this.cartonForm.controls['serialTo'].value)
     this.carton.typeVoucher = typ.amount
-
+    // setTimeout(() =>{
+    //   const notif = 'Vous recevrez une notification une fois l\'opération terminé'
+    //   Swal.fire({
+    //     title: 'Opération en cours',
+    //     html: 'Le système est entrain de créer le carton et générer les coupons. '+ notif.toString().bold() ,
+    //     icon: 'info',
+    //     footer: '<a ></a>',
+    //     showCancelButton: false,
+    //     confirmButtonText: 'OK',
+    //     allowOutsideClick: false,
+    //     focusConfirm: false,
+    //     backdrop: `rgba(0, 0, 0, 0.4)`
+    //   }).then((result) => {
+    //     if (result.value) {
+    //       this.annuler()
+    //     }
+    //   })
+    // }  , 1000);
     this.cartonService.createCarton(this.carton).subscribe(
       resp => {
+
         console.log('carton créé', resp)
         /**
          * je dois résoudre le fait de charger toute la liste des cartons car un soucis avec la réponse qui est retournée
          */
         // this.cartons.push(resp)
-        this.getCartons();
+
         // this.mvtStockService.createStockMovement(this.mvtStock).subscribe()
         this.isLoading.next(false);
-        this.notifService.onSuccess('enregistrement effectué')
-        this.annuler()
+        this.notifService.onSuccess('Carton crée avec succès!')
+        this.getCartons();
+        // this.annuler()
       },
       error => {
         this.isLoading.next(false);
@@ -288,4 +299,16 @@ export class StockCartonComponent implements OnInit {
     )
   }
 
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
+  }
+
+  pageChange(event: number){
+    this.page = event
+    this.getCartons()
+  }
+
+  removeZeros(coupon: string): string{
+    return coupon.replace(/[0]/g,'')
+  }
 }

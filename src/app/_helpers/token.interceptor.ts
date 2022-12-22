@@ -33,6 +33,8 @@ export class TokenInterceptor implements HttpInterceptor {
           // console.log('erreurs', err)
           if (err.error.message.includes("JWT expired at")) {
             this.notifService.expiredSession()
+          } else if (err.error.message.includes("Une authentification complète est requise pour accéder à cette ressource")) {
+            this.notifService.expiredSession()
           } else {
             this.notifService.onError(err.error.message, '')
           }

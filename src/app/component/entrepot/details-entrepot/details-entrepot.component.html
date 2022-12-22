@@ -22,32 +22,6 @@
   </div>
 </div>
 
-<!--<div class="main-card mb-3 card">-->
-<!--  <div class="row">-->
-<!--    <div class="col-md-4" *ngFor="let unit of units; let i = index">-->
-<!--      <div class="widget-content">-->
-<!--        <div class="widget-content-outer">-->
-<!--          <div class="widget-content-wrapper">-->
-<!--            <div class="widget-content-left">-->
-<!--              <div class="widget-heading">Unité {{i + 1}}</div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div class="widget-progress-wrapper">-->
-<!--            <div class="progress-sub-label">-->
-<!--              <div class="sub-label-left">Type de coupon</div>-->
-<!--              <div class="sub-label-right text-success font-weight-bold">{{unit.idTypeVoucher}}</div>-->
-<!--            </div>-->
-<!--            <div class="progress-sub-label">-->
-<!--              <div class="sub-label-left">Quantité de carnet</div>-->
-<!--              <div class="sub-label-right text-alternate">{{unit.quantityNotebook}}</div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
-
 <div class="row">
   <div class="col-md-12">
     <div class="main-card mb-3 card " id="htmlData">
@@ -59,23 +33,24 @@
         <table class="align-middle mb-0 table table-sm table-borderless table-hover" id="element-pannes">
           <thead>
           <tr>
-            <th class="">Ref#</th>
-            <th class="">Date</th>
-            <th class="">Quantité de cartons</th>
-            <th class="">Quantité de carnets</th>
+<!--            <th class="">Ref#</th>-->
+<!--            <th class="">Date</th>-->
+            <th *ngIf="storeHouse.type === 'stockage'" class="">Quantité de cartons</th>
+            <th *ngIf="storeHouse.type === 'vente'" class="">Quantité de carnets</th>
             <th class="">Type de coupon</th>
-            <th class="">Statut</th>
+<!--            <th class="">Statut</th>-->
             <!--<th class="text-center">Actions</th>-->
           </tr>
           </thead>
           <tbody>
           <tr style="cursor: pointer" *ngFor="let item of items">
-            <td class="text-left">{{item.internalReference}}</td>
-            <td class="text-left">{{item.createdAt | date: 'dd/MM/yyyy'}}</td>
-            <td class="text-left">{{item.quantityCarton}}</td>
-            <td class="text-left">{{item.quantityNotebook}}</td>
-            <td class="text-left"><span *ngFor="let voucher of vouchers">{{voucher.internalReference == item.idTypeVoucher ? voucher.amount : ''}}</span></td>
-            <td class="text-left"><span class="text-focus">{{item.status.name}}</span> </td>
+<!--            <td class="text-left">{{item.internalReference}}</td>-->
+<!--            <td class="text-left">{{item.createdAt | date: 'dd/MM/yyyy'}}</td>-->
+            <td *ngIf="storeHouse.type === 'stockage'" class="text-left">{{item.quantityCarton}}</td>
+            <td *ngIf="storeHouse.type === 'vente'" class="text-left">{{item.quantityNoteBook}}</td>
+            <td class="text-left">{{item.amount}}</td>
+<!--            <td class="text-left"><span *ngFor="let voucher of vouchers">{{voucher.internalReference == item.idTypeVoucher ? voucher.amount : ''}}</span></td>-->
+<!--            <td class="text-left"><span class="text-focus">{{item.status.name}}</span> </td>-->
           </tr>
 
           </tbody>
@@ -104,24 +79,37 @@
             <th>#</th>
             <th>Ref. interne</th>
             <th>Numéro du carton</th>
-            <th>Numéro de série</th>
+            <th>Série</th>
+            <!--                <th>Magasin</th>-->
             <th>Magasinier</th>
             <th>Statut</th>
             <th>Date création</th>
             <th>Date modification</th>
+            <!--                <th>Actions</th>-->
           </tr>
           </thead>
-          <tbody *ngFor="let carton of cartons; let i = index">
+          <tbody *ngFor="let carton of cartons | paginate: { id: 'carton', itemsPerPage: size, currentPage: page, totalItems: totalElements }; let i = index">
 
           <tr>
             <td>{{i + 1}}</td>
             <td>{{carton.internalReference}}</td>
             <td>{{carton.number}}</td>
-            <td>{{carton.serialFrom}} - {{carton.serialTo}}</td>
+            <td>{{removeZeros(carton.typeVoucher.toString())}} -
+              {{padWithZero(carton.serialTo, 7)}} A {{removeZeros(carton.typeVoucher.toString())}} -
+              {{padWithZero(carton.serialFrom, 7)}}</td>
+
             <td>{{carton.idStoreKeeper}}</td>
-            <td>{{carton.status.name}}</td>
+            <td>{{getStatuts(carton.status.name)}}</td>
             <td>{{carton.createdAt}}</td>
             <td>{{carton.updateAt}}</td>
+            <!--                <td>-->
+            <!--                  <a style="cursor: pointer"  class="delete text-danger" (click)="deleteCarton(carton, i)" >-->
+            <!--                    <i class="pe-7s-trash" title="supprimer"></i>-->
+            <!--                  </a>&nbsp;-->
+            <!--                  <a style="cursor: pointer"  class="text-primary" (click)="updateCartonModal(mymodal, carton)">-->
+            <!--                    <i class="pe-7s-eyedropper" title="modifier"></i>-->
+            <!--                  </a>-->
+            <!--                </td>-->
           </tr>
         </table>
         <div class="text-center">
@@ -135,7 +123,10 @@
           </div>
           <div class="btn-actions-pane-right">
             <div role="group" class="btn-group-sm btn-group">
-              <pagination-controls id="carton" (pageChange)="pageChangeCarton($event)"></pagination-controls>
+              <pagination-controls id="carton"
+                                   previousLabel="Précédent"
+                                   nextLabel="Suivant"
+                                   (pageChange)="pageChangeCarton($event)"></pagination-controls>
             </div>
           </div>
         </div>
@@ -166,20 +157,20 @@
                 <th>Date modification</th>
               </tr>
               </thead>
-              <tbody *ngFor="let carnet of carnets | paginate: { itemsPerPage: size, currentPage: page, totalItems: totalElements }; let i = index">
+              <tbody *ngFor="let carnet of carnets | paginate: { itemsPerPage: size1, currentPage: page1, totalItems: totalElements1 }; let i = index">
 
               <tr>
                 <td>{{i + 1}}</td>
                 <td>{{carnet.internalReference}}</td>
                 <td>{{carnet.serialNumber}}</td>
                 <td >{{carnet.idCarton}}</td>
-                <td>{{carnet.status.name}}</td>
+                <td>{{getStatuts(carnet.status.name)}}</td>
                 <td>{{carnet.createdAt}}</td>
                 <td>{{carnet.updateAt}}</td>
               </tr>
             </table>
             <div class="text-center">
-              <p *ngIf="totalElements == 0" style="color: grey; font-size: 1.8rem;" class="mx-auto" >Aucun Carnet trouvé !</p>
+              <p *ngIf="totalElements1 == 0" style="color: grey; font-size: 1.8rem;" class="mx-auto" >Aucun Carnet trouvé !</p>
             </div>
           </ng-container>
         </ng-container>
@@ -187,13 +178,16 @@
       <div class="card-footer">
         <div class="btn-actions-pane-left">
           <div role="group" class="btn-group-sm btn-group">
-            Total carnets: <b>{{ totalElements }} </b>
+            Total carnets: <b>{{ totalElements1 }} </b>
           </div>
         </div>
         <div class="btn-actions-pane-right">
           <div role="group" class="btn-group-sm btn-group">
             <!--              <pagination-controls id="client" (pageChange)="pageChange($event)" ></pagination-controls>-->
-            <pagination-controls id="carnet" (pageChange)="pageChangeCarnet($event)"></pagination-controls>
+            <pagination-controls id="carnet"
+                                 previousLabel="Précédent"
+                                 nextLabel="Suivant"
+                                 (pageChange)="pageChangeCarnet($event)"></pagination-controls>
           </div>
         </div>
       </div>

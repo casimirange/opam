@@ -9,6 +9,9 @@ import {Store} from "../../../_interfaces/store";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {IToken} from "../../../_interfaces/token";
 import {BehaviorSubject} from "rxjs";
+import {StatusAccountService} from "../../../_services/status/status-account.service";
+import {StatusUserService} from "../../../_services/status/status-user.service";
+import {RoleUserService} from "../../../_services/role/role-user.service";
 
 @Component({
   selector: 'app-details-user',
@@ -19,7 +22,8 @@ export class DetailsUserComponent implements OnInit {
 
   user: ISignup = new ISignup();
   store: Store = new Store();
-
+  typeAccount: string = '';
+  statusUser: string = '';
   updateUser: FormGroup ;
   credentials: ICredentialsSignup = new ICredentialsSignup()
 
@@ -29,13 +33,14 @@ export class DetailsUserComponent implements OnInit {
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   constructor(private userService: UsersService,  private notifsService: NotifsService, private route: ActivatedRoute,
-              private storeService: StoreService, private fb: FormBuilder, ) {
+              private storeService: StoreService, private fb: FormBuilder, private statusAccountService: StatusAccountService,
+              private statusUserService: StatusUserService, private roleUserService: RoleUserService) {
     this.updateUser = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       telephone: ['', [Validators.required, Validators.pattern('^[2,6][0-9]{8}'), Validators.minLength(9), Validators.maxLength(9) ]],
       pinCode: ['', [Validators.required, Validators.pattern('^[0-9 ]*$')]],
       idStore: ['', [Validators.required]],
-      // username: ['', [Validators.required, Validators.minLength(4)]],
+      typeAccount: ['', [Validators.required, Validators.minLength(4)]],
       password: ['', [Validators.required, Validators.pattern("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")]],
       firstName: ['', [Validators.required, Validators.minLength(4)]],
       lastName: ['', [Validators.required, Validators.minLength(4)]],
@@ -68,6 +73,8 @@ export class DetailsUserComponent implements OnInit {
     this.userService.getUser(parseInt(id)).subscribe(
       resp => {
         this.user = resp
+        this.typeAccount = this.user.typeAccount.name
+        this.statusUser = this.user.status.name
         console.log(resp)
 
         this.storeService.getStoreByInternalref(this.user.idStore).subscribe(
@@ -84,7 +91,9 @@ export class DetailsUserComponent implements OnInit {
   }
 
   enableDesable(){
-    this.userService.enableDesable(this.user.userId, this.user.status.id).subscribe(
+    console.log(this.user.status.id)
+    console.log(this.user.internalReference)
+    this.userService.enableDesable(this.user.internalReference, this.user.status.id).subscribe(
       resp => {
         console.log('new user', resp)
         this.getUser()
@@ -112,6 +121,18 @@ export class DetailsUserComponent implements OnInit {
         this.errorMessage = error.error.message;
       }
     )
+  }
+
+  getStatusAccount(status: string): string {
+    return this.statusAccountService.allStatus(status)
+  }
+
+  getStatus(status: string): string {
+    return this.statusUserService.allStatus(status)
+  }
+
+  getRole(status: string): string {
+    return this.roleUserService.allRole(status)
   }
 
 }

@@ -6,28 +6,41 @@ import {NotifsService} from "../../../_services/notifications/notifs.service";
 import Swal from "sweetalert2";
 import {StationService} from "../../../_services/stations/station.service";
 import {Station} from "../../../_interfaces/station";
+import {StatusService} from "../../../_services/status/status.service";
+import {UsersService} from "../../../_services/users/users.service";
+import {IUser} from "../../../_interfaces/user";
+import {ISignup} from "../../../_interfaces/signup";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-index-station',
   templateUrl: './index-station.component.html',
-  styleUrls: ['./index-station.component.css']
+  styleUrls: ['./index-station.component.scss']
 })
 export class IndexStationComponent implements OnInit {
 
   stations: Station[] = [];
+  users: ISignup[] = [];
   station: Station = new Station();
   @ViewChild('mymodal', { static: false }) viewMe?: ElementRef<HTMLElement>;
   stationForm: FormGroup ;
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   modalTitle = 'Enregistrer une nouvelle station'
+  page: number = 1;
+  totalPages: number;
+  totalElements: number;
+  size: number = 10;
   roleUser = localStorage.getItem('userAccount').toString()
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private stationService: StationService, private notifService: NotifsService) {
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private stationService: StationService,
+              private notifService: NotifsService, private statusService: StatusService, private router: Router,
+              private userService: UsersService) {
     this.formStation();
   }
 
   ngOnInit(): void {
     this.getStations();
+    this.getUsers();
   }
 
   //formulaire de création
@@ -36,17 +49,31 @@ export class IndexStationComponent implements OnInit {
       localization: ['', [Validators.required, Validators.minLength(3)]],
       designation: ['', [Validators.required, Validators.minLength(3)]],
       pinCode: ['', [Validators.required, Validators.pattern('^[0-9 ]*$')]],
-      balance: ['', [Validators.required, Validators.pattern('^[0-9 ]*$')]],
+      managerStation: ['', [Validators.required]],
     });
   }
 
   //récupération de la liste des stations
   getStations(){
-    this.stationService.getStations().subscribe(
+    this.stationService.getAllStationWithPagination(this.page-1, this.size).subscribe(
       resp => {
         console.log(resp)
         this.stations = resp.content
+        this.size = resp.size
+        this.totalPages = resp.totalPages
+        this.totalElements = resp.totalElements
         this.notifService.onSuccess('chargement des stations')
+      },
+    )
+  }
+
+  //récupération de la liste des stations
+  getUsers(){
+    this.userService.getAllUsersWithPagination(this.page-1, 100).subscribe(
+      resp => {
+        console.log(resp)
+        this.users = resp.content
+        this.users = this.users.filter(user => user.typeAccount.name === 'MANAGER_STATION')
       },
     )
   }
@@ -54,8 +81,13 @@ export class IndexStationComponent implements OnInit {
   //save store house
   saveStation(){
     this.isLoading.next(true);
+    this.station.balance = 0;
+    this.station.localization = this.stationForm.controls['localization'].value;
+    this.station.designation = this.stationForm.controls['designation'].value;
+    this.station.pinCode = this.stationForm.controls['pinCode'].value;
+    this.station.managerStagion = this.stationForm.controls['managerStation'].value;
 
-    this.stationService.createStation(this.stationForm.value).subscribe(
+    this.stationService.createStation(this.station).subscribe(
       resp => {
         this.stations.push(resp)
         this.isLoading.next(false);
@@ -72,49 +104,13 @@ export class IndexStationComponent implements OnInit {
   annuler() {
     this.formStation();
     this.station = new Station()
+    this.modalTitle = 'Enregistrer une nouvelle station'
     this.modalService.dismissAll()
   }
   //open modal
   open(content: any){
     const modal = true;
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
-  }
-
-  deleteStation(station: Station, index: number) {
-    Swal.fire({
-      title: 'Supprimer station',
-      html: "Voulez-vous vraiment supprimer "+ station.designation.toString().bold() + " de la liste de vos stations ?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#00ace6',
-      cancelButtonColor: '#f65656',
-      confirmButtonText: 'OUI',
-      cancelButtonText: 'NON',
-      allowOutsideClick: true,
-      focusConfirm: false,
-      focusCancel: true,
-      focusDeny: true,
-      backdrop: `rgba(0, 0, 0, 0.4)`,
-      showLoaderOnConfirm: true
-    }).then((result) => {
-      if (result.value) {
-        this.isLoading.next(true)
-        this.stationService.deleteStation(station.internalReference).subscribe(
-          resp => {
-            this.stations.splice(index, 1)
-            this.isLoading.next(false)
-            this.notifService.onSuccess(`station ${station.designation.toString().bold()} supprimée avec succès !`)
-          },error => {
-            this.isLoading.next(false);
-            // if (error.error.message.includes('JWT expired')){
-            //
-            // }else {
-            //   this.notifService.onError(error.error.message, '')
-            // }
-          }
-        )
-      }
-    })
   }
 
   updateStationModal(mymodal: TemplateRef<any>, station: Station) {
@@ -132,6 +128,7 @@ export class IndexStationComponent implements OnInit {
         // on recherche l'index du client dont on veut faire la modification dans liste des clients
         const index = this.stations.findIndex(station => station.internalReference === resp.internalReference);
         this.stations[ index ] = resp;
+        this.modalTitle = 'Enregistrer une nouvelle station'
         this.notifService.onSuccess("station modifiée avec succès!")
         this.annuler()
       },
@@ -141,4 +138,16 @@ export class IndexStationComponent implements OnInit {
     )
   }
 
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
+  }
+
+  pageChange(event: number){
+    this.page = event
+    this.getStations()
+  }
+
+  showDetails(station: Station) {
+    this.router.navigate(['/stations/details', station.internalReference])
+  }
 }

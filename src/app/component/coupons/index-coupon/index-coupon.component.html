@@ -83,10 +83,10 @@
                 <th>Statut</th>
                 <th>Date création</th>
                 <th>Date modification</th>
-                <th>Actions</th>
+<!--                <th>Actions</th>-->
               </tr>
               </thead>
-              <tbody *ngFor="let coupon of coupons | paginate: { itemsPerPage: size, currentPage: page, totalItems: totalElements }; let i = index">
+              <tbody *ngFor="let coupon of coupons | paginate: { id: 'coupon',itemsPerPage: size, currentPage: page, totalItems: totalElements }; let i = index">
 
               <tr>
                 <td>{{i + 1}}</td>
@@ -97,17 +97,17 @@
                 <td>{{coupon.idTicket}}</td>
                 <td>{{coupon.idNotebook}}</td>
                 <td>{{coupon.idStation}}</td>
-                <td>{{coupon.status.name}}</td>
+                <td>{{getStatuts(coupon.status.name)}}</td>
                 <td>{{coupon.createdAt}}</td>
                 <td>{{coupon.updateAt}}</td>
-                <td>
-                  <a style="cursor: pointer"  class="delete text-danger" (click)="deleteCoupon(coupon, i)" >
-                    <i class="pe-7s-trash" title="supprimer"></i>
-                  </a>&nbsp;
-                  <a style="cursor: pointer"  class="text-primary" >
-                    <i class="pe-7s-eyedropper" title="modifier"></i>
-                  </a>
-                </td>
+<!--                <td>-->
+<!--                  <a style="cursor: pointer"  class="delete text-danger" (click)="deleteCoupon(coupon, i)" >-->
+<!--                    <i class="pe-7s-trash" title="supprimer"></i>-->
+<!--                  </a>&nbsp;-->
+<!--                  <a style="cursor: pointer"  class="text-primary" >-->
+<!--                    <i class="pe-7s-eyedropper" title="modifier"></i>-->
+<!--                  </a>-->
+<!--                </td>-->
               </tr>
             </table>
             <div class="text-center">
@@ -125,7 +125,11 @@
         <div class="btn-actions-pane-right">
           <div role="group" class="btn-group-sm btn-group">
             <!--              <pagination-controls id="client" (pageChange)="pageChange($event)" ></pagination-controls>-->
-            <pagination-controls (pageChange)="pageChange($event)"></pagination-controls>
+            <pagination-controls
+              id="coupon"
+              previousLabel="Précédent"
+              nextLabel="Suivant"
+              (pageChange)="pageChange($event)"></pagination-controls>
           </div>
         </div>
       </div>

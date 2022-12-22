@@ -36,11 +36,12 @@
             <div class="progress-sub-label">
               <div class="sub-label-left">Type de coupon</div>
               <div class="sub-label-right text-success font-weight-bold">
-                <span *ngFor="let voucher of vouchers">{{voucher.internalReference == unit.idTypeVoucher ? voucher.amount : ''}}</span></div>
+                <span >{{unit.amount}}</span></div>
+<!--                <span *ngFor="let voucher of vouchers">{{voucher.internalReference == unit.idTypeVoucher ? voucher.amount : ''}}</span></div>-->
             </div>
             <div class="progress-sub-label">
               <div class="sub-label-left">Quantité de carnet</div>
-              <div class="sub-label-right text-alternate">{{unit.quantityNotebook}}</div>
+              <div class="sub-label-right text-alternate">{{unit.quantityNoteBook}}</div>
             </div>
           </div>
         </div>
@@ -89,7 +90,7 @@
             <!--              <td class="text-left">12</td>-->
             <!--              <td class="text-left" > type 1 </td>-->
             <td class="text-left" >{{storeHouse.type}}</td>
-            <td class="text-left" > <span class="text-focus">{{storeHouse.status.name}}</span> </td>
+            <td class="text-left" > <span class="text-focus">{{getStatuts(storeHouse.status.name)}}</span> </td>
           </tr>
 
           </tbody>

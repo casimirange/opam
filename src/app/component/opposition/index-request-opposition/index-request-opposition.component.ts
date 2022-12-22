@@ -17,6 +17,8 @@ import {RequestOpposition} from "../../../_interfaces/requestOpposition";
 import {UsersService} from "../../../_services/users/users.service";
 import {IUser} from "../../../_interfaces/user";
 import {OppositionService} from "../../../_services/opposition/opposition.service";
+import {StatusOrderService} from "../../../_services/status/status-order.service";
+import {StatusService} from "../../../_services/status/status.service";
 
 @Component({
   selector: 'app-index-request-opposition',
@@ -33,17 +35,21 @@ export class IndexRequestOppositionComponent implements OnInit {
   requestOpposition: RequestOpposition = new RequestOpposition();
   requestOppositions: RequestOpposition[] = [];
   unit: Unite = new Unite();
-  typeVouchers: TypeVoucher[]
   clients: Client[]
-  voucher: number[] = []
+  vouchers: number[] = []
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   modalTitle: string = 'Enregistrer nouvelle requête';
   roleUser = localStorage.getItem('userAccount').toString()
+  page: number = 1;
+  totalPages: number;
+  totalElements: number;
+  size: number = 10;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService, private router: Router,
               private notifService: NotifsService, private unitService: UnitsService, private voucherService: VoucherService,
-              private clientService: ClientService, private userService: UsersService, private requestService: OppositionService) {
-    this.formStore();
+              private clientService: ClientService, private userService: UsersService, private requestService: OppositionService,
+              private statusService: StatusService) {
+    this.formRequest();
   }
 
   ngOnInit(): void {
@@ -53,14 +59,13 @@ export class IndexRequestOppositionComponent implements OnInit {
   }
 
   //initialisation du formulaire de création type de bon
-  formStore(){
+  formRequest(){
     this.requestForm = this.fb.group({
       idClient: ['', [Validators.required]],
       reason: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(3)]],
       idManagerCoupon: ['', [Validators.required,]],
       serialNumber: ['', ],
-      chanel: ['', ],
     });
   }
 
@@ -76,7 +81,7 @@ export class IndexRequestOppositionComponent implements OnInit {
     this.requestOpposition.idServiceClient = parseInt(localStorage.getItem('uid'))
     this.requestOpposition.idClient = this.clients.find(client => client.completeName === this.requestForm.controls['idClient'].value).internalReference
     this.requestOpposition.idManagerCoupon = parseInt(this.requestForm.controls['idManagerCoupon'].value)
-    this.requestOpposition.serialCoupons = this.voucher
+    this.requestOpposition.serialCoupons = this.vouchers
 
     this.isLoading.next(true);
     console.log('demande d\'opposition', this.requestOpposition)
@@ -96,10 +101,13 @@ export class IndexRequestOppositionComponent implements OnInit {
   }
 
   getRequests(){
-    this.requestService.getOppositionRequest().subscribe(
+    this.requestService.getOppositionRequest(this.page -1, this.size).subscribe(
       resp => {
         this.requestOppositions = resp.content
-        console.log('request', resp)
+        // this.size = resp.size
+        this.totalPages = resp.totalPages
+        this.totalElements = resp.totalElements
+        this.notifService.onSuccess('Liste des demandes d\'opposition')
       },
     )
   }
@@ -122,61 +130,9 @@ export class IndexRequestOppositionComponent implements OnInit {
   }
 
   annuler() {
-    this.formStore();
+    this.formRequest();
     this.store = new Store()
     this.modalService.dismissAll()
-  }
-
-  delete(store: RequestOpposition, index:number) {
-    // this.isLoading.next(true);
-    // this.storeService.deleteStore(store.internalReference).subscribe(
-    //   resp => {
-    //     // console.log(resp)
-    //     this.stores.splice(index, 1)
-    //     this.isLoading.next(false);
-    //     this.notifService.onSuccess("magasin de "+store.internalReference+" supprimé")
-    //   },
-    //   error => {
-    //     // this.notifServices.onError(error.error.message,"échec de suppression")
-    //     this.isLoading.next(false);
-    //   }
-    // )
-  }
-
-  valid(internalRef: number, index:number) {
-    this.isLoading.next(true);
-    this.requestService.validOppositionRequest(internalRef).subscribe(
-      resp => {
-        // console.log(resp)
-        const index = this.requestOppositions.findIndex(req => req.internalReference === resp.internalReference);
-        this.requestOppositions[ index ] = resp;
-        this.isLoading.next(false);
-        this.notifService.onSuccess("requête d'opposition validée")
-      },
-    )
-  }
-
-  deleteStore(store: RequestOpposition, index: number) {
-    Swal.fire({
-      title: 'Supprimer Magasin',
-      html: "Voulez-vous vraiment supprimer la requête "+ store.internalReference.toString().bold() + " ?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#00ace6',
-      cancelButtonColor: '#f65656',
-      confirmButtonText: 'OUI',
-      cancelButtonText: 'NON',
-      allowOutsideClick: true,
-      focusConfirm: false,
-      focusCancel: true,
-      focusDeny: true,
-      backdrop: `rgba(0, 0, 0, 0.4)`,
-      showLoaderOnConfirm: true
-    }).then((result) => {
-      if (result.value) {
-        this.delete(store, index)
-      }
-    })
   }
 
   updateStoreModal(mymodal: TemplateRef<any>, store: RequestOpposition) {
@@ -204,7 +160,6 @@ export class IndexRequestOppositionComponent implements OnInit {
 
   // showDetails(store: Store) {
   //   this.router.navigate(['/entrepots/details', store.internalReference])
-  //   // [routerLink]=""
   // }
 
   findClients(event: any): void{
@@ -220,12 +175,29 @@ export class IndexRequestOppositionComponent implements OnInit {
   }
 
   addCoupon() {
-    this.voucher.push(this.requestForm.controls['serialNumber'].value)
+    this.vouchers.push(this.requestForm.controls['serialNumber'].value)
     this.requestForm.controls['serialNumber'].reset()
-    console.log(this.voucher)
+    console.log(this.vouchers)
+  }
+
+  removeCoupon(coupon: number) {
+    console.log(this.vouchers.indexOf(coupon))
+    const prodIndex = this.vouchers.indexOf(coupon)
+    this.vouchers.splice(prodIndex, 1)
+    console.log('prod', coupon)
+    console.log('produit', this.vouchers)
   }
 
   requestDetails(request: RequestOpposition) {
     this.router.navigate(['/request-opposition/details', request.internalReference])
+  }
+
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
+  }
+
+  pageChange(event: number){
+    this.page = event
+    this.getRequests()
   }
 }

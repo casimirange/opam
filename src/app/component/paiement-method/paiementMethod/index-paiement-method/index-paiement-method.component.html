@@ -11,7 +11,8 @@
       </div>
     </div>
     <div class="page-title-actions">
-      <button (click)="open(mymodal)" type="button" data-toggle="tooltip" title="ajouter une méthode de paiement" data-placement="bottom" class="btn-shadow mr-3 btn btn-dark">
+      <button (click)="open(mymodal)" type="button" data-toggle="tooltip" title="ajouter une méthode de paiement"
+              data-placement="bottom" class="btn-shadow mr-3 btn btn-primary">
            <span class="btn-icon-wrapper pr-2 opacity-7">
                                             <i class="fa fa-plus fa-w-20"></i>
                                         </span>
@@ -46,9 +47,9 @@
           <td> {{payment.createdAt | date: 'dd/MM/yyyy HH:mm'}}</td>
           <td> {{payment.updateAt | date: 'dd/MM/yyyy HH:mm'}}</td>
           <td>
-            <a style="cursor: pointer"  class="delete text-danger" (click)="deletePayment(payment, i)" >
-              <i class="pe-7s-trash" title="supprimer"></i>
-            </a>&nbsp;
+<!--            <a style="cursor: pointer"  class="delete text-danger" (click)="deletePayment(payment, i)" >-->
+<!--              <i class="pe-7s-trash" title="supprimer"></i>-->
+<!--            </a>&nbsp;-->
             <a style="cursor: pointer"  class="text-primary" (click)="updatePaymentModal(mymodal, payment)">
               <i class="pe-7s-eyedropper" title="modifier"></i>
             </a>

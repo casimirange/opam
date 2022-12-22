@@ -6,8 +6,9 @@ export class Stock {
   internalReference?: number;
   idStore1?: number;
   idStore2?: number;
-  idStoreHouseStockage1?: number;
+  idStoreHouseStockage: number;
   idStoreHouseStockage2?: number;
+  listCartons: number[];
   idStoreHouse1?: number;
   idStoreHouse2?: number;
   idStoreKeeper?: number;

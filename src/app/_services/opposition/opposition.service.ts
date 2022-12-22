@@ -24,7 +24,7 @@ export class OppositionService {
     return this.http.get<any>(environment.requestOpposition+`/${internalRef}` )
   }
 
-  getOppositionRequest(): Observable<any>{
-    return this.http.get<any>(environment.requestOpposition,)
+  getOppositionRequest(page: number, size: number): Observable<any>{
+    return this.http.get<any>(environment.requestOpposition+`?page=${page}&size=${size}`,)
   }
 }

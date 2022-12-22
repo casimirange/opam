@@ -11,7 +11,7 @@ export class TicketService {
   constructor(private http: HttpClient) { }
 
   //liste des tickets par demande d'opposition
-  getTicketByRequestOpposition(internalRef: number): Observable<any>{
-    return this.http.get<any>(environment.ticket + `/requestopposition/${internalRef}`)
+  getTicketByRequestOpposition(internalRef: number, page: number, size: number): Observable<any>{
+    return this.http.get<any>(environment.ticket + `/requestopposition/${internalRef}?page=${page}&size=${size}`)
   }
 }

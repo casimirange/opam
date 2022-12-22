@@ -38,6 +38,7 @@ export class TokenService {
     localStorage.setItem('uid', user.internalReference.toString())
     localStorage.setItem('email', user.email)
     localStorage.setItem('userAccount', user.typeAccount.name)
+    localStorage.setItem('store', user.idStore.toString())
   }
 
   userInactivity(){

@@ -8,9 +8,11 @@ export class Piece{
   // idStoreKeeper: number;
   // serialNumber: string;
   idTypeVoucher: number;
+  typeVoucher: number;
   idStoreHouse: number;
-  quantityNotebook: number;
+  quantityNoteBook: number;
   quantityCarton: number;
+  amount: number;
   createdAt?: Date;
   updatedAt?: Date;
   status?: Status;

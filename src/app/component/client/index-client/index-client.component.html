@@ -60,7 +60,7 @@
                 </tr>
                 </thead>
                 <tbody *ngFor="let client of clients | clientNameFilter: name | clientRefFilter: internalRef | clientCompagnyFilter: compagny
-                 | clientDateFilter: date | paginate: { itemsPerPage: size, currentPage: page, totalItems: totalElements } ; let i = index">
+                 | clientDateFilter: date | paginate: { id: 'client', itemsPerPage: size, currentPage: page, totalItems: totalElements } ; let i = index">
 
                 <tr (dblclick)="detailsClient(client)">
                   <td>{{i + 1}}</td>
@@ -71,12 +71,13 @@
                   <td>{{client.phone}}</td>
                   <td>{{client.email}}</td>
                   <td>{{client.gulfcamAccountNumber}}</td>
-                  <td>{{client.typeClient.name }}</td>
+                  <td>{{client.typeClient.name === 'PARTICULAR' ? 'PARTICULIER' : client.typeClient.name }}</td>
                   <td>{{client.rccm}}</td>
                   <td>
-                    <a style="cursor: pointer"  class="delete text-danger" (click)="deleteClient(client, i)" >
-                      <i class="pe-7s-trash" title="supprimer"></i>
-                    </a>&nbsp;
+<!--                    pour supprimer un client-->
+<!--                    <a style="cursor: pointer"  class="delete text-danger" (click)="deleteClient(client, i)" >-->
+<!--                      <i class="pe-7s-trash" title="supprimer"></i>-->
+<!--                    </a>&nbsp;-->
                     <a style="cursor: pointer"  class="text-primary" (click)="updateClientModal(mymodal, client)">
                       <i class="pe-7s-eyedropper" title="modifier"></i>
                     </a>
@@ -101,7 +102,11 @@
           <div class="btn-actions-pane-right">
             <div role="group" class="btn-group-sm btn-group">
 <!--              <pagination-controls id="client" (pageChange)="pageChange($event)" ></pagination-controls>-->
-              <pagination-controls (pageChange)="pageChange($event)"></pagination-controls>
+              <pagination-controls
+                id="client"
+                previousLabel="Précédent"
+                nextLabel="Suivant"
+                (pageChange)="pageChange($event)"></pagination-controls>
             </div>
           </div>
         </div>
@@ -112,7 +117,7 @@
   <ng-template #mymodal let-modal >
   <div class="modal-header">
     <h6 class="modal-title timeline-title" id="modal-basic-title"><b>{{modalTitle}}</b> </h6>
-    <div class="close vertical-timeline-element-content bounce-in" (click)=" modal.close('save click')" >
+    <div class="close vertical-timeline-element-content bounce-in" (click)=" annuler()" >
       <p><i class="fa fa-times"></i></p>
     </div>
   </div>
