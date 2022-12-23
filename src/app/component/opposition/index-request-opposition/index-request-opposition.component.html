@@ -99,7 +99,7 @@
 <ng-template #mymodal let-modal>
   <div class="modal-header">
     <h6 class="modal-title timeline-title" id="modal-basic-title"><b>{{modalTitle}}</b></h6>
-    <div class="close vertical-timeline-element-content bounce-in" (click)=" modal.close('save click')">
+    <div class="close vertical-timeline-element-content bounce-in" (click)=" annuler()">
       <p><i class="fa fa-times"></i></p>
     </div>
   </div>
@@ -118,17 +118,17 @@
                   <option *ngFor="let client of clients" [value]="client.completeName"></option>
                 </datalist>
               </div>
-<!--              <div-->
-<!--                *ngIf="requestForm.controls['localization'].invalid && (requestForm.controls['localization'].dirty || requestForm.controls['localization'].touched)"-->
-<!--                class="mb-2" style="color: #f65656; font-style: italic;">-->
+              <div
+                *ngIf="requestForm.controls['idClient'].invalid && (requestForm.controls['idClient'].dirty || requestForm.controls['idClient'].touched)"
+                class="mb-2" style="color: #f65656; font-style: italic;">
 
-<!--                <div *ngIf="requestForm.controls['localization'].errors?.['required']" class="ml-3">-->
-<!--                  la localisation est obligatoire.-->
-<!--                </div>-->
+                <div *ngIf="requestForm.controls['idClient'].errors?.['required']" class="ml-3">
+                  veuillez sélectionner un client.
+                </div>
 <!--                <div *ngIf="requestForm.controls['localization'].errors?.['minLength']" class="ml-3">-->
 <!--                  entrez une localisation valide-->
 <!--                </div>-->
-<!--              </div>-->
+              </div>
             </div>
             <div class="col-md-12">
               <div class="position-relative form-group">
@@ -138,17 +138,17 @@
                   <option *ngFor="let user of users" value="{{user.internalReference}}">{{user.firstName}}</option>
                 </select>
               </div>
-<!--              <div-->
-<!--                *ngIf="requestForm.controls['manager'].invalid && (requestForm.controls['manager'].dirty || requestForm.controls['manager'].touched)"-->
-<!--                class="mb-2" style="color: #f65656; font-style: italic;">-->
+              <div
+                *ngIf="requestForm.controls['idManagerCoupon'].invalid && (requestForm.controls['idManagerCoupon'].dirty || requestForm.controls['idManagerCoupon'].touched)"
+                class="mb-2" style="color: #f65656; font-style: italic;">
 
-<!--                <div *ngIf="requestForm.controls['manager'].errors?.['required']" class="ml-3">-->
-<!--                  la desccription est obligatoire.-->
-<!--                </div>-->
+                <div *ngIf="requestForm.controls['idManagerCoupon'].errors?.['required']" class="ml-3">
+                  veuillez sélectionner un gestionnaire
+                </div>
 <!--                <div *ngIf="requestForm.controls['manager'].errors?.['minLength']" class="ml-3">-->
 <!--                  entrez une description valide-->
 <!--                </div>-->
-<!--              </div>-->
+              </div>
             </div>
             <div class="col-md-12">
               <div class="position-relative form-group">
@@ -164,7 +164,7 @@
                   la desccription est obligatoire.
                 </div>
                 <div *ngIf="requestForm.controls['description'].errors?.['minLength']" class="ml-3">
-                  entrez une description valide
+                  la desccription doit avoir au moins 3 caractères
                 </div>
               </div>
             </div>
@@ -179,20 +179,31 @@
                 class="mb-2" style="color: #f65656; font-style: italic;">
 
                 <div *ngIf="requestForm.controls['reason'].errors?.['required']" class="ml-3">
-                  la reason est obligatoire.
+                  la raison est obligatoire.
                 </div>
                 <div *ngIf="requestForm.controls['reason'].errors?.['minLength']" class="ml-3">
-                  entrez une reason valide
+                  la raison doit avoir au moins 3 caractères
                 </div>
               </div>
             </div>
 
             <div class="row col-md-12">
-              <div class="col-md-5">
+              <div class="col-md-10">
                 <div class="position-relative form-group">
-                  <label for="qte" class="">Coupon *</label>
-                  <input name="email" id="qte" placeholder="entrer une quantité" type="text" class="form-control"
+                  <label for="qte" class="">Coupon</label>
+                  <input name="email" id="qte" placeholder="Numéro de série du coupon" type="text" class="form-control"
                          formControlName="serialNumber">
+                  <div
+                    *ngIf="requestForm.controls['serialNumber'].invalid && (requestForm.controls['serialNumber'].dirty || requestForm.controls['serialNumber'].touched)"
+                    class="mb-2" style="color: #f65656; font-style: italic;">
+
+                    <div *ngIf="requestForm.controls['serialNumber'].errors?.['required']" class="ml-3">
+                      le coupon est obligatoire.
+                    </div>
+                    <div *ngIf="requestForm.controls['serialNumber'].errors?.['pattern']" class="ml-3">
+                      le numéro de série doit avoir 7 chiffres (Ex: 0000001)
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="col-md-2">
@@ -204,8 +215,8 @@
                 </div>
               </div>
             </div>
-            <div class="row col-md-12">
-              <h5 class="card-title">Liste des carnets</h5>
+            <div class="col-md-12 position-relative form-group">
+              <h5 class="card-title">Liste des coupons</h5>
               <table class="mb-0 table table-sm">
                 <thead>
                 <tr>
@@ -221,11 +232,11 @@
                   <td><i class="pe-7s-trash text-danger" (click)="removeCoupon(prod)"></i></td>
                 </tr>
                 </tbody>
-                <tfoot>
-                <div class="float-right">Total: {{vouchers.length}} coupon(s)</div>
-                </tfoot>
               </table>
-              <p *ngIf="vouchers.length == 0" class="text-focus text-center">Ajouter des coupons à la demande</p>
+              <div class="text-center">
+                <p *ngIf="vouchers.length === 0" style="color: grey; font-size: 0.9rem;" class="mx-auto" >Ajouter des coupons à la demande</p>
+              </div>
+              <div class="card-subtitle float-right">Total: {{vouchers.length}} coupon(s)</div>
             </div>
 
           </div>
@@ -233,8 +244,8 @@
           <button class="mt-1 btn btn-secondary float-right ml-3" (click)="annuler()"><i class="pe-7s-back"></i>Annuler
           </button>
           <button class="mt-1 btn btn-primary float-right"
-                  [disabled]="(vouchers.length == 0 && requestForm.controls['idClient'].invalid && requestForm.controls['idManagerCoupon'].invalid
-                  && requestForm.controls['description'].invalid && requestForm.controls['reason'].invalid)  || (isLoading$ | async)"
+                  [disabled]="(vouchers.length == 0 || requestForm.controls['idClient'].invalid || requestForm.controls['idManagerCoupon'].invalid
+                  || requestForm.controls['description'].invalid || requestForm.controls['reason'].invalid)  || (isLoading$ | async)"
                   (click)="createRequest()">
             <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
             <span *ngIf="isLoading$ | async">Enregistrement ...</span>

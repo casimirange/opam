@@ -19,17 +19,18 @@ import {IUser} from "../../../_interfaces/user";
 import {OppositionService} from "../../../_services/opposition/opposition.service";
 import {StatusOrderService} from "../../../_services/status/status-order.service";
 import {StatusService} from "../../../_services/status/status.service";
+import {ISignup} from "../../../_interfaces/signup";
 
 @Component({
   selector: 'app-index-request-opposition',
   templateUrl: './index-request-opposition.component.html',
-  styleUrls: ['./index-request-opposition.component.css']
+  styleUrls: ['./index-request-opposition.component.scss']
 })
 export class IndexRequestOppositionComponent implements OnInit {
 
   requestForm: FormGroup;
   stores: Store[] = [];
-  users: IUser[] = [];
+  users: ISignup[] = [];
   store: Store = new Store ();
   canaux = ['Appel', 'Courier papier', 'Email', 'Sur site']
   requestOpposition: RequestOpposition = new RequestOpposition();
@@ -65,7 +66,7 @@ export class IndexRequestOppositionComponent implements OnInit {
       reason: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(3)]],
       idManagerCoupon: ['', [Validators.required,]],
-      serialNumber: ['', ],
+      serialNumber: ['', [Validators.required, Validators.pattern('^[0-9]{7}'), Validators.minLength(7), Validators.maxLength(7)]],
     });
   }
 
@@ -125,6 +126,7 @@ export class IndexRequestOppositionComponent implements OnInit {
     this.userService.getUsers().subscribe(
       resp => {
         this.users = resp.content
+        this.users = this.users.filter(user => user.typeAccount.name === 'MANAGER_COUPON')
       },
     )
   }
@@ -133,6 +135,7 @@ export class IndexRequestOppositionComponent implements OnInit {
     this.formRequest();
     this.store = new Store()
     this.modalService.dismissAll()
+    this.vouchers = []
   }
 
   updateStoreModal(mymodal: TemplateRef<any>, store: RequestOpposition) {

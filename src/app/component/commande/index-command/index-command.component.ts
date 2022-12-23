@@ -96,8 +96,8 @@ export class IndexCommandComponent implements OnInit {
       quantity: ['', [Validators.required, Validators.pattern('^[0-9 ]*$')]],
       voucherType: ['', [Validators.required]],
       delais: ['', [Validators.required]],
-      description: ['', [Validators.required]],
-      refCli: ['', [Validators.required]],
+      description: ['', [Validators.required, Validators.minLength(5)]],
+      refCli: ['', [Validators.required, Validators.minLength(3)]],
     });
   }
 

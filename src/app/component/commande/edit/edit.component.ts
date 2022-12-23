@@ -83,11 +83,11 @@ export class EditComponent implements OnInit {
 
   formOrder(){
     this.editForm = this.fb.group({
-      method: [''],
-      peimentRef: [''],
-      file: [''],
-      fileBordereau: [''],
-      reason: [''],
+      method: ['', [Validators.required]],
+      peimentRef: ['', [Validators.required, Validators.minLength(3)]],
+      file: ['', [Validators.required]],
+      fileBordereau: ['', [Validators.required]],
+      reason: ['', [Validators.required]],
     });
   }
 
@@ -143,6 +143,7 @@ export class EditComponent implements OnInit {
   }
 
   acceptOrder(){
+    this.isLoading.next(true);
     this.order.idFund = parseInt(localStorage.getItem('uid'))
     this.order.idPaymentMethod = this.editForm.controls['method'].value
     this.order.paymentReference = this.editForm.controls['peimentRef'].value
@@ -153,14 +154,17 @@ export class EditComponent implements OnInit {
     this.orderService.acceptOrder(this.order.internalReference, this.order.idFund, this.order.idPaymentMethod, this.order.paymentReference,
       docType, this.currentFileUpload).subscribe(
       resp => {
+        this.isLoading.next(false);
         this.notifsService.onSuccess('Commande Acceptée')
         this.refreshOrder()
+        this.editForm.controls['file'].reset()
         this.formOrder()
       }
     )
   }
 
   endOrder(){
+    this.isLoading.next(true);
     this.order.idManagerCoupon = parseInt(localStorage.getItem('uid'))
     const docType = 'pdf'
     const file : File = this.editForm.controls['fileBordereau'].value
@@ -168,18 +172,21 @@ export class EditComponent implements OnInit {
 
     this.orderService.validOrder(this.order.internalReference, this.order.idManagerCoupon, this.currentFileUpload).subscribe(
       resp => {
+        this.isLoading.next(false);
         this.notifsService.onSuccess('Commande Terminée')
         this.formOrder()
         this.refreshOrder()
+        this.editForm.controls['fileBordereau'].reset()
       }
     )
   }
 
   payOrder(){
     this.order.idManagerCoupon = parseInt(localStorage.getItem('uid'))
-
+    this.isLoading.next(true);
     this.orderService.payOrder(this.order.internalReference, this.order.idManagerCoupon).subscribe(
       resp => {
+        this.isLoading.next(false);
         this.refreshOrder()
         this.formOrder()
         this.notifsService.onSuccess('Commande Payée')
@@ -190,18 +197,32 @@ export class EditComponent implements OnInit {
 
   generateBoredereau(){
     if (this.statut == "PAID"){
+      this.isLoading.next(true);
       this.orderService.deliveryOrder(this.order.internalReference, this.order.idManagerCoupon).subscribe(
         respProd => {
-          console.log('delivery', respProd)
-          const file = new Blob([respProd], { type: 'application/pdf' });
-          const fileURL = URL.createObjectURL(file);
-          window.open(fileURL);
+          // console.log('delivery', respProd)
+          // const file = new Blob([respProd], { type: 'application/pdf' });
+          // const fileURL = URL.createObjectURL(file);
+          // window.open(fileURL);
+          this.isLoading.next(false);
           this.notifsService.onSuccess('Commande en cours de livraison')
           this.refreshOrder()
           // this.isLoading.next(false);
         },
       )
     }
+  }
+
+  getBoredereau(){
+    const type = 'DELIVERY'
+    this.orderService.getReçu(this.order.internalReference, type).subscribe(
+      respProd => {
+        const file = new Blob([respProd], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        window.open(fileURL);
+        // this.isLoading.next(false);
+      },
+    )
   }
 
   refreshOrder(){
@@ -345,7 +366,7 @@ export class EditComponent implements OnInit {
     //   this.getProforma();
     // }
     switch (select) {
-      case 'bordereau': this.generateBoredereau();
+      case 'bordereau': this.generateBonLivraison();
         break;
       case 'preuve': this.generatePreuve();
         break;
@@ -355,8 +376,8 @@ export class EditComponent implements OnInit {
         break;
       case 'reçu': this.generateReçu();
         break;
-      // case 'bonLivraison': this.generateBonLivraison();
-      //   break;
+      case 'bonLivraison': this.generateBonLivraison();
+        break;
     }
     // if (select == 'bordereau'){
     //

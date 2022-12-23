@@ -42,12 +42,12 @@
             <form [formGroup]="selectPdfForm">
               <select (change)="generatePDF($event)" name="" id="" formControlName="pdf" class="form-control form-control-sm">
                 <option value="" selected disabled hidden>Générer pdf</option>
-                <option *ngIf="statut == 'PAID' " value="bordereau">Bordereau de livraison</option>
+                <option *ngIf="statut == 'PAID' || statut == 'IN_PROCESS_OF_DELIVERY' || statut == 'CLOSED' " value="bordereau">Bordereau de livraison</option>
 <!--                <option *ngIf="statut == 'PAID' " value="bonLivraison">Bon de livraison</option>-->
 <!--                <option  value="facture">Facture</option>-->
                 <option  value="préfacture" >Préfacture/Proforma</option>
 <!--                <option  value="proforma"  ></option>-->
-                <option  value="bonCommand" >Bon de Commande</option>
+                <option *ngIf="statut == 'CLOSED' " value="bonCommand">Preuve de Bon de Livraison</option>
                 <option *ngIf="statut != 'CREATED'" value="preuve">Preuve de paiement</option>
                 <option *ngIf="statut != 'CREATED'" value="reçu">Reçu de paiement</option>
 
@@ -57,13 +57,32 @@
           <div class="float-right">
             <button class="btn btn-outline-danger btn-lg mr-3" *ngIf="statut != 'ORDER_CANCEL' && statut != 'CLOSED' " (click)="deny(order)">Annuler</button>
             <button class="btn btn-outline-primary btn-lg mr-3" *ngIf="statut == 'CREATED' " (click)="acceptOrder()"
-                    [disabled]="editForm.controls['file'].invalid"
-                    [disabled]="editForm.controls['peimentRef'].invalid"
-                    [disabled]="editForm.controls['method'].invalid"
-            >Accepter paiement</button>
-            <button class="btn btn-outline-primary btn-lg mr-3" *ngIf="statut == 'ACCEPTED' " (click)="payOrder()">Confirmer paiement</button>
-            <button class="btn btn-outline-primary btn-lg mr-3" *ngIf="statut == 'PAID'" (click)="generateBoredereau()">Générer le Bordereau</button>
-            <button class="btn btn-outline-primary btn-lg mr-3" *ngIf="statut == 'IN_PROCESS_OF_DELIVERY'" (click)="endOrder()">Valider BL</button>
+                    [disabled]="(editForm.controls['file'].invalid || editForm.controls['peimentRef'].invalid
+                    || editForm.controls['method'].invalid)  || (isLoading$ | async)"
+            >
+              <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
+              <span *ngIf="isLoading$ | async">Enregistrement ...</span>
+              <span *ngIf="!(isLoading$ | async)">Accepter paiement</span>
+              </button>
+            <button class="btn btn-outline-primary btn-lg mr-3" *ngIf="statut == 'ACCEPTED' " (click)="payOrder()"
+                    [disabled]="(isLoading$ | async)"
+            >
+              <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
+              <span *ngIf="isLoading$ | async">Confirmation ...</span>
+              <span *ngIf="!(isLoading$ | async)">Confirmer paiement</span>
+              </button>
+            <button class="btn btn-outline-primary btn-lg mr-3" *ngIf="statut == 'PAID'" (click)="generateBoredereau()" [disabled]="(isLoading$ | async)">
+              <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
+              <span *ngIf="isLoading$ | async">Déclenchement ...</span>
+              <span *ngIf="!(isLoading$ | async)">Déclencher la livraison</span>
+              </button>
+            <button class="btn btn-outline-primary btn-lg mr-3" *ngIf="statut == 'IN_PROCESS_OF_DELIVERY'"
+                    [disabled]="(editForm.controls['fileBordereau'].invalid)  || (isLoading$ | async)" (click)="endOrder()">
+              <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
+              <span *ngIf="isLoading$ | async">Validation ...</span>
+              <span *ngIf="!(isLoading$ | async)">Valider BL</span>
+
+            </button>
         </div>
         </div>
         <div class="card-body">
@@ -141,15 +160,15 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-4" >
+              <div class="col-md-4" *ngIf="statut == 'ACCEPT' ">
                 <div class="position-relative form-group">
-                  <label for="exampleEmail" class="">Importer pièce justificative</label>
-                  <input name="file" id="exampleFile" type="file" class="form-control-file" formControlName="file" (change)="selectFile($event)"  [disabled]="statut != 'CREATED'">
+                  <label for="exampleEmail" class="" >Importer pièce justificative</label>
+                  <input name="file" id="exampleFile" type="file" class="form-control-file" formControlName="file" (change)="selectFile($event)" >
                 </div>
               </div>
               <div class="col-md-4"  *ngIf="statut == 'IN_PROCESS_OF_DELIVERY' ">
                 <div class="position-relative form-group">
-                  <label for="exampleEmail" class="">Importer bordereau de livraison</label>
+                  <label for="exampleEmail" class="">Importer Bordereau de Livraison</label>
                   <input name="file" id="exampleFile" type="file" class="form-control-file" formControlName="fileBordereau"
                          (change)="selectFile($event)" >
                 </div>
