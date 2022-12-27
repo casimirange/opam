@@ -1,8 +1,8 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Store} from "../../../_interfaces/store";
-import {Unite} from "../../../_interfaces/unite";
-import {TypeVoucher} from "../../../_interfaces/typeVoucher";
+import {Store} from "../../../_model/store";
+import {Unite} from "../../../_model/unite";
+import {TypeVoucher} from "../../../_model/typeVoucher";
 import {BehaviorSubject} from "rxjs";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {StoreService} from "../../../_services/store/store.service";
@@ -10,10 +10,10 @@ import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {UnitsService} from "../../../_services/units/units.service";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
 import Swal from "sweetalert2";
-import {Stock} from "../../../_interfaces/stock";
+import {Stock} from "../../../_model/stock";
 import {MvtStockService} from "../../../_services/stock/mvt-stock.service";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";
-import {StoreHouse} from "../../../_interfaces/storehouse";
+import {StoreHouse} from "../../../_model/storehouse";
 
 @Component({
   selector: 'app-index-mvt-stock',

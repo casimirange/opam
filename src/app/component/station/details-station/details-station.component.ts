@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import {Store} from "../../../_interfaces/store";
-import {Order} from "../../../_interfaces/order";
-import {StoreHouse} from "../../../_interfaces/storehouse";
-import {Unite} from "../../../_interfaces/unite";
-import {TypeVoucher} from "../../../_interfaces/typeVoucher";
+import {Store} from "../../../_model/store";
+import {Order} from "../../../_model/order";
+import {StoreHouse} from "../../../_model/storehouse";
+import {Unite} from "../../../_model/unite";
+import {TypeVoucher} from "../../../_model/typeVoucher";
 import {ClientService} from "../../../_services/clients/client.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {OrderService} from "../../../_services/order/order.service";
@@ -15,12 +15,12 @@ import {Location} from "@angular/common";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
 import {StatusService} from "../../../_services/status/status.service";
 import {Un} from "../../magasin/details-magasin/details-magasin.component";
-import {Station} from "../../../_interfaces/station";
+import {Station} from "../../../_model/station";
 import {StationService} from "../../../_services/stations/station.service";
-import {CreditNote} from "../../../_interfaces/creditNote";
+import {CreditNote} from "../../../_model/creditNote";
 import {CreditNoteService} from "../../../_services/creditNote/credit-note.service";
 import {CouponService} from "../../../_services/coupons/coupon.service";
-import {Coupon} from "../../../_interfaces/coupon";
+import {Coupon} from "../../../_model/coupon";
 
 @Component({
   selector: 'app-details-station',

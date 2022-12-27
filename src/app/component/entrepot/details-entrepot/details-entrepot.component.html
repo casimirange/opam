@@ -88,7 +88,7 @@
             <!--                <th>Actions</th>-->
           </tr>
           </thead>
-          <tbody *ngFor="let carton of cartons | paginate: { id: 'carton', itemsPerPage: size, currentPage: page, totalItems: totalElements }; let i = index">
+          <tbody *ngFor="let carton of cartons | paginate: { id: 'cartonStorehouse', itemsPerPage: size, currentPage: page, totalItems: totalElements }; let i = index">
 
           <tr>
             <td>{{i + 1}}</td>
@@ -102,14 +102,6 @@
             <td>{{getStatuts(carton.status.name)}}</td>
             <td>{{carton.createdAt}}</td>
             <td>{{carton.updateAt}}</td>
-            <!--                <td>-->
-            <!--                  <a style="cursor: pointer"  class="delete text-danger" (click)="deleteCarton(carton, i)" >-->
-            <!--                    <i class="pe-7s-trash" title="supprimer"></i>-->
-            <!--                  </a>&nbsp;-->
-            <!--                  <a style="cursor: pointer"  class="text-primary" (click)="updateCartonModal(mymodal, carton)">-->
-            <!--                    <i class="pe-7s-eyedropper" title="modifier"></i>-->
-            <!--                  </a>-->
-            <!--                </td>-->
           </tr>
         </table>
         <div class="text-center">
@@ -123,7 +115,7 @@
           </div>
           <div class="btn-actions-pane-right">
             <div role="group" class="btn-group-sm btn-group">
-              <pagination-controls id="carton"
+              <pagination-controls id="cartonStorehouse"
                                    previousLabel="Précédent"
                                    nextLabel="Suivant"
                                    (pageChange)="pageChangeCarton($event)"></pagination-controls>
@@ -157,13 +149,13 @@
                 <th>Date modification</th>
               </tr>
               </thead>
-              <tbody *ngFor="let carnet of carnets | paginate: { itemsPerPage: size1, currentPage: page1, totalItems: totalElements1 }; let i = index">
+              <tbody *ngFor="let carnet of carnets | paginate: { id: 'carnetStorehouse', itemsPerPage: size1, currentPage: page1, totalItems: totalElements1 }; let i = index">
 
               <tr>
                 <td>{{i + 1}}</td>
                 <td>{{carnet.internalReference}}</td>
                 <td>{{carnet.serialNumber}}</td>
-                <td >{{carnet.idCarton}}</td>
+                <td>{{carnet.idCarton}}</td>
                 <td>{{getStatuts(carnet.status.name)}}</td>
                 <td>{{carnet.createdAt}}</td>
                 <td>{{carnet.updateAt}}</td>
@@ -184,7 +176,7 @@
         <div class="btn-actions-pane-right">
           <div role="group" class="btn-group-sm btn-group">
             <!--              <pagination-controls id="client" (pageChange)="pageChange($event)" ></pagination-controls>-->
-            <pagination-controls id="carnet"
+            <pagination-controls id="carnetStorehouse"
                                  previousLabel="Précédent"
                                  nextLabel="Suivant"
                                  (pageChange)="pageChangeCarnet($event)"></pagination-controls>

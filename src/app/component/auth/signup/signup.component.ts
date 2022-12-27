@@ -1,19 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ICredentials} from "../../../_interfaces/credentials";
-import {IToken} from "../../../_interfaces/token";
+import {IToken} from "../../../_model/token";
 import {AuthService} from "../../../_services/auth.service";
 import {TokenService} from "../../../_services/token/token.service";
-import {ICredentialsSignup} from "../../../_interfaces/signup";
+import {ICredentialsSignup} from "../../../_model/signup";
 import {BehaviorSubject, Observable, of} from "rxjs";
 import {DataState} from "../../../_enum/data.state.enum";
 import {AppState} from "../../../_interfaces/app-state";
-import {CustomResponseLogin} from "../../../_interfaces/custom-response-login";
 import {catchError, map, startWith} from "rxjs/operators";
-import {CustomResponseSignup} from "../../../_interfaces/custom-response-signup";
 import {Router} from "@angular/router";
 import {StoreService} from "../../../_services/store/store.service";
-import {Store} from "../../../_interfaces/store";
+import {Store} from "../../../_model/store";
 
 @Component({
   selector: 'app-logout',
@@ -31,11 +29,11 @@ export class SignupComponent implements OnInit {
   stores: Store[] = [];
   findStore: Store;
 
-  appState$: Observable<AppState<CustomResponseSignup>> = new Observable<AppState<CustomResponseSignup>>();
+  // appState$: Observable<AppState<CustomResponseSignup>> = new Observable<AppState<CustomResponseSignup>>();
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   readonly DataState = DataState;
-  private dataSubject = new BehaviorSubject<CustomResponseSignup>(null);
+  // private dataSubject = new BehaviorSubject<CustomResponseSignup>(null);
   form: any;
   constructor(
     private fb: FormBuilder, private authService: AuthService, private router: Router, private storeService: StoreService) {

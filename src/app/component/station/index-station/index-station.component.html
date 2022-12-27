@@ -102,12 +102,13 @@
 <!--                  <a style="cursor: pointer"  class="delete text-danger" (click)="deleteStation(station, i)" >-->
 <!--                    <i class="pe-7s-trash" title="supprimer"></i>-->
 <!--                  </a>&nbsp;-->
-                  <a style="cursor: pointer"  class="text-success" (click)="showDetails(station)">
-                    <i class="pe-7s-look" title="Afficher les détails"></i>
-                  </a> &nbsp;&nbsp;
-                  <a style="cursor: pointer"  class="text-primary" (click)="updateStationModal(mymodal, station)">
+
+                  <button class="btn btn-sm btn-secondary mr-2" (click)="showDetails(station)">
+                    <i class="pe-7s-look" title="consulter"></i>
+                  </button>
+                  <button class="btn btn-sm btn-primary" (click)="updateStationModal(mymodal, station)">
                     <i class="pe-7s-eyedropper" title="modifier"></i>
-                  </a>
+                  </button>
                 </td>
               </tr>
             </table>

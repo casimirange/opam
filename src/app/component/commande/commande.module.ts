@@ -16,19 +16,21 @@ import { ClientRefFilterPipe } from './pipes/client-ref-filter.pipe';
 import { OrderRefFilterPipe } from './pipes/order-ref-filter.pipe';
 import { OrderDateFilterPipe } from './pipes/order-date-filter.pipe';
 import {NgxPaginationModule} from "ngx-pagination";
+// import {AmountVoucherPipe} from "../../pipe/amount-voucher.pipe";
 
 
 @NgModule({
-  declarations: [
-    AddCommandComponent,
-    CommandLayoutComponent,
-    IndexCommandComponent,
-    EditComponent,
-    ClientNameFilterPipe,
-    ClientRefFilterPipe,
-    OrderRefFilterPipe,
-    OrderDateFilterPipe,
-  ],
+    declarations: [
+        AddCommandComponent,
+        CommandLayoutComponent,
+        IndexCommandComponent,
+        EditComponent,
+        ClientNameFilterPipe,
+        ClientRefFilterPipe,
+        OrderRefFilterPipe,
+        OrderDateFilterPipe,
+        // AmountVoucherPipe
+    ],
     imports: [
         CommonModule,
         CommandeRoutingModule,
@@ -36,11 +38,15 @@ import {NgxPaginationModule} from "ngx-pagination";
         // SweetAlert2Module.forChild(),
         ReactiveFormsModule,
         FormsModule,
-        NgxPaginationModule
+        NgxPaginationModule,
+
     ],
-  providers: [
-    // ClientService
-  ]
-  // exports: [RouterModule]
+    exports: [
+        OrderDateFilterPipe
+    ],
+    providers: [
+        // ClientService
+    ]
+    // exports: [RouterModule]
 })
 export class CommandeModule { }

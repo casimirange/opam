@@ -1,11 +1,11 @@
 import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {StoreHouse} from "../../../_interfaces/storehouse";
-import {Carton} from "../../../_interfaces/carton";
-import {Carnet} from "../../../_interfaces/carnet";
-import {TypeVoucher} from "../../../_interfaces/typeVoucher";
+import {StoreHouse} from "../../../_model/storehouse";
+import {Carton} from "../../../_model/carton";
+import {Carnet} from "../../../_model/carnet";
+import {TypeVoucher} from "../../../_model/typeVoucher";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Store} from "../../../_interfaces/store";
-import {BehaviorSubject} from "rxjs";
+import {Store} from "../../../_model/store";
+import {BehaviorSubject, Observable, of} from "rxjs";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";
 import {StoreService} from "../../../_services/store/store.service";
@@ -15,6 +15,11 @@ import {CarnetService} from "../../../_services/carnets/carnet.service";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
 import Swal from "sweetalert2";
 import {StatusService} from "../../../_services/status/status.service";
+import {AppState} from "../../../_interfaces/app-state";
+import {CustomResponse} from "../../../_interfaces/custom-response";
+import {Coupon} from "../../../_model/coupon";
+import {DataState} from "../../../_enum/data.state.enum";
+import {catchError, map, startWith} from "rxjs/operators";
 
 @Component({
   selector: 'app-index-carnet',
@@ -33,6 +38,9 @@ export class IndexCarnetComponent implements OnInit {
   cartonForm: FormGroup ;
   stores: Store[] = [];
   store: Store = new Store();
+  appState$: Observable<AppState<CustomResponse<Carnet>>>;
+  readonly DataState = DataState;
+  private dataSubjects = new BehaviorSubject<CustomResponse<Carnet>>(null);
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
 
@@ -48,7 +56,7 @@ export class IndexCarnetComponent implements OnInit {
   constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService,
               private storeService: StoreService, private notifService: NotifsService, private cartonService: CartonService,
               private carnetService: CarnetService, private voucherService: VoucherService, private statusService: StatusService) {
-    this.formCarton();
+    this.formCarnet();
   }
 
   ngOnInit(): void {
@@ -64,7 +72,7 @@ export class IndexCarnetComponent implements OnInit {
   }
 
   //formulaire de création
-  formCarton(){
+  formCarnet(){
     this.cartonForm = this.fb.group({
       idStoreHouse: ['', [Validators.required]],
       idStore: ['', [Validators.required]],
@@ -94,51 +102,19 @@ export class IndexCarnetComponent implements OnInit {
   }
   //récupération de la liste des entrepots
   getCarnets(){
+    this.appState$ = this.carnetService.carnets$(this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.dataSubjects.next(response)
+          this.notifService.onSuccess('chargement des carnets')
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
 
-    this.carnetService.getCarnets(this.page -1, this.size).subscribe(
-      resp => {
-        console.log(resp)
-        this.carnets = resp.content
-        this.size = resp.size
-        this.totalPages = resp.totalPages
-        this.totalElements = resp.totalElements
-        this.notifService.onSuccess('chargement des carnets')
-      },
-    )
-  }
-  //récupération de la liste des entrepots
-  getStoreHouses(event: any){
-    console.log('event', event)
-
-    this.storeHouseService.getStoreHouses().subscribe(
-      resp => {
-        console.log(resp)
-        const store = this.stores.find(st => st.localization === event)
-        console.log(store)
-        if (event != ''){
-          this.storeHouses = resp.content.filter(sth => sth.idStore == store.internalReference && sth.type == 'stockage')
-          console.log('filtrées2',resp.content.filter(sth => sth.idStore == store.internalReference ))
-        }
-
-        console.log('filtrées',this.storeHouses)
-
-        this.notifService.onSuccess('chargement des entrepots')
-      },
-    )
-  }
-
-  padWithZero(num, targetLength) {
-    return String(num).padStart(targetLength, '0');
-  }
-
-  compare( a: Carnet, b: Carnet ) {
-    if ( a.serialNumber < b.serialNumber ){
-      return -1;
-    }
-    if ( a.serialNumber > b.serialNumber ){
-      return 1;
-    }
-    return 0;
   }
 
   //on récupère la liste des types de coupon
@@ -151,67 +127,29 @@ export class IndexCarnetComponent implements OnInit {
   }
 
   annuler() {
-    this.formCarton();
+    this.formCarnet();
     this.storeHouse = new StoreHouse()
     this.modalService.dismissAll()
-
   }
-  //open modal
-
-
 
   open(content: any){
     const modal = true;
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
   }
 
-  deleteCarnet(carnet: Carnet, index: number) {
-    Swal.fire({
-      title: 'Supprimer carton',
-      html: "Voulez-vous vraiment supprimer "+ carnet.serialNumber.toString().bold() + " de la liste de vos carnets ?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#00ace6',
-      cancelButtonColor: '#f65656',
-      confirmButtonText: 'OUI',
-      cancelButtonText: 'NON',
-      allowOutsideClick: true,
-      focusConfirm: false,
-      focusCancel: true,
-      focusDeny: true,
-      backdrop: `rgba(0, 0, 0, 0.4)`,
-      showLoaderOnConfirm: true
-    }).then((result) => {
-      if (result.value) {
-        this.isLoading.next(true)
-        this.carnetService.deleteCarnet(carnet.internalReference).subscribe(
-          resp => {
-            this.carnets.splice(index, 1)
-            this.isLoading.next(false)
-            this.notifService.onSuccess(`carnet ${carnet.internalReference.toString().bold()} supprimé avec succès !`)
-          },error => {
-            this.isLoading.next(false);
-            // if (error.error.message.includes('JWT expired')){
-            //
-            // }else {
-            //   this.notifService.onError(error.error.message, '')
-            // }
-          }
-        )
-      }
-    })
-  }
-
   pageChange(event: number){
     this.page = event
-    this.carnetService.getCarnets(this.page -1, this.size).subscribe(
-      resp => {
-        this.carnets = resp.content
-        this.size = resp.size
-        this.totalPages = resp.totalPages
-        this.totalElements = resp.totalElements
-      },
-    )
+    this.appState$ = this.carnetService.carnets$(this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.dataSubjects.next(response)
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
   getStatuts(status: string): string {

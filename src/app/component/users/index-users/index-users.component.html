@@ -66,10 +66,13 @@
             <td class="text-left">{{user.telephone }}</td>
             <td class="text-left">{{getStatusAccount(user.typeAccount.name)}}</td>
             <td class="text-center">
-              <a style="cursor: pointer" class=" text-success" data-toggle="modal"
-                 (click)="showDetails(user)">
-                <i class="pe-7s-look" data-toggle="modal" title="voir les détails"></i>
-              </a>
+<!--              <a style="cursor: pointer" class=" text-success" data-toggle="modal"-->
+<!--                 (click)="showDetails(user)">-->
+<!--                <i class="pe-7s-look" data-toggle="modal" title="voir les détails"></i>-->
+<!--              </a>-->
+              <button class="btn btn-sm btn-secondary mr-2" (click)="showDetails(user)">
+                <i class="pe-7s-look" title="consulter"></i>
+              </button>
             </td>
             <!--              <td class="text-left" > type 1 </td>-->
 <!--            <td class="text-left" ><span *ngFor="let store of stores">{{store.internalReference == order.idStore ? store.localization : ''}}</span></td>-->

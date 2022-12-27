@@ -1,23 +1,29 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {OrderService} from "../../../_services/order/order.service";
-import {Order} from "../../../_interfaces/order";
+import {Order} from "../../../_model/order";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, NavigationStart, Router} from "@angular/router";
 import {StoreService} from "../../../_services/store/store.service";
 import {ClientService} from "../../../_services/clients/client.service";
-import {Client, TypeClient} from "../../../_interfaces/client";
-import {Store} from "../../../_interfaces/store";
+import {Client, TypeClient} from "../../../_model/client";
+import {Store} from "../../../_model/store";
 import {ProductService} from "../../../_services/product/product.service";
-import {Products} from "../../../_interfaces/products";
+import {Products} from "../../../_model/products";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
-import {TypeVoucher} from "../../../_interfaces/typeVoucher";
+import {TypeVoucher} from "../../../_model/typeVoucher";
 import {PaiementService} from "../../../_services/paiement/paiement.service";
-import {PaiementMethod} from "../../../_interfaces/paiement";
+import {PaiementMethod} from "../../../_model/paiement";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import Swal from "sweetalert2";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Observable, of} from "rxjs";
 import {CouponService} from "../../../_services/coupons/coupon.service";
 import {StatusOrderService} from "../../../_services/status/status-order.service";
+import {catchError, filter, map, startWith} from "rxjs/operators";
+import {AppState} from "../../../_interfaces/app-state";
+import {CustomResponse} from "../../../_interfaces/custom-response";
+import {DataState} from "../../../_enum/data.state.enum";
+import {LoaderComponent} from "../../../preloader/loader/loader.component";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 export class Product{
   coupon: number;
@@ -33,51 +39,49 @@ export class EditComponent implements OnInit {
   order: Order = new Order();
   vouchers: TypeVoucher[] = []
   voucher: TypeVoucher = new TypeVoucher()
+  voucherAmount: number
+  listVouchers: number[] = []
   client: Client = new Client();
   store: Store = new Store();
   products: Products[] = []
   paymentMethods: PaiementMethod[] = []
   statut: string;
-  amountOrder: number
   editForm: FormGroup;
   selectPdfForm: FormGroup;
   selectedFiles: FileList;
   currentFileUpload: File;
-  selectedFile = null;
   addCouponClientForm: FormGroup ;
-  clF: any;
   orF: any;
   canaux = ['Appel', 'Courier papier', 'Email', 'Sur site']
   stores: Store[] = [];
   typeVoucher = [3000, 5000, 10000]
-  tabProducts: string[] = [];
-  tabProd: Product;
-  Products: Products[] = [];
-  Product: Products = new Products();
-  totalOrder: number;
   roleUser = localStorage.getItem('userAccount').toString();
-  name = ''
-  refCli = ''
-  date = ''
-  internalRef = ''
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
-
+  private loadingFile = new BehaviorSubject<boolean>(false);
+  loadingFile$ = this.loadingFile.asObservable();
+  private IdParam: string;
+  orderState$: Observable<AppState<Order>>;
+  readonly DataState = DataState;
+  private dataSubjects = new BehaviorSubject<Order>(null);
   constructor(private orderService: OrderService,  private notifsService: NotifsService, private route: ActivatedRoute,
               private clientService: ClientService, private storeService: StoreService, private productService: ProductService,
               private voucherService: VoucherService, private paymentService: PaiementService, private fb: FormBuilder,
-              private statusService: StatusOrderService, private couponService: CouponService) {
+              private statusService: StatusOrderService, private couponService: CouponService, private router: Router,
+              private modalService: NgbModal) {
     this.formOrder()
     this.formAddCarnet()
     this.orF = this.addCouponClientForm.controls;
     this.selectPdfForm = this.fb.group({
       pdf: ['']
     });
+    this.IdParam = this.route.snapshot.paramMap.get('id');
   }
 
   ngOnInit(): void {
     this.getOrder()
-    // this.getVouchers(591577792)
+    this.getVouchers()
+    this.getProductsByOrder()
     this.getPaymentMethods()
   }
 
@@ -93,52 +97,77 @@ export class EditComponent implements OnInit {
 
   formAddCarnet(){
     this.addCouponClientForm = this.fb.group({
-      coupon: ['', [Validators.required, Validators.pattern('^[0-9 ]*$')]],
+      coupon: ['', [Validators.required,]]
     });
   }
 
   getOrder(){
-    const id = this.route.snapshot.paramMap.get('id');
 
-      this.orderService.getOrderByRef(parseInt(id)).subscribe(
-        resp => {
-          this.order = resp
-          console.log('commande', resp)
-          this.statut = this.order.status.name
-          this.clientService.findClient(this.order.idClient).subscribe(
-            resp => {
-              console.log(resp)
-              this.client = resp;
-            }
-          )
-          this.storeService.getStoreByInternalref(this.order.idStore).subscribe(
-            resp => {
-              this.store = resp
-            }
-          )
-          this.productService.getProducts(this.order.internalReference).subscribe(
-            resp => {
-              console.log('produits',resp)
-              this.products = resp.content
-            }
-          )
-        },
-        // err => {
-        //   this.notifsService.onError(err.error.message, 'échec chargement de la commande')
-        // }
+    this.orderState$ = this.orderService.showOrder$(parseInt(this.IdParam))
+      .pipe(
+        map((response) => {
+          this.dataSubjects.next(response)
+          this.order = response
+          this.statut = response.status.name
+          this.getClientByOrder(response.idClient)
+          this.getStoreByOrder(response.idStore)
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
       )
 
+    // this.loadingData.next(true)
+    //   this.orderService.getOrderByRef(parseInt(this.IdParam)).subscribe(
+    //     resp => {
+    //       this.order = resp
+    //       this.statut = this.order.status.name
+    //       this.loadingData.next(false)
+    //       this.clientService.findClient(this.order.idClient).subscribe(
+    //         resp => {
+    //           this.client = resp;
+    //         }
+    //       )
+    //       this.storeService.getStoreByInternalref(this.order.idStore).subscribe(
+    //         resp => {
+    //           this.store = resp
+    //         }
+    //       )
+    //     },
+    //   )
+  }
+
+  getProductsByOrder(){
+    this.productService.getProducts(parseInt(this.IdParam)).subscribe(
+      resp => {
+        this.products = resp.content
+      }
+    )
+  }
+
+  getClientByOrder(internalRefClient: number){
+    this.clientService.findClient(internalRefClient).subscribe(
+      resp => {
+        this.client = resp;
+      }
+    )
+  }
+
+  getStoreByOrder(internalRefClient: number){
+    this.storeService.getStoreByInternalref(internalRefClient).subscribe(
+      resp => {
+        this.store = resp;
+      }
+    )
   }
 
   getPaymentMethods(){
     this.paymentService.getPaymentMethods().subscribe(
       resp => {
         this.paymentMethods = resp.content
-        console.log(resp)
       },
-      // error => {
-      //   this.notifsService.onError(error.error.message, 'échec chargement magasins')
-      // }
     )
   }
 
@@ -156,8 +185,9 @@ export class EditComponent implements OnInit {
       resp => {
         this.isLoading.next(false);
         this.notifsService.onSuccess('Commande Acceptée')
+        this.generateReçu()
         this.refreshOrder()
-        this.editForm.controls['file'].reset()
+        this.editForm.reset()
         this.formOrder()
       }
     )
@@ -174,7 +204,6 @@ export class EditComponent implements OnInit {
       resp => {
         this.isLoading.next(false);
         this.notifsService.onSuccess('Commande Terminée')
-        this.formOrder()
         this.refreshOrder()
         this.editForm.controls['fileBordereau'].reset()
       }
@@ -188,7 +217,6 @@ export class EditComponent implements OnInit {
       resp => {
         this.isLoading.next(false);
         this.refreshOrder()
-        this.formOrder()
         this.notifsService.onSuccess('Commande Payée')
       }
     )
@@ -201,14 +229,17 @@ export class EditComponent implements OnInit {
       this.orderService.deliveryOrder(this.order.internalReference, this.order.idManagerCoupon).subscribe(
         respProd => {
           // console.log('delivery', respProd)
-          // const file = new Blob([respProd], { type: 'application/pdf' });
-          // const fileURL = URL.createObjectURL(file);
-          // window.open(fileURL);
+          const file = new Blob([respProd], { type: 'application/pdf' });
+          const fileURL = URL.createObjectURL(file);
+          window.open(fileURL);
           this.isLoading.next(false);
           this.notifsService.onSuccess('Commande en cours de livraison')
           this.refreshOrder()
           // this.isLoading.next(false);
         },
+        error => {
+          this.isLoading.next(false);
+        }
       )
     }
   }
@@ -226,13 +257,19 @@ export class EditComponent implements OnInit {
   }
 
   refreshOrder(){
-    const id = this.route.snapshot.paramMap.get('id');
-    this.orderService.getOrderByRef(parseInt(id)).subscribe(
-      resp => {
-        this.order = resp
-        this.statut = this.order.status.name
-      }
-    )
+    this.orderState$ = this.orderService.showOrder$(parseInt(this.IdParam))
+      .pipe(
+        map((response) => {
+          this.dataSubjects.next(response)
+          this.order = response
+          this.statut = response.status.name
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADED_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
   selectFile(event) {
@@ -240,52 +277,66 @@ export class EditComponent implements OnInit {
   }
 
   getProforma(){
+    this.openLoader()
     this.orderService.getProforma(this.order.internalReference).subscribe(
       respProd => {
-        console.log('proforma', respProd)
+        this.closeLoader()
         const file = new Blob([respProd], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
         window.open(fileURL);
-        // this.isLoading.next(false);
-      },
+      },error => {
+        this.closeLoader()
+      }
     )
   }
 
   generatePreuve(){
     const docType = 'pdf'
     const type = 'INVOICE'
+    this.openLoader()
     this.orderService.getFile(this.order.internalReference, type, docType).subscribe(
       respProd => {
-        console.log('reçu', respProd)
+        this.closeLoader()
         const file = new Blob([respProd], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
         window.open(fileURL);
-        // this.isLoading.next(false);
-      },
+      },error => {
+        this.closeLoader()
+      }
+
     )
   }
 
   generateReçu(){
+    this.loadingFile.next(true)
+    this.openLoader()
     const type = 'INVOICE'
     this.orderService.getReçu(this.order.internalReference, type).subscribe(
       respProd => {
+        this.loadingFile.next(false)
+        this.closeLoader()
         const file = new Blob([respProd], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
         window.open(fileURL);
-        // this.isLoading.next(false);
-      },
+      },error => {
+        this.loadingFile.next(false)
+        this.closeLoader()
+      }
     )
   }
 
   generateBonLivraison(){
     const type = 'DELIVERY'
+    this.openLoader()
     this.orderService.getReçu(this.order.internalReference, type).subscribe(
       respProd => {
+        this.closeLoader()
         const file = new Blob([respProd], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
         window.open(fileURL);
-        // this.isLoading.next(false);
-      },
+      },error => {
+        this.closeLoader()
+      }
     )
   }
 
@@ -329,31 +380,27 @@ export class EditComponent implements OnInit {
   }
 
   denyOrder() {
-    this.order.idManagerCoupon = parseInt(localStorage.getItem('uid'))
-    this.order.reasonForCancellation = this.editForm.controls['reason'].value
-    if (this.order.reasonForCancellation == ''){
+    if (this.editForm.controls['reason'].value .toString() == ''){
       this.notifsService.onError('veuillez préciser la raison d\'annulation de la commande', '')
     }else {
+      this.order.idManagerCoupon = parseInt(localStorage.getItem('uid'))
+      this.order.reasonForCancellation = this.editForm.controls['reason'].value
       this.orderService.denyOrder(this.order.internalReference, this.order.idManagerCoupon, this.order.reasonForCancellation).subscribe();
-      this.refreshOrder()
       this.notifsService.onSuccess('commande annulée avec succès')
+      this.refreshOrder()
     }
-
   }
 
   addProduct(){
-    this.tabProd = new Product();
+    this.isLoading.next(true)
 
-    this.tabProd.coupon = this.addCouponClientForm.controls['coupon'].value;
-    // this.tabProducts.push(this.tabProd)
-
-    console.log('coupons', this.tabProducts)
-
-    this.couponService.affectCouponClient(this.addCouponClientForm.controls['coupon'].value.toString(), this.order.idClient).subscribe();
-    // this.refreshOrder()
-    this.notifsService.onSuccess('carnet attribué avec succès')
-    this.orF['coupon'].clear
+    this.listVouchers.forEach(coupon => {
+      this.couponService.affectCouponClient(coupon.toString(), this.order.idClient).subscribe();
+    })
+    this.notifsService.onSuccess('carnet(s) attribué(s) avec succès')
     this.orF['coupon'].reset();
+    this.listVouchers = []
+    this.isLoading.next(false)
 
   }
 
@@ -396,21 +443,40 @@ export class EditComponent implements OnInit {
   getVouchers(): void{
       this.voucherService.getTypevoucher().subscribe(
       resp => {
-        this.vouchers = resp;
-        console.log(resp)
+        this.vouchers = resp.content;
       })
   }
 
-  // getVouchers(internalRef: Products): void{
-  //
-  // }
-
-  getAmount(amount: number): number {
-    console.log('amount', amount)
-    return amount
+  getVoucher(product: number): number{
+    this.voucherService.getTypevoucherByInternalRef(product).subscribe(
+      resp => {
+        this.voucher = resp;
+      }, error => {},
+      ()=>{
+        this.voucherAmount = this.voucher.amount
+      })
+    return this.voucherAmount
   }
 
   getStatuts(status: string): string {
     return this.statusService.allStatus(status)
+  }
+
+  addCoupon() {
+    this.listVouchers.push(this.addCouponClientForm.controls['coupon'].value)
+    this.addCouponClientForm.controls['coupon'].reset()
+  }
+
+  removeCoupon(coupon: number) {
+    const prodIndex = this.listVouchers.indexOf(coupon)
+    this.listVouchers.splice(prodIndex, 1)
+  }
+
+  openLoader(){
+    this.modalService.open(LoaderComponent, {backdrop: false });
+  }
+
+  closeLoader(){
+    this.modalService.dismissAll()
   }
 }

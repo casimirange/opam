@@ -1,8 +1,8 @@
 import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {StoreHouse} from "../../../_interfaces/storehouse";
-import {Store} from "../../../_interfaces/store";
+import {StoreHouse} from "../../../_model/storehouse";
+import {Store} from "../../../_model/store";
 import {StoreService} from "../../../_services/store/store.service";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";

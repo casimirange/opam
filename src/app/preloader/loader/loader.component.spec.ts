@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddCarnetComponent } from './add-carnet.component';
+import { LoaderComponent } from './loader.component';
 
-describe('AddCarnetComponent', () => {
-  let component: AddCarnetComponent;
-  let fixture: ComponentFixture<AddCarnetComponent>;
+describe('LoaderComponent', () => {
+  let component: LoaderComponent;
+  let fixture: ComponentFixture<LoaderComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AddCarnetComponent ]
+      declarations: [ LoaderComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AddCarnetComponent);
+    fixture = TestBed.createComponent(LoaderComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {Products} from "../../_interfaces/products";
+import {Products} from "../../_model/products";
 import {Observable} from "rxjs";
 import {environment} from "../../../environments/environment";
-import {RequestOpposition} from "../../_interfaces/requestOpposition";
-import {CreditNote} from "../../_interfaces/creditNote";
+import {RequestOpposition} from "../../_model/requestOpposition";
+import {CreditNote} from "../../_model/creditNote";
 
 @Injectable({
   providedIn: 'root'

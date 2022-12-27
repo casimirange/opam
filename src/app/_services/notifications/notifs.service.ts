@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Subject} from "rxjs";
+import {BehaviorSubject, Subject} from "rxjs";
 
 import {TokenService} from "../token/token.service";
 import {Router} from "@angular/router";
@@ -25,6 +25,8 @@ export class NotifsService {
 
   apiError = new Subject()
   private url: string;
+  private isLoading = new BehaviorSubject<boolean>(false);
+  isLoading$ = this.isLoading.asObservable();
   constructor(private tokenService: TokenService, private router: Router, private bnIdle: BnNgIdleService,
               private _location: Location) { }
 
@@ -36,6 +38,7 @@ export class NotifsService {
   }
 
   onError(message: string, title: string): void{
+    this.isLoading.next(false);
     Toast.fire({
       icon: 'error',
       text: message,

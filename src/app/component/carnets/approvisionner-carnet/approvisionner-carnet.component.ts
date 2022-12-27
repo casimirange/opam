@@ -4,16 +4,17 @@ import {UsersService} from "../../../_services/users/users.service";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {ActivatedRoute} from "@angular/router";
 import {StoreService} from "../../../_services/store/store.service";
-import {ICredentialsSignup, ISignup} from "../../../_interfaces/signup";
-import {Store} from "../../../_interfaces/store";
+import {ICredentialsSignup, ISignup} from "../../../_model/signup";
+import {Store} from "../../../_model/store";
 import {BehaviorSubject} from "rxjs";
-import {Supply} from "../../../_interfaces/supply";
-import {StoreHouse} from "../../../_interfaces/storehouse";
+import {Supply} from "../../../_model/supply";
+import {StoreHouse} from "../../../_model/storehouse";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
-import {TypeVoucher} from "../../../_interfaces/typeVoucher";
+import {TypeVoucher} from "../../../_model/typeVoucher";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";
 import {CartonService} from "../../../_services/cartons/carton.service";
-import {Carton} from "../../../_interfaces/carton";
+import {Carton} from "../../../_model/carton";
+import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-approvisionner-carnet',
@@ -22,25 +23,13 @@ import {Carton} from "../../../_interfaces/carton";
 })
 export class ApprovisionnerCarnetComponent implements OnInit {
 
-  user: ISignup = new ISignup();
   store: Store = new Store();
-  storeHouseStockage: StoreHouse = new StoreHouse();
-  storeHouseSell: StoreHouse = new StoreHouse();
   supply: Supply = new Supply();
-
   supplyForm: FormGroup ;
-  credentials: ICredentialsSignup = new ICredentialsSignup()
-
-  errorMessage = '';
-  stores: Store[] = [];
   cartons: Carton[] = [];
-  vouchers: TypeVoucher[] = [];
   form: any;
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
-  magasin: string
-  entrepot: string;
-  typcoupon: any;
   sn: any;
   storeHouse1: StoreHouse = new StoreHouse();
   storeHouse2: StoreHouse = new StoreHouse();
@@ -50,55 +39,36 @@ export class ApprovisionnerCarnetComponent implements OnInit {
   constructor(private userService: UsersService,  private notifsService: NotifsService, private route: ActivatedRoute,
               private storeService: StoreService, private storeHouseService: StoreHouseService, private fb: FormBuilder,
               private voucherService: VoucherService, private cartonService: CartonService) {
-    // this.supplyForm = this.fb.group({
-    //   idStoreHouseStockage: ['', [Validators.required]],
-    //   idStoreHouseSell: ['', [Validators.required]],
-    //   typeVoucher: ['', [Validators.required]],
-    //   serialFrom: ['', [Validators.required]],
-    //   serialTo: ['', [Validators.required]],
-    //   number: ['', [Validators.required]],
-    //   from: ['', [Validators.required]],
-    //   to: ['', [Validators.required]],
-    // });
+    this.formSupply()
+    this.form = this.supplyForm.controls;
+  }
+
+  formSupply(){
     this.supplyForm = this.fb.group({
       idCarton: ['', [Validators.required]],
       idStoreHouseSell: ['', [Validators.required]],
     });
-
-    this.form = this.supplyForm.controls;
   }
+
   ngOnInit() {
-    this.getTypeVoucher()
     this.getStoreHouses()
     this.getCartons()
   }
 
-  //on récupère la liste des types de coupon
-  getTypeVoucher(): void{
-    this.voucherService.getTypevoucher().subscribe(
-      resp => {
-        this.vouchers = resp.content
-      }
-    )
-  }
 
   //on récupère la liste des types de coupon
   getCartons(): void{
-    this.cartonService.getCartons().subscribe(
+    this.cartonService.getAllCartonWithPagination(0, 500).subscribe(
       resp => {
-        this.cartons = resp.content
+        this.cartons = resp.content.filter((carton: Carton) => carton.status.name === 'AVAILABLE')
       }
     )
   }
 
   getStoreHouses(){
-    this.storeHouseService.getStoreHouses().subscribe(
+    this.storeHouseService.getAllStoreHousesWithPagination(0, 500).subscribe(
       resp => {
-        this.storeHouses1 = resp.content.filter(st => st.type == 'stockage')
         this.storeHouses2 = resp.content.filter(st => st.type == 'vente')
-        console.log("entrepots", resp.content)
-        console.log("entrepots1", this.storeHouses1)
-        console.log("entrepots2", this.storeHouses2)
       },
     )
   }
@@ -107,15 +77,30 @@ export class ApprovisionnerCarnetComponent implements OnInit {
     this.isLoading.next(true);
     this.supply.idCarton = this.supplyForm.controls['idCarton'].value
     this.supply.idStoreHouseSell = this.supplyForm.controls['idStoreHouseSell'].value
-
+    setTimeout(() =>{
+      const notif = 'Vous recevrez une notification une fois l\'opération terminée'
+      Swal.fire({
+        title: 'Opération en cours',
+        html: 'Le système est entrain de créer les carnets et générer les coupons. '+ notif.toString().bold() ,
+        icon: 'info',
+        showCancelButton: false,
+        confirmButtonText: 'OK',
+        allowOutsideClick: false,
+        focusConfirm: false,
+        timer: 3000,
+        backdrop: `rgba(0, 0, 0, 0.4)`
+      }).then((result) => {
+        if (result.value) {
+          this.annuler()
+        }
+      })
+    }  , 1000);
 
     console.log('supply', this.supply)
 
     this.cartonService.createCartonSupply(this.supply.idCarton, this.supply.idStoreHouseSell).subscribe(
       resp => {
-        console.log('carton approvisionné', resp)
-        // this.cartons.push(resp)
-        // this.mvtStockService.createStockMovement(this.mvtStock).subscribe()
+
         this.isLoading.next(false);
         this.notifsService.onSuccess('approvisionnement effectué')
         // this.annuler()
@@ -124,6 +109,11 @@ export class ApprovisionnerCarnetComponent implements OnInit {
         this.isLoading.next(false);
       }
     )
+  }
+
+  annuler() {
+    this.formSupply();
+    this.supplyForm.reset()
   }
 
 

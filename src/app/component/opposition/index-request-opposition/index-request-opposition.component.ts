@@ -1,8 +1,8 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Store} from "../../../_interfaces/store";
-import {Unite} from "../../../_interfaces/unite";
-import {TypeVoucher} from "../../../_interfaces/typeVoucher";
+import {Store} from "../../../_model/store";
+import {Unite} from "../../../_model/unite";
+import {TypeVoucher} from "../../../_model/typeVoucher";
 import {BehaviorSubject} from "rxjs";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {StoreService} from "../../../_services/store/store.service";
@@ -12,14 +12,14 @@ import {UnitsService} from "../../../_services/units/units.service";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
 import Swal from "sweetalert2";
 import {ClientService} from "../../../_services/clients/client.service";
-import {Client} from "../../../_interfaces/client";
-import {RequestOpposition} from "../../../_interfaces/requestOpposition";
+import {Client} from "../../../_model/client";
+import {RequestOpposition} from "../../../_model/requestOpposition";
 import {UsersService} from "../../../_services/users/users.service";
-import {IUser} from "../../../_interfaces/user";
+import {IUser} from "../../../_model/user";
 import {OppositionService} from "../../../_services/opposition/opposition.service";
 import {StatusOrderService} from "../../../_services/status/status-order.service";
 import {StatusService} from "../../../_services/status/status.service";
-import {ISignup} from "../../../_interfaces/signup";
+import {ISignup} from "../../../_model/signup";
 
 @Component({
   selector: 'app-index-request-opposition',
@@ -60,13 +60,13 @@ export class IndexRequestOppositionComponent implements OnInit {
   }
 
   //initialisation du formulaire de création type de bon
-  formRequest(){
+    formRequest(){
     this.requestForm = this.fb.group({
       idClient: ['', [Validators.required]],
       reason: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(3)]],
       idManagerCoupon: ['', [Validators.required,]],
-      serialNumber: ['', [Validators.required, Validators.pattern('^[0-9]{7}'), Validators.minLength(7), Validators.maxLength(7)]],
+      serialNumber: ['', [Validators.required, Validators.pattern('^[0-9]*'),]],
     });
   }
 

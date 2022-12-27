@@ -4,12 +4,11 @@ import {HttpClient} from "@angular/common/http";
 import {AuthService} from "../../../_services/auth.service";
 import {TokenService} from "../../../_services/token/token.service";
 import {ICredentials} from "../../../_interfaces/credentials";
-import {IToken} from "../../../_interfaces/token";
+import {IToken} from "../../../_model/token";
 import {BehaviorSubject, Observable, of} from "rxjs";
 import {AppState} from "../../../_interfaces/app-state";
 import {catchError, map, startWith} from "rxjs/operators";
 import {DataState} from "../../../_enum/data.state.enum";
-import {CustomResponseLogin} from "../../../_interfaces/custom-response-login";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 
 @Component({
@@ -26,11 +25,10 @@ export class LoginComponent implements OnInit {
   user?: IToken;
   errorMessage = '';
 
-  appState$: Observable<AppState<CustomResponseLogin>> = new Observable<AppState<CustomResponseLogin>>();
+  // appState$: Observable<AppState<CustomResponseLogin>> = new Observable<AppState<CustomResponseLogin>>();
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   readonly DataState = DataState;
-  private dataSubject = new BehaviorSubject<CustomResponseLogin>(null);
   isLoginFailed: boolean;
   isLoggedIn: boolean;
   form: any;

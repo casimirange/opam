@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {Observable, Subject, throwError} from "rxjs";
-import {Client} from "../../_interfaces/client";
-import {catchError, tap} from "rxjs/operators";
-import {Clients} from "../../component/client/interface/clients";
-import {CustomResponseCliennts} from "../../_interfaces/custom-response-cliennts";
+import {Client} from "../../_model/client";
+import {Products} from "../../_model/products";
+import {CustomResponse} from "../../_interfaces/custom-response";
+import {catchError} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +30,8 @@ export class ClientService {
     return this.http.post<Client>(environment.client, client)
   }
 
-  findClient(internalRef: number): Observable<any>{
-    return this.http.get<any>(environment.client+`/${internalRef}`)
+  findClient(internalRef: number): Observable<Client>{
+    return this.http.get<Client>(environment.client+`/${internalRef}`)
   }
 
   deleteClient(internalref: number): Observable<any>{
@@ -42,4 +42,35 @@ export class ClientService {
     return this.http.put<any>(environment.client+`/${internalRef}`, client);
   }
 
+
+  /**
+   * nouvelle approche clean code
+   * @param page
+   * @param size
+   */
+
+
+  clients$ = (page: number, size: number) => <Observable<CustomResponse<Client>>>
+    this.http.get<CustomResponse<Client>>(environment.client + `?page=${page}&size=${size}`,)
+      .pipe(catchError(this.handleError));
+
+  addClient$ = (client: Client) => <Observable<Client>>
+    this.http.post<Client>(environment.client, client)
+      .pipe(catchError(this.handleError));
+
+  updateClient$ = (client: Client, internalRef: number) => <Observable<Client>>
+    this.http.put<Client>(environment.client+`/${internalRef}`, client)
+      .pipe(catchError(this.handleError));
+
+  deleteClient$ = (internalRef: number) => <Observable<Client>>
+    this.http.delete<Client>(environment.client+`/${internalRef}`)
+      .pipe(catchError(this.handleError));
+
+  showClient$ = (internalRef: number) => <Observable<Client>>
+    this.http.get<Client>(environment.client+`/${internalRef}`)
+      .pipe(catchError(this.handleError));
+
+  handleError(error: HttpErrorResponse): Observable<never>{
+    return throwError(`Une erreur est survenue: ${error.error.message.toString().bold()}` )
+  }
 }

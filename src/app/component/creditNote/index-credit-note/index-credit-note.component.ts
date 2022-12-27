@@ -1,11 +1,11 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Store} from "../../../_interfaces/store";
-import {IUser} from "../../../_interfaces/user";
-import {RequestOpposition} from "../../../_interfaces/requestOpposition";
-import {Unite} from "../../../_interfaces/unite";
-import {TypeVoucher} from "../../../_interfaces/typeVoucher";
-import {Client} from "../../../_interfaces/client";
+import {Store} from "../../../_model/store";
+import {IUser} from "../../../_model/user";
+import {RequestOpposition} from "../../../_model/requestOpposition";
+import {Unite} from "../../../_model/unite";
+import {TypeVoucher} from "../../../_model/typeVoucher";
+import {Client} from "../../../_model/client";
 import {BehaviorSubject} from "rxjs";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {StoreService} from "../../../_services/store/store.service";
@@ -18,8 +18,8 @@ import {UsersService} from "../../../_services/users/users.service";
 import {OppositionService} from "../../../_services/opposition/opposition.service";
 import Swal from "sweetalert2";
 import {StationService} from "../../../_services/stations/station.service";
-import {Station} from "../../../_interfaces/station";
-import {CreditNote} from "../../../_interfaces/creditNote";
+import {Station} from "../../../_model/station";
+import {CreditNote} from "../../../_model/creditNote";
 import {CreditNoteService} from "../../../_services/creditNote/credit-note.service";
 
 @Component({
@@ -39,7 +39,7 @@ export class IndexCreditNoteComponent implements OnInit {
   typeVouchers: TypeVoucher[]
   clients: Client[]
   stations: Station[]
-  voucher: number[] = []
+  vouchers: number[] = []
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   modalTitle: string = 'Enregistrer nouvelle requête';
@@ -61,7 +61,7 @@ export class IndexCreditNoteComponent implements OnInit {
   formStore(){
     this.creditForm = this.fb.group({
       idStation: ['', [Validators.required,]],
-      serialNumber: ['', ],
+      serialNumber: ['', [Validators.required, Validators.pattern('^[0-9]*'),]],
     });
   }
 
@@ -75,7 +75,7 @@ export class IndexCreditNoteComponent implements OnInit {
     console.log(this.creditForm.value)
     // this.creditNote.idClient = this.clients.find(client => client.completeName === this.creditForm.controls['idClient'].value).internalReference
     this.creditNote.idStation = parseInt(this.creditForm.controls['idStation'].value)
-    this.creditNote.serialCoupons = this.voucher
+    this.creditNote.serialCoupons = this.vouchers
     console.log('req', this.creditNote)
     this.isLoading.next(true);
     this.creditNoteService.saveCreditNote(this.creditNote).subscribe(
@@ -122,6 +122,7 @@ export class IndexCreditNoteComponent implements OnInit {
     this.formStore();
     this.store = new Store()
     this.modalService.dismissAll()
+    this.vouchers = []
   }
 
   delete(store: CreditNote, index:number) {
@@ -221,9 +222,15 @@ export class IndexCreditNoteComponent implements OnInit {
   }
 
   addCoupon() {
-    this.voucher.push(this.creditForm.controls['serialNumber'].value)
+    this.vouchers.push(this.creditForm.controls['serialNumber'].value)
     this.creditForm.controls['serialNumber'].reset()
-    console.log(this.voucher)
+    console.log(this.vouchers)
+  }
+
+  removeCoupon(coupon: number) {
+    console.log(this.vouchers.indexOf(coupon))
+    const prodIndex = this.vouchers.indexOf(coupon)
+    this.vouchers.splice(prodIndex, 1)
   }
 
 }

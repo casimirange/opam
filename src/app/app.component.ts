@@ -3,11 +3,11 @@ import {NotifsService} from "./_services/notifications/notifs.service";
 // import {ConnectionService} from "ng-connection-service";
 // import {OnlineStatusService, OnlineStatusType} from "ngx-online-status";
 import {fromEvent, interval, merge, Observable, Observer} from "rxjs";
-import {first, map} from "rxjs/operators";
+import {filter, first, map} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
 import Swal from "sweetalert2";
 import {BnNgIdleService} from "bn-ng-idle";
-import {Router} from "@angular/router";
+import {NavigationStart, Router} from "@angular/router";
 import {TokenService} from "./_services/token/token.service";
 import {Location} from "@angular/common";
 const Toast = Swal.mixin({
@@ -36,6 +36,7 @@ export class AppComponent implements OnInit{
   source = interval(1000)
   url: string;
   timer: number = 0;
+  navStart: Observable<NavigationStart>
   constructor(private notifsService: NotifsService, private tokenService: TokenService,
               private bnIdle: BnNgIdleService, private router: Router, private _location: Location) {
 
@@ -126,10 +127,15 @@ export class AppComponent implements OnInit{
 
     // this.createOnline$().subscribe(isOnline => console.log(isOnline));
 
+    this.navStart = this.router.events.pipe(
+      filter(evt => evt instanceof NavigationStart)) as Observable<NavigationStart>;
 
   }
 
   ngOnInit(): void {
+    this.navStart.subscribe( (res) => {
+      console.log('navigation started', res)
+    })
     // this.router.events.subscribe((val) => {
     //   // console.log(this._location.path())
     //   this.url = this._location.path()

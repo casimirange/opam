@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {TypeVoucher} from "../../_interfaces/typeVoucher";
+import {TypeVoucher} from "../../_model/typeVoucher";
 import {Observable} from "rxjs";
 import {environment} from "../../../environments/environment";
 

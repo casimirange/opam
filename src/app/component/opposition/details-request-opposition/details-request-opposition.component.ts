@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
-import {RequestOpposition} from "../../../_interfaces/requestOpposition";
+import {RequestOpposition} from "../../../_model/requestOpposition";
 import {OppositionService} from "../../../_services/opposition/opposition.service";
-import {Ticket} from "../../../_interfaces/ticket";
+import {Ticket} from "../../../_model/ticket";
 import {TicketService} from "../../../_services/ticket/ticket.service";
 import {StatusService} from "../../../_services/status/status.service";
 import {BehaviorSubject} from "rxjs";

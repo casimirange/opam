@@ -5,6 +5,7 @@ export class Carnet{
   internalReference?: number;
   idCarton: number;
   idStoreKeeper: number;
+  idStoreHouse: number;
   serialNumber: string;
   createdAt?: Date;
   updateAt?: Date;

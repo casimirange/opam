@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {UsersService} from "../../../_services/users/users.service";
-import {ISignup} from "../../../_interfaces/signup";
+import {ISignup} from "../../../_model/signup";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {StoreService} from "../../../_services/store/store.service";
-import {Store} from "../../../_interfaces/store";
+import {Store} from "../../../_model/store";
 import {StatusService} from "../../../_services/status/status.service";
 import {StatusAccountService} from "../../../_services/status/status-account.service";
 import {Router} from "@angular/router";

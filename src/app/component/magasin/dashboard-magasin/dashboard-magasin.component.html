@@ -69,17 +69,23 @@
           <td> {{store.createdAt | date: 'dd/MM/yyyy HH:mm'}}</td>
           <td> {{store.updateAt | date: 'dd/MM/yyyy HH:mm'}}</td>
           <td>
-            <a style="cursor: pointer" class=" text-success" data-toggle="modal"
-               (click)="showDetails(store)">
-              <i class="pe-7s-look" data-toggle="modal" title="voir les détails"></i>
-            </a>
+<!--            <a style="cursor: pointer" class=" text-success" data-toggle="modal"-->
+<!--               (click)="showDetails(store)">-->
+<!--              <i class="pe-7s-look" data-toggle="modal" title="voir les détails"></i>-->
+<!--            </a>-->
             &nbsp;&nbsp;
 <!--            <a style="cursor: pointer" class="delete text-danger" (click)="deleteStore(store, i)">-->
 <!--              <i class="pe-7s-trash" title="supprimer"></i>-->
 <!--            </a>&nbsp;-->
-            <a style="cursor: pointer" class="text-primary" (click)="updateStoreModal(mymodal, store)">
+<!--            <a style="cursor: pointer" class="text-primary" (click)="updateStoreModal(mymodal, store)">-->
+<!--              <i class="pe-7s-eyedropper" title="modifier"></i>-->
+<!--            </a>-->
+            <button class="btn btn-sm btn-secondary mr-2" (click)="showDetails(store)">
+              <i class="pe-7s-look" title="consulter"></i>
+            </button>
+            <button class="btn btn-sm btn-primary" (click)="updateStoreModal(mymodal, store)">
               <i class="pe-7s-eyedropper" title="modifier"></i>
-            </a>
+            </button>
           </td>
         </tr>
         </tbody>

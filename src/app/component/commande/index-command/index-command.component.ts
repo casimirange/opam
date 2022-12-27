@@ -1,23 +1,28 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {Client} from "../../../_interfaces/client";
+import {Client} from "../../../_model/client";
 
 
 import {ClientService} from "../../../_services/clients/client.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {IndexClientComponent} from "../../client/index-client/index-client.component";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
-import {TypeVoucher} from "../../../_interfaces/typeVoucher";
-import {Products} from "../../../_interfaces/products";
+import {TypeVoucher} from "../../../_model/typeVoucher";
+import {Products} from "../../../_model/products";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
-import {Store} from "../../../_interfaces/store";
+import {Store} from "../../../_model/store";
 import {StoreService} from "../../../_services/store/store.service";
-import {Order} from "../../../_interfaces/order";
+import {Order} from "../../../_model/order";
 import {ProductService} from "../../../_services/product/product.service";
 import {OrderService} from "../../../_services/order/order.service";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Observable, of} from "rxjs";
 import {StatusService} from "../../../_services/status/status.service";
 import {StatusOrderService} from "../../../_services/status/status-order.service";
+import {AppState} from "../../../_interfaces/app-state";
+import {CustomResponse} from "../../../_interfaces/custom-response";
+import {DataState} from "../../../_enum/data.state.enum";
+import {catchError, map, startWith} from "rxjs/operators";
+import {ConfigOptions} from "../../../configOptions/config-options";
 
 export class Product{
   quantity: number;
@@ -47,7 +52,7 @@ export class IndexCommandComponent implements OnInit {
   tabProd: Product;
   Products: Products[] = [];
   Product: Products = new Products();
-  totalOrder: number;
+  totalOrder: number = 0;
   vouchers: TypeVoucher[] = [];
   voucher: TypeVoucher = new TypeVoucher()
   orders: Order[] = [];
@@ -61,12 +66,19 @@ export class IndexCommandComponent implements OnInit {
   totalPages: number;
   totalElements: number;
   size: number = 10;
+  orderState$: Observable<AppState<CustomResponse<Order>>>;
+  readonly DataState = DataState;
+  private dataSubjects = new BehaviorSubject<CustomResponse<Order>>(null);
+  private isSearching = new BehaviorSubject<boolean>(false);
+  isSearching$ = this.isSearching.asObservable();
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   roleUser = localStorage.getItem('userAccount').toString()
   constructor(private fb: FormBuilder, private modalService: NgbModal, private clientService: ClientService,
               private voucherService: VoucherService, private notifsService: NotifsService, private storeService: StoreService,
-              private productService: ProductService, private orderService: OrderService, private statusService: StatusOrderService) {
+              private productService: ProductService, private orderService: OrderService, private statusService: StatusOrderService,
+              private global: ConfigOptions
+  ) {
     this.formClient();
     this.formOrder();
     this.clF = this.clientForm.controls;
@@ -116,16 +128,33 @@ export class IndexCommandComponent implements OnInit {
     )
   }
 
-  findClients(event: any): void{
+  findClients(event: string): Client[]{
     console.log(event)
-    this.clientService.searchClient(event) .subscribe(
-      resp => {
-        this.clients = resp;
-        console.log(resp)
-      }, error => {
-        this.clients = []
-      }
-    )
+    if (event != '' && event.length >= 3){
+      this.clientService.searchClient(event) .subscribe(
+        resp => {
+          this.clients = resp;
+          console.log(resp)
+        }
+      )
+    }else {
+      this.clients = []
+    }
+    return this.clients
+  }
+
+  findStore(event: string): Store[]{
+    if (event != '' && event.length >= 3){
+      this.storeService.searchStore(event) .subscribe(
+        resp => {
+          this.stores = resp;
+        }
+      )
+    }else {
+      this.stores = []
+    }
+    return this.stores
+
   }
 
   getStores(){
@@ -149,35 +178,35 @@ export class IndexCommandComponent implements OnInit {
 
   addProduct(){
     this.tabProd = new Product();
-
-    this.tabProd.quantity = this.orF['quantity'].value;
+    this.tabProd.quantity = parseInt(this.orF['quantity'].value);
     this.tabProd.voucher = this.orF['voucherType'].value;
     this.tabProd.total = this.orF['quantity'].value * this.orF['voucherType'].value * 10;
-    this.tabProducts.push(this.tabProd)
+    const prod = this.tabProducts.find(tb => tb.voucher == this.tabProd.voucher)
+    const index = this.tabProducts.findIndex(client => client.voucher === this.tabProd.voucher);
+      if (!prod){
+        this.tabProducts.push(this.tabProd)
+      }else {
+        prod.quantity += this.tabProd.quantity
+        prod.total += this.tabProd.total
+      }
+    this.tabProducts[index] = prod
     this.orF['quantity'].clear; this.orF['voucherType'].clear
-    console.log('produit', this.tabProducts)
     this.totalOrder = 0;
     for(let prod of this.tabProducts){
       this.totalOrder = this.totalOrder + prod.total
     }
     this.orF['quantity'].reset();
     this.orF['voucherType'].reset();
-
   }
 
   removeProduct(index: Product){
     this.tabProd = new Product()
-
-    console.log(this.tabProducts.indexOf(index))
     const prodIndex = this.tabProducts.indexOf(index)
     this.tabProducts.splice(prodIndex, 1)
-    console.log('prod', index)
-    console.log('produit', this.tabProducts)
     this.totalOrder = 0;
     for(let prod of this.tabProducts){
       this.totalOrder = this.totalOrder + prod.total
     }
-
   }
 
   showClientForms(){
@@ -206,25 +235,20 @@ export class IndexCommandComponent implements OnInit {
   }
 
   getOrders(){
-    this.isLoading.next(true);
-    this.orderService.getOrders().subscribe(
-      resp =>{
-        this.orders = resp.content
-        this.isLoading.next(false);
-        this.notifsService.onSuccess('Cahrgement des commandes')
-      },
-    )
+    this.orderState$ = this.orderService.orders$(this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.dataSubjects.next(response)
+          this.notifsService.onSuccess('Cahrgement des commandes')
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
-  getOrdersPaginate(){
-    this.isLoading.next(true);
-    this.orderService.getOrdersWithPagination(this.page-1, this.size).subscribe(
-      resp =>{
-        this.orders = resp.content
-        this.isLoading.next(false);
-      },
-    )
-  }
 
   annuler() {
     this.formOrder();
@@ -241,9 +265,9 @@ export class IndexCommandComponent implements OnInit {
   saveOrder(){
     this.isLoading.next(true);
     //on récupère les informations du client
-      this.client = this.clients.find(client => client.completeName === this.orF['client'].value)
+      this.client = this.findClients(this.orF['client'].value)[0]
     //on récupère les informations du magasin
-    this.store = this.stores.find(store => store.localization === this.orF['store'].value)
+    this.store = this.findStore(this.orF['store'].value)[0]
 
     this.order.idStore = this.store.internalReference
     this.order.idClient = this.client.internalReference
@@ -252,33 +276,55 @@ export class IndexCommandComponent implements OnInit {
     this.order.deliveryTime = this.orF['delais'].value
     this.order.clientReference = this.orF['refCli'].value
     this.order.idManagerOrder = parseInt(localStorage.getItem('uid'))
-    this.order.tax = 0.1925;
+    this.order.tax = this.global.tax;
     this.order.ttcaggregateAmount = this.totalOrder * this.order.tax + this.totalOrder;
     this.order.netAggregateAmount = this.totalOrder;
 
 
+    this.orderState$ = this.orderService.addOrder$(this.order)
+      .pipe(
+        map((response ) => {
+          // this.dataSubjects.next(
+          //   {...this.dataSubjects.value , content: [response, ...this.dataSubjects.value.content]}
+          // )
+          this.isLoading.next(false)
+          this.getOrders()
+          this.saveProductsOrder(response)
+          setTimeout(() => this.getProforma(response) , 1000);
+          this.tabProducts = []
+          this.annuler()
+          return {dataState: DataState.LOADED_STATE, appData: this.dataSubjects.value}
+        }),
+        startWith({dataState: DataState.LOADED_STATE, appData: this.dataSubjects.value}),
+        catchError((error: string) => {
+          this.isLoading.next(false)
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
+
+
     //on enregistre une nouvelle commande
-    this.orderService.saveOrder(this.order).subscribe(
-      resp => {
-        console.log(resp)
-        this.isLoading.next(false);
-        /**
-         * je dois gérer cette partie
-         */
-        // this.orders.push(resp)
-
-        this.saveProductsOrder(resp)
-        setTimeout(() => this.getProforma(resp) , 5000);
-
-        this.getOrders()
-        this.notifsService.onSuccess('Nouvelle commande créée')
-        this.tabProducts = []
-      },
-      error => {
-        this.isLoading.next(false);
-        // this.notifsService.onError(error.error.message, 'erreur commande')
-      }
-    )
+    // this.orderService.saveOrder(this.order).subscribe(
+    //   resp => {
+    //     console.log(resp)
+    //     this.isLoading.next(false);
+    //     /**
+    //      * je dois gérer cette partie
+    //      */
+    //     // this.orders.push(resp)
+    //
+    //     this.saveProductsOrder(resp)
+    //     setTimeout(() => this.getProforma(resp) , 5000);
+    //
+    //     this.getOrders()
+    //     this.notifsService.onSuccess('Nouvelle commande créée')
+    //     this.tabProducts = []
+    //   },
+    //   error => {
+    //     this.isLoading.next(false);
+    //     // this.notifsService.onError(error.error.message, 'erreur commande')
+    //   }
+    // )
 
   }
 
@@ -289,19 +335,7 @@ export class IndexCommandComponent implements OnInit {
       this.Product.quantityNotebook = prod.quantity
       this.Product.idTypeVoucher = this.voucher.internalReference
       this.Product.idOrder = order.internalReference
-
-      this.productService.saveProduct(this.Product).subscribe(
-        respProd => {
-          console.log('prod save', respProd)
-          this.isLoading.next(false);
-        },
-        err => {
-          // this.notifsService.onError(err.error.message, 'err prod')
-        },
-        () => {
-          this.annuler()
-        }
-      )
+      this.productService.saveProduct(this.Product).subscribe()
     }
   }
 
@@ -311,14 +345,8 @@ export class IndexCommandComponent implements OnInit {
         const file = new Blob([respProd], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
         window.open(fileURL, 'Download');
-        // this.isLoading.next(false);
       },
     )
-  }
-
-  openClientModal(content: any){
-    const modal = true;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
   }
 
   openCommandModal(content: any){
@@ -328,7 +356,17 @@ export class IndexCommandComponent implements OnInit {
 
   pageChange(event: number){
     this.page = event
-    this.getOrdersPaginate()
+    this.orderState$ = this.orderService.orders$(this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.dataSubjects.next(response)
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
   getStatuts(status: string): string {

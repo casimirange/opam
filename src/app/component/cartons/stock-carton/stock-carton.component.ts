@@ -1,24 +1,29 @@
 import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {StoreHouse} from "../../../_interfaces/storehouse";
+import {StoreHouse} from "../../../_model/storehouse";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Store} from "../../../_interfaces/store";
-import {BehaviorSubject} from "rxjs";
+import {Store} from "../../../_model/store";
+import {BehaviorSubject, Observable, of} from "rxjs";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";
 import {StoreService} from "../../../_services/store/store.service";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import Swal from "sweetalert2";
 import {CartonService} from "../../../_services/cartons/carton.service";
-import {Carton} from "../../../_interfaces/carton";
+import {Carton} from "../../../_model/carton";
 import {CarnetService} from "../../../_services/carnets/carnet.service";
-import {Carnet} from "../../../_interfaces/carnet";
-import {TypeVoucher} from "../../../_interfaces/typeVoucher";
+import {Carnet} from "../../../_model/carnet";
+import {TypeVoucher} from "../../../_model/typeVoucher";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
-import {Coupon} from "../../../_interfaces/coupon";
+import {Coupon} from "../../../_model/coupon";
 import {CouponService} from "../../../_services/coupons/coupon.service";
-import {Stock} from "../../../_interfaces/stock";
+import {Stock} from "../../../_model/stock";
 import {MvtStockService} from "../../../_services/stock/mvt-stock.service";
 import {StatusService} from "../../../_services/status/status.service";
+import {catchError, map, startWith} from "rxjs/operators";
+import {AppState} from "../../../_interfaces/app-state";
+import {CustomResponse} from "../../../_interfaces/custom-response";
+import {Client} from "../../../_model/client";
+import {DataState} from "../../../_enum/data.state.enum";
 
 @Component({
   selector: 'app-stock-carton',
@@ -48,13 +53,19 @@ export class StockCartonComponent implements OnInit {
   isLoadingDataStoreHouse$ = this.isLoadingDataStoreHouse.asObservable();
   private isLoadingDataCarton = new BehaviorSubject<boolean>(false);
   isLoadingDataCarton$ = this.isLoadingDataCarton.asObservable();
+  appState$: Observable<AppState<CustomResponse<Carton>>>;
+  readonly DataState = DataState;
+  private dataSubjects = new BehaviorSubject<CustomResponse<Carton>>(null);
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   modalTitle = 'Enregistrer un nouveau carton'
   magasin: string
   entrepot: string;
-  typcoupon: any;
-  sn: any;
+  sctd: number;
+  sctf: number;
+  scpd: number;
+  scpf: number;
+  nc: number;
   page: number = 1;
   totalPages: number;
   totalElements: number;
@@ -81,16 +92,16 @@ export class StockCartonComponent implements OnInit {
       idStoreHouse: ['', [Validators.required]],
       idStore: ['', [Validators.required]],
       typeVoucher: ['', [Validators.required]],
-      serialFrom: ['', [Validators.required]],
-      serialTo: ['', [Validators.required]],
-      number: ['', [Validators.required]],
-      from: ['', [Validators.required]],
-      to: ['', [Validators.required]],
+      serialFrom: ['', [Validators.required, Validators.pattern('^[0-9 ]*$'), Validators.min(1)]],
+      serialTo: ['', [Validators.required, Validators.pattern('^[0-9 ]*$'), Validators.min(1)]],
+      number: ['', [Validators.required, Validators.pattern('^[0-9 ]*$'), Validators.min(1)]],
+      from: ['', [Validators.required, Validators.pattern('^[0-9 ]*$'), Validators.min(1)]],
+      to: ['', [Validators.required, Validators.pattern('^[0-9 ]*$'), Validators.min(1)]],
     });
   }
 
   //récupération de la liste des magasins
-  getStores(){
+    getStores(){
     this.storeService.getStore().subscribe(
       resp => {
         this.stores = resp.content
@@ -100,30 +111,31 @@ export class StockCartonComponent implements OnInit {
 
   //récupération de la liste des entrepots
   getCartons(){
-
-    this.cartonService.getAllCartonWithPagination(this.page-1, this.size).subscribe(
-      resp => {
-        console.log('liste des cartons', resp)
-        this.cartons = resp.content
-        this.size = resp.size
-        this.totalPages = resp.totalPages
-        this.totalElements = resp.totalElements
-        console.log(resp.content)
-        this.notifService.onSuccess('chargement des cartons')
-      },
-    )
+    this.appState$ = this.cartonService.cartons$(this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          console.log(response)
+          this.dataSubjects.next(response)
+          this.notifService.onSuccess('chargement des cartons')
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
   //récupération de la liste des entrepots
   getStoreHouses(event: any){
-    console.log('event', event)
     const store = this.stores.find(st => st.localization === event)
-    console.log('le mag', store)
     if(event != ''){
       this.storeHouses = []
+      this.isLoading.next(true);
       this.storeHouseService.getStoreHousesByStore(store.internalReference).subscribe(
         resp => {
+          this.isLoading.next(false);
             this.storeHouses = resp.content.filter(sth => sth.type == 'stockage')
-          this.notifService.onSuccess('chargement des entrepots')
+          // this.notifService.onSuccess('chargement des entrepots')
         },
       )
     }
@@ -171,18 +183,10 @@ export class StockCartonComponent implements OnInit {
     // }  , 1000);
     this.cartonService.createCarton(this.carton).subscribe(
       resp => {
-
-        console.log('carton créé', resp)
-        /**
-         * je dois résoudre le fait de charger toute la liste des cartons car un soucis avec la réponse qui est retournée
-         */
-        // this.cartons.push(resp)
-
-        // this.mvtStockService.createStockMovement(this.mvtStock).subscribe()
         this.isLoading.next(false);
         this.notifService.onSuccess('Carton crée avec succès!')
         this.getCartons();
-        // this.annuler()
+        this.annuler()
       },
       error => {
         this.isLoading.next(false);
@@ -201,6 +205,12 @@ export class StockCartonComponent implements OnInit {
 
   annuler() {
     this.formCarton();
+    this.cartonForm.reset()
+    this.nc = null
+    this.sctf = null
+    this.sctd = null
+    this.scpf = null
+    this.scpd = null
     this.storeHouse = new StoreHouse()
     this.modalService.dismissAll()
     this.magasin = ''
@@ -212,43 +222,6 @@ export class StockCartonComponent implements OnInit {
   open(content: any){
     const modal = true;
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
-  }
-
-  deleteCarton(carton: Carton, index: number) {
-    Swal.fire({
-      title: 'Supprimer carton',
-      html: "Voulez-vous vraiment supprimer "+ carton.number.toString().bold() + " de la liste de vos cartons ?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#00ace6',
-      cancelButtonColor: '#f65656',
-      confirmButtonText: 'OUI',
-      cancelButtonText: 'NON',
-      allowOutsideClick: true,
-      focusConfirm: false,
-      focusCancel: true,
-      focusDeny: true,
-      backdrop: `rgba(0, 0, 0, 0.4)`,
-      showLoaderOnConfirm: true
-    }).then((result) => {
-      if (result.value) {
-        this.isLoading.next(true)
-        this.cartonService.deleteCarton(carton.internalReference).subscribe(
-          resp => {
-            this.cartons.splice(index, 1)
-            this.isLoading.next(false)
-            this.notifService.onSuccess(`carton ${carton.internalReference.toString().bold()} supprimé avec succès !`)
-          },error => {
-            this.isLoading.next(false);
-            // if (error.error.message.includes('JWT expired')){
-            //
-            // }else {
-            //   this.notifService.onError(error.error.message, '')
-            // }
-          }
-        )
-      }
-    })
   }
 
   updateCartonModal(mymodal: TemplateRef<any>, carton: Carton) {
@@ -305,7 +278,17 @@ export class StockCartonComponent implements OnInit {
 
   pageChange(event: number){
     this.page = event
-    this.getCartons()
+    this.appState$ = this.cartonService.cartons$(this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.dataSubjects.next(response)
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
   removeZeros(coupon: string): string{

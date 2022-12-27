@@ -2,10 +2,10 @@ import {Component, OnInit, TemplateRef} from '@angular/core';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {VoucherService} from "../../_services/voucher/voucher.service";
-import {TypeVoucher} from "../../_interfaces/typeVoucher";
+import {TypeVoucher} from "../../_model/typeVoucher";
 import {BehaviorSubject} from "rxjs";
 import {NotifsService} from "../../_services/notifications/notifs.service";
-import {StoreHouse} from "../../_interfaces/storehouse";
+import {StoreHouse} from "../../_model/storehouse";
 import Swal from "sweetalert2";
 import {StatusService} from "../../_services/status/status.service";
 

@@ -1,5 +1,0 @@
-export enum ClientTypeEnum {
-  PARTICULAR = 'PARTICULAR',
-  ENTREPRISE = 'ENTREPRISE',
-  INSTITUTION = 'INSTITUTION'
-}

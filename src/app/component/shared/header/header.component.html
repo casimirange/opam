@@ -1,12 +1,13 @@
-<div class="app-header header-shadow">
+<div class="app-header header-shadow" [ngClass]="globals.toggleSidebar ? 'closed-sidebar' : ''">
   <div class="app-header__logo">
     <div class="logo-src">GULFCAM</div>
     <div class="header__pane ml-auto">
       <div>
-        <button type="button" class="hamburger close-sidebar-btn hamburger--elastic" data-class="closed-sidebar">
-                        <span class="hamburger-box">
-                            <span class="hamburger-inner"></span>
-                        </span>
+        <button type="button" class="hamburger close-sidebar-btn hamburger--elastic"
+                [ngClass]="globals.toggleSidebarMobile ? 'is-active' : ''" (click)="toggleSidebarMobile()">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
         </button>
       </div>
     </div>
@@ -57,7 +58,7 @@
                 {{lastName | titlecase}}
               </div>
               <div class="widget-subheading">
-                {{getStatusAccount(roleUser)}}
+                {{getStatusAccount(roleUser) | titlecase}}
               </div>
             </div>
           </div>

@@ -1,9 +1,9 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {Client} from "../../../_interfaces/client";
-import {Store} from "../../../_interfaces/store";
+import {Client} from "../../../_model/client";
+import {Store} from "../../../_model/store";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {TypeVoucher} from "../../../_interfaces/typeVoucher";
-import {Order} from "../../../_interfaces/order";
+import {TypeVoucher} from "../../../_model/typeVoucher";
+import {Order} from "../../../_model/order";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ClientService} from "../../../_services/clients/client.service";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
@@ -11,7 +11,13 @@ import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {StoreService} from "../../../_services/store/store.service";
 import {ProductService} from "../../../_services/product/product.service";
 import {OrderService} from "../../../_services/order/order.service";
-import {Products} from "../../../_interfaces/products";
+import {Products} from "../../../_model/products";
+import {BehaviorSubject, Observable, of} from "rxjs";
+import {AppState} from "../../../_interfaces/app-state";
+import {CustomResponse} from "../../../_interfaces/custom-response";
+import {DataState} from "../../../_enum/data.state.enum";
+import {catchError, map, startWith} from "rxjs/operators";
+import {StatusOrderService} from "../../../_services/status/status-order.service";
 
 export class Product{
   quantity: number;
@@ -47,11 +53,24 @@ export class IndexCaisseComponent implements OnInit {
   orders: Order[] = [];
   order: Order = new Order();
   roleUser = localStorage.getItem('userAccount').toString()
-  @ViewChild('orderModal', { static: false }) commandModal?: ElementRef<HTMLElement>;
-
+  name = ''
+  refCli = ''
+  date = ''
+  internalRef = ''
+  page: number = 1;
+  totalPages: number;
+  totalElements: number;
+  size: number = 10;
+  orderState$: Observable<AppState<CustomResponse<Order>>>;
+  readonly DataState = DataState;
+  private dataSubjects = new BehaviorSubject<CustomResponse<Order>>(null);
+  private isSearching = new BehaviorSubject<boolean>(false);
+  isSearching$ = this.isSearching.asObservable();
+  private isLoading = new BehaviorSubject<boolean>(false);
+  isLoading$ = this.isLoading.asObservable();
   constructor(private fb: FormBuilder, private modalService: NgbModal, private clientService: ClientService,
               private voucherService: VoucherService, private notifsService: NotifsService, private storeService: StoreService,
-              private productService: ProductService, private orderService: OrderService) {
+              private productService: ProductService, private orderService: OrderService, private statusService: StatusOrderService) {
     this.formClient();
     this.formOrder();
     this.clF = this.clientForm.controls;
@@ -84,93 +103,23 @@ export class IndexCaisseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getClients()
-    this.getTypeVoucher()
-    this.getStores()
     this.getOrders()
   }
 
-  getClients(): void{
-    this.clientService.getAllClients().subscribe(
-      resp => {
-        this.clients = resp.content;
-      }
-    )
-  }
-
-  getStores(){
-    this.storeService.getStore().subscribe(
-      resp => {
-        this.stores = resp.content
-      },
-      error => {
-        this.notifsService.onError(error.error.message, 'échec chargement magasins')
-      }
-    )
-  }
-
-  getTypeVoucher(): void{
-    this.voucherService.getTypevoucher().subscribe(
-      resp => {
-        this.vouchers = resp.content
-      }
-    )
-  }
-
-  addProduct(){
-    this.tabProd = new Product();
-
-    this.tabProd.quantity = this.orF['quantity'].value;
-    this.tabProd.voucher = this.orF['voucherType'].value;
-    this.tabProd.total = this.orF['quantity'].value * this.orF['voucherType'].value;
-    this.tabProducts.push(this.tabProd)
-    this.orF['quantity'].clear; this.orF['voucherType'].clear
-    console.log('produit', this.tabProducts)
-    this.totalOrder = 0;
-    for(let prod of this.tabProducts){
-      this.totalOrder = this.totalOrder + prod.total
-    }
-    this.orF['quantity'].reset();
-    this.orF['voucherType'].reset();
-
-  }
-
-  removeProduct(index: Product){
-    this.tabProd = new Product()
-
-    console.log(this.tabProducts.indexOf(index))
-    const prodIndex = this.tabProducts.indexOf(index)
-    this.tabProducts.splice(prodIndex, 1)
-    console.log('prod', index)
-    console.log('produit', this.tabProducts)
-    this.totalOrder = 0;
-    for(let prod of this.tabProducts){
-      this.totalOrder = this.totalOrder + prod.total
-    }
-
-  }
-
-  showClientForms(){
-    this.showClientForm = !this.showClientForm;
-    this.showClientForm ? this.title = 'Enregistrer nouveau client' : this.title = 'Enregistrer nouvelle commande';
-  }
-
-
-  saveClientt(){
-    this.clientService.addClient(this.clientForm.value as Client).subscribe(
-      resp => {
-        this.clients.push(resp)
-        this.notifsService.onSuccess('client rajouté avec succès')
-        this.showClientForms();
-        this.formClient()
-      },
-      err => {
-        this.notifsService.onError(err.error.message, 'échec d\'enregistrement')
-      }
-    )
-  }
 
   getOrders(){
+    this.orderState$ = this.orderService.orders$(this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.dataSubjects.next(response)
+          this.notifsService.onSuccess('Cahrgement des commandes')
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
     this.orderService.getOrders().subscribe(
       resp =>{
         // this.orders =
@@ -182,75 +131,22 @@ export class IndexCaisseComponent implements OnInit {
     )
   }
 
-  saveOrder(){
-
-    //on récupère les informations du client
-    this.client = this.clients.find(client => client.completeName === this.orF['client'].value)
-    //on récupère les informations du magasin
-    this.store = this.stores.find(store => store.localization === this.orF['store'].value)
-
-    this.order.idStore = this.store.internalReference
-    this.order.idClient = this.client.internalReference
-    this.order.channel = this.orF['chanel'].value
-    this.order.idManagerOrder = parseInt(localStorage.getItem('uid'))
-
-    //on enregistre la commande
-    this.orderService.saveOrder(this.order).subscribe(
-      resp => {
-        console.log(resp)
-
-        //une fois la commande enregistrée, on enregistre les produits liés à cette commande
-        for(let prod of this.tabProducts){
-          this.voucher = this.vouchers.find(v => v.amount == prod.voucher)
-          this.Product.quantityNotebook = prod.quantity
-          this.Product.idTypeVoucher = this.voucher.internalReference
-          this.Product.idOrder = resp.internalReference
-
-          this.productService.saveProduct(this.Product).subscribe(
-            respProd => {
-              console.log('prod save', respProd)
-            },
-            err => {
-              this.notifsService.onError(err.error.message, 'err prod')
-            }
-          )
-        }
-      },
-      error => {
-        this.notifsService.onError(error.error.message, 'erreur commande')
-      }
-    )
-
-
-
-    //enregistrer la commande et les produits
-
-
-
-    // this.tabProducts.forEach(pro => {
-    //   this.Products
-    // })
-
-
-    /**
-     * enregistrer la commande en récupérant l'identifiant du gestionnaire
-     */
-
-
-
-    /**
-     * proforma: générer le client est une entreprise ou un particulier
-     * préfacture: générer si le client est une institution
-     */
+  pageChange(event: number){
+    this.page = event
+    this.orderState$ = this.orderService.orders$(this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.dataSubjects.next(response)
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
-  openClientModal(content: any){
-    const modal = true;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
-  }
-
-  openCommandModal(content: any){
-    const modal = true;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-titles', size: 'xl', });
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
   }
 }

@@ -1,10 +1,10 @@
 import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {StoreHouse} from "../../../_interfaces/storehouse";
-import {Carton} from "../../../_interfaces/carton";
-import {Carnet} from "../../../_interfaces/carnet";
-import {TypeVoucher} from "../../../_interfaces/typeVoucher";
+import {StoreHouse} from "../../../_model/storehouse";
+import {Carton} from "../../../_model/carton";
+import {Carnet} from "../../../_model/carnet";
+import {TypeVoucher} from "../../../_model/typeVoucher";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Store} from "../../../_interfaces/store";
+import {Store} from "../../../_model/store";
 import {BehaviorSubject} from "rxjs";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";

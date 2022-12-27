@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import {Observable, throwError} from "rxjs";
 import {environment} from "../../../environments/environment";
+import {CustomResponse} from "../../_interfaces/custom-response";
+import {Client} from "../../_model/client";
+import {catchError} from "rxjs/operators";
+import {Carton} from "../../_model/carton";
 
 @Injectable({
   providedIn: 'root'
@@ -26,8 +30,8 @@ export class CartonService {
     return this.http.get<any>(environment.carton+ `?page=${page}&size=${size}`)
   }
 
-  getCartonsByStoreHouse(idStoreHouse: number, page: number,): Observable<any>{
-    return this.http.get<any>(environment.carton+`/storehouse/${idStoreHouse}?page=${page}`)
+  getCartonsByStoreHouse(idStoreHouse: number, page: number, size: number): Observable<any>{
+    return this.http.get<any>(environment.carton+`/storehouse/${idStoreHouse}?page=${page}&size=${size}`)
   }
 
   updateCarton(carton: any, internalRef: number): Observable<any>{
@@ -40,5 +44,13 @@ export class CartonService {
 
   findCarton(internalRef: number): Observable<any>{
     return this.http.get<any>(environment.carton+`/${internalRef}`)
+  }
+
+  cartons$ = (page: number, size: number) => <Observable<CustomResponse<Carton>>>
+    this.http.get<CustomResponse<Carton>>(environment.carton + `?page=${page}&size=${size}`,)
+      .pipe(catchError(this.handleError));
+
+  handleError(error: HttpErrorResponse): Observable<never>{
+    return throwError(`Une erreur est survenue: ${error.error.message.toString().bold()}` )
   }
 }

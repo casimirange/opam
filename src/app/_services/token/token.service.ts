@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {IToken} from "../../_interfaces/token";
+import {IToken} from "../../_model/token";
 import {Router} from "@angular/router";
-import {IUser} from "../../_interfaces/user";
-import {ISignup} from "../../_interfaces/signup";
+import {IUser} from "../../_model/user";
+import {ISignup} from "../../_model/signup";
 import {BnNgIdleService} from "bn-ng-idle";
 
 @Injectable({

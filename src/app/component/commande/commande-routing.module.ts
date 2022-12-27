@@ -5,6 +5,7 @@ import {IndexCommandComponent} from "./index-command/index-command.component";
 import {AddCommandComponent} from "./add/add-command.component";
 import {SignupComponent} from "../auth/signup/signup.component";
 import {EditComponent} from "./edit/edit.component";
+import {AmountVoucherPipe} from "./pipes/amount-voucher.pipe";
 
 const routes: Routes = [
   { path:'', component: CommandLayoutComponent, children: [
@@ -18,6 +19,9 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  declarations: [
+    AmountVoucherPipe
+  ],
+  exports: [RouterModule, AmountVoucherPipe]
 })
 export class CommandeRoutingModule { }

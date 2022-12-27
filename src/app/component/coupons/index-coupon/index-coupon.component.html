@@ -62,13 +62,16 @@
 
       <div class="table-responsive" >
 
-        <ng-container class="bg-white">
-          <!--            <ng-container *ngSwitchCase="DataState.LOADING_STATE" class="bg-white py-1 px-1">-->
-          <!--              <div class="col-md-12 single-note-item text-center bg-white">-->
-          <!--                <div class="spinner-border text-primary" role="status"></div>-->
-          <!--              </div>-->
-          <!--            </ng-container>-->
-          <ng-container class="bg-white py-1 px-1">
+        <ng-container class="bg-white" *ngIf="(appState$ | async) as appState" [ngSwitch]="appState.dataState">
+          <ng-container class="bg-white" *ngSwitchCase="DataState.LOADING_STATE">
+              <div class="col-md-12 text-center my-3">
+                <!--                <div class="spinner-border text-primary my-3" role="status"></div>-->
+                <div class="ball-clip-rotate">
+                  <div style="background-color: rgb(68, 64, 84);"></div>
+                </div>
+              </div>
+            </ng-container>
+          <ng-container class="bg-white py-1 px-1" *ngSwitchCase="DataState.LOADED_STATE">
             <table class="table table-hover bg-white" >
               <thead>
               <tr>
@@ -77,16 +80,17 @@
                 <th>Numéro de série</th>
                 <th>Coupon</th>
                 <th>Client</th>
-                <th>Ticket</th>
+<!--                <th>Ticket</th>-->
                 <th>Carnet</th>
                 <th>Station</th>
                 <th>Statut</th>
-                <th>Date création</th>
-                <th>Date modification</th>
+                <th>Note credit</th>
+                <th>Dde Oppo.</th>
+                <th>Date</th>
 <!--                <th>Actions</th>-->
               </tr>
               </thead>
-              <tbody *ngFor="let coupon of coupons | paginate: { id: 'coupon',itemsPerPage: size, currentPage: page, totalItems: totalElements }; let i = index">
+              <tbody *ngFor="let coupon of appState.appData.content | paginate: { id: 'coupon',itemsPerPage: appState.appData.size, currentPage: page, totalItems: appState.appData.totalElements }; let i = index">
 
               <tr>
                 <td>{{i + 1}}</td>
@@ -94,44 +98,42 @@
                 <td>{{ padWithZero(coupon.serialNumber, 7)}}</td>
                 <td><span *ngFor="let v of vouchers">{{v.internalReference == coupon.idTypeVoucher ? v.amount : ''}}</span></td>
                 <td>{{coupon.idClient}}</td>
-                <td>{{coupon.idTicket}}</td>
+<!--                <td>{{coupon.idTicket}}</td>-->
                 <td>{{coupon.idNotebook}}</td>
-                <td>{{coupon.idStation}}</td>
+                <td><span *ngFor="let station of stations">{{station.internalReference == coupon.idStation ? station.designation : ''}}</span></td>
                 <td>{{getStatuts(coupon.status.name)}}</td>
-                <td>{{coupon.createdAt}}</td>
-                <td>{{coupon.updateAt}}</td>
-<!--                <td>-->
-<!--                  <a style="cursor: pointer"  class="delete text-danger" (click)="deleteCoupon(coupon, i)" >-->
-<!--                    <i class="pe-7s-trash" title="supprimer"></i>-->
-<!--                  </a>&nbsp;-->
-<!--                  <a style="cursor: pointer"  class="text-primary" >-->
-<!--                    <i class="pe-7s-eyedropper" title="modifier"></i>-->
-<!--                  </a>-->
-<!--                </td>-->
+                <td>{{coupon.idCreditNote}}</td>
+                <td>{{coupon.idRequestOpposition}}</td>
+                <td>{{coupon.createdAt | date: 'dd/MM/yyyy'}}</td>
               </tr>
             </table>
             <div class="text-center">
-              <p *ngIf="totalElements == 0" style="color: grey; font-size: 1.8rem;" class="mx-auto" >Aucun Coupon trouvé !</p>
+              <p *ngIf="!appState.appData.content.length" style="color: grey; font-size: 1.8rem;" class="mx-auto" >Aucun Coupon trouvé !</p>
+            </div>
+            <div class="card-footer">
+              <div class="btn-actions-pane-left">
+                <div role="group" class="btn-group-sm btn-group">
+                  Total coupons: <b>{{ appState.appData.totalElements }} </b>
+                </div>
+              </div>
+              <div class="btn-actions-pane-right">
+                <div role="group" class="btn-group-sm btn-group">
+                  <!--              <pagination-controls id="client" (pageChange)="pageChange($event)" ></pagination-controls>-->
+                  <pagination-controls
+                    id="coupon"
+                    previousLabel="Précédent"
+                    nextLabel="Suivant"
+                    (pageChange)="pageChange($event)"></pagination-controls>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <ng-container class="bg-white"  *ngSwitchCase="DataState.ERROR_STATE">
+            <div class="col-md-12 text-center">
+              <div class="text-danger" >{{appState.error}}</div>
             </div>
           </ng-container>
         </ng-container>
-      </div>
-      <div class="card-footer">
-        <div class="btn-actions-pane-left">
-          <div role="group" class="btn-group-sm btn-group">
-            Total coupons: <b>{{ totalElements }} </b>
-          </div>
-        </div>
-        <div class="btn-actions-pane-right">
-          <div role="group" class="btn-group-sm btn-group">
-            <!--              <pagination-controls id="client" (pageChange)="pageChange($event)" ></pagination-controls>-->
-            <pagination-controls
-              id="coupon"
-              previousLabel="Précédent"
-              nextLabel="Suivant"
-              (pageChange)="pageChange($event)"></pagination-controls>
-          </div>
-        </div>
       </div>
     </div>
   </div>

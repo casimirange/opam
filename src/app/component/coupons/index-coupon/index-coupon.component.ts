@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import {StoreHouse} from "../../../_interfaces/storehouse";
-import {Carton} from "../../../_interfaces/carton";
-import {Carnet} from "../../../_interfaces/carnet";
-import {TypeVoucher} from "../../../_interfaces/typeVoucher";
+import {StoreHouse} from "../../../_model/storehouse";
+import {Carton} from "../../../_model/carton";
+import {Carnet} from "../../../_model/carnet";
+import {TypeVoucher} from "../../../_model/typeVoucher";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {Store} from "../../../_interfaces/store";
-import {BehaviorSubject} from "rxjs";
+import {Store} from "../../../_model/store";
+import {BehaviorSubject, Observable, of} from "rxjs";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {StoreHouseService} from "../../../_services/storeHouse/store-house.service";
 import {StoreService} from "../../../_services/store/store.service";
@@ -15,10 +15,15 @@ import {CarnetService} from "../../../_services/carnets/carnet.service";
 import {VoucherService} from "../../../_services/voucher/voucher.service";
 import Swal from "sweetalert2";
 import {CouponService} from "../../../_services/coupons/coupon.service";
-import {Coupon} from "../../../_interfaces/coupon";
+import {Coupon} from "../../../_model/coupon";
 import {StationService} from "../../../_services/stations/station.service";
-import {Station} from "../../../_interfaces/station";
+import {Station} from "../../../_model/station";
 import {StatusService} from "../../../_services/status/status.service";
+import {AppState} from "../../../_interfaces/app-state";
+import {CustomResponse} from "../../../_interfaces/custom-response";
+import {Client} from "../../../_model/client";
+import {DataState} from "../../../_enum/data.state.enum";
+import {catchError, map, startWith} from "rxjs/operators";
 
 @Component({
   selector: 'app-index-coupon',
@@ -39,6 +44,9 @@ export class IndexCouponComponent implements OnInit {
   couponForm: FormGroup ;
   stores: Store[] = [];
   store: Store = new Store();
+  appState$: Observable<AppState<CustomResponse<Coupon>>>;
+  readonly DataState = DataState;
+  private dataSubjects = new BehaviorSubject<CustomResponse<Coupon>>(null);
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   roleUser = localStorage.getItem('userAccount').toString()
@@ -56,25 +64,17 @@ export class IndexCouponComponent implements OnInit {
               private storeService: StoreService, private notifService: NotifsService, private cartonService: CartonService,
               private carnetService: CarnetService, private voucherService: VoucherService, private couponService: CouponService,
               private stationService: StationService, private statusService: StatusService) {
-    this.formCarton();
+    this.formCoupon();
   }
 
   ngOnInit(): void {
-    this.getStores();
     this.getTypeVoucher()
-    this.storeHouseService.getStoreHouses().subscribe(
-      resp => {
-        this.storeHouses = resp.content
-      },
-    )
-    this.getCartons();
-    this.getCarnets();
     this.getCoupons();
     this.getStations();
   }
 
   //formulaire de création
-  formCarton(){
+  formCoupon(){
     this.couponForm = this.fb.group({
       coupon: ['', [Validators.required]],
       idStation: ['', [Validators.required]],
@@ -99,73 +99,21 @@ export class IndexCouponComponent implements OnInit {
     )
   }
 
-  //récupération de la liste des entrepots
-  getCartons(){
-
-    this.cartonService.getCartons().subscribe(
-      resp => {
-        this.cartons = resp.content
-        this.notifService.onSuccess('chargement des cartons')
-      },
-    )
-  }
-  //récupération de la liste des entrepots
-  getCarnets(){
-
-    this.carnetService.getCarnets(this.page -1, this.size).subscribe(
-      resp => {
-        this.carnets = resp.content
-        this.size = resp.size
-        this.totalPages = resp.totalPages
-        this.totalElements = resp.totalElements
-        this.notifService.onSuccess('chargement des carnets')
-      },
-    )
-  }
 
   //récupération de la liste des entrepots
   getCoupons(){
-
-    this.couponService.getCoupons(this.page -1, this.size).subscribe(
-      resp => {
-        console.log(resp.content)
-        this.coupons = resp.content
-        this.size = resp.size
-        this.totalPages = resp.totalPages
-        this.totalElements = resp.totalElements
-        this.notifService.onSuccess('chargement des coupons')
-      },
-    )
-  }
-  //récupération de la liste des entrepots
-  getStoreHouses(event: any){
-    console.log('event', event)
-
-    this.storeHouseService.getStoreHouses().subscribe(
-      resp => {
-        console.log(resp)
-        const store = this.stores.find(st => st.localization === event)
-        console.log(store)
-        if (event != ''){
-          this.storeHouses = resp.content.filter(sth => sth.idStore == store.internalReference && sth.type == 'stockage')
-          console.log('filtrées2',resp.content.filter(sth => sth.idStore == store.internalReference ))
-        }
-
-        console.log('filtrées',this.storeHouses)
-
-        this.notifService.onSuccess('chargement des entrepots')
-      },
-    )
-  }
-
-  compare( a: Carnet, b: Carnet ) {
-    if ( a.serialNumber < b.serialNumber ){
-      return -1;
-    }
-    if ( a.serialNumber > b.serialNumber ){
-      return 1;
-    }
-    return 0;
+    this.appState$ = this.couponService.coupons$(this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.dataSubjects.next(response)
+          this.notifService.onSuccess('chargement des coupons')
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
   //on récupère la liste des types de coupon
@@ -178,67 +126,29 @@ export class IndexCouponComponent implements OnInit {
   }
 
   annuler() {
-    this.formCarton();
-    this.storeHouse = new StoreHouse()
+    this.formCoupon();
     this.modalService.dismissAll()
-
   }
-  //open modal
-
-
 
   open(content: any){
     const modal = true;
     this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
   }
 
-  deleteCoupon(coupon: Coupon, index: number) {
-    Swal.fire({
-      title: 'Supprimer coupon',
-      html: "Voulez-vous vraiment supprimer "+ coupon.serialNumber.toString().bold() + " de la liste de vos coupons ?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#00ace6',
-      cancelButtonColor: '#f65656',
-      confirmButtonText: 'OUI',
-      cancelButtonText: 'NON',
-      allowOutsideClick: true,
-      focusConfirm: false,
-      focusCancel: true,
-      focusDeny: true,
-      backdrop: `rgba(0, 0, 0, 0.4)`,
-      showLoaderOnConfirm: true
-    }).then((result) => {
-      if (result.value) {
-        this.isLoading.next(true)
-        this.couponService.deleteCoupon(coupon.internalReference).subscribe(
-          resp => {
-            this.coupons.splice(index, 1)
-            this.isLoading.next(false)
-            this.notifService.onSuccess(`coupon ${coupon.internalReference.toString().bold()} supprimé avec succès !`)
-          },error => {
-            this.isLoading.next(false);
-            // if (error.error.message.includes('JWT expired')){
-            //
-            // }else {
-            //   this.notifService.onError(error.error.message, '')
-            // }
-          }
-        )
-      }
-    })
-  }
-
   pageChange(event: number){
     this.page = event
-    this.couponService.getCoupons(this.page -1, this.size).subscribe(
-      resp => {
-        this.coupons = resp.content
-        this.size = resp.size
-        this.totalPages = resp.totalPages
-        this.totalElements = resp.totalElements
-      },
-    )
+    this.appState$ = this.couponService.coupons$(this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.dataSubjects.next(response)
+          console.log(response)
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
   getStatuts(status: string): string {
@@ -263,6 +173,7 @@ export class IndexCouponComponent implements OnInit {
       resp => {
         console.log(resp)
         this.getCoupons()
+        this.annuler()
         this.isLoading.next(false);
         this.notifService.onSuccess('coupon accepté')
       },

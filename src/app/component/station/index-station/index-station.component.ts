@@ -5,11 +5,11 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import Swal from "sweetalert2";
 import {StationService} from "../../../_services/stations/station.service";
-import {Station} from "../../../_interfaces/station";
+import {Station} from "../../../_model/station";
 import {StatusService} from "../../../_services/status/status.service";
 import {UsersService} from "../../../_services/users/users.service";
-import {IUser} from "../../../_interfaces/user";
-import {ISignup} from "../../../_interfaces/signup";
+import {IUser} from "../../../_model/user";
+import {ISignup} from "../../../_model/signup";
 import {Router} from "@angular/router";
 
 @Component({

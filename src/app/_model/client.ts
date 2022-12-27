@@ -1,4 +1,3 @@
-import {ClientTypeEnum} from "../_enum/clientTypeEnum";
 import {Status} from "./status";
 
 export class Client {

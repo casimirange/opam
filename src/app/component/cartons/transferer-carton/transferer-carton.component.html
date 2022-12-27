@@ -6,7 +6,7 @@
         </i>
       </div>
       <div>Stock
-        <div class="page-title-subheading">Mouvement du stock </div>
+        <div class="page-title-subheading">Mouvement du stock</div>
       </div>
     </div>
   </div>
@@ -30,119 +30,46 @@
   </li>
 </ul>
 
-<div >
+<div>
   <div class="row">
     <div class="col-md-12">
       <div class="main-card mb-3 card">
         <div class="card-body">
           <h5 class="card-title">Transfert de carton</h5>
-          <form [formGroup]="supplyForm">
+          <form [formGroup]="tranfertForm">
             <div class="form-row">
-<!--                            <div class="col-md-6">-->
-<!--                              <div class="position-relative form-group">-->
-<!--                                <label>Magasin 1</label>-->
-<!--                                <select formControlName="idStore1" class="form-control form-control-sm">-->
-<!--                                  <option *ngFor="let store of stores1" [value]="store.internalReference">{{store.localization}}</option>-->
-<!--                                </select>-->
-<!--                              </div>-->
-<!--&lt;!&ndash;                              <div *ngIf="form['email'].invalid && (form['email'].dirty || form['email'].touched)"&ndash;&gt;-->
-<!--&lt;!&ndash;                                   class="mb-2"  style="color: #f65656; font-style: italic;">&ndash;&gt;-->
-
-<!--&lt;!&ndash;                                <div *ngIf="form['email'].errors?.['required']" class="ml-3">&ndash;&gt;-->
-<!--&lt;!&ndash;                                  l'email est obligatoire.&ndash;&gt;-->
-<!--&lt;!&ndash;                                </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <div *ngIf="form['email'].errors?.['email']" class="ml-3">&ndash;&gt;-->
-<!--&lt;!&ndash;                                  entrez une email valide : example@example.com&ndash;&gt;-->
-<!--&lt;!&ndash;                                </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                              </div>&ndash;&gt;-->
-<!--                            </div>-->
-<!--                            <div class="col-md-6">-->
-<!--                              <div class="position-relative form-group">-->
-<!--                                <label>Magasin 2</label>-->
-<!--                                <select formControlName="idStore2" class="form-control form-control-sm">-->
-<!--                                  <option *ngFor="let store of stores1" [value]="store.internalReference">{{store.localization}}</option>-->
-<!--                                </select>-->
-<!--                              </div>-->
-<!--&lt;!&ndash;                              <div *ngIf="form['telephone'].invalid && (form['telephone'].dirty || form['telephone'].touched)"&ndash;&gt;-->
-<!--&lt;!&ndash;                                   class="mb-2"  style="color: #f65656; font-style: italic;">&ndash;&gt;-->
-
-<!--&lt;!&ndash;                                <div *ngIf="form['telephone'].errors?.['required']" class="ml-3">&ndash;&gt;-->
-<!--&lt;!&ndash;                                  le numéro de téléphone est obligatoire.&ndash;&gt;-->
-<!--&lt;!&ndash;                                </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                                <div *ngIf="form['telephone'].errors?.['pattern']" class="ml-3">&ndash;&gt;-->
-<!--&lt;!&ndash;                                  Le numéro de téléphone doit comporter 9 chiffres commençant par 2 ou par 6&ndash;&gt;-->
-<!--&lt;!&ndash;                                </div>&ndash;&gt;-->
-<!--&lt;!&ndash;                              </div>&ndash;&gt;-->
-<!--                            </div>-->
               <div class="col-md-6">
                 <div class="position-relative form-group">
                   <label>Entrepôt de stockage d'arrivé</label>
-                  <select formControlName="idStoreHouseStockage" class="form-control form-control-sm">
+                  <select formControlName="idStoreHouseStockage" class="form-control">
+                    <option disabled selected hidden value="">Sélectionner un entrepôt</option>
                     <option *ngFor="let store of storeHouses1" [value]="store.internalReference">{{store.name}}</option>
                   </select>
+                  <div
+                    *ngIf="form['idStoreHouseStockage'].invalid && (form['idStoreHouseStockage'].dirty || form['idStoreHouseStockage'].touched)"
+                    class="mb-2" style="color: #f65656; font-style: italic;">
+
+                    <div *ngIf="form['idStoreHouseStockage'].errors?.['required']" class="ml-3">
+                      le carton est obligatoire.
+                    </div>
+                  </div>
                 </div>
-<!--                <div *ngIf="form['idStoreHouseStockage'].invalid && (form['idStoreHouseStockage'].dirty || form['idStoreHouseStockage'].touched)"-->
-<!--                     class="mb-2"  style="color: #f65656; font-style: italic;">-->
-
-<!--                  <div *ngIf="form['idStoreHouseStockage'].errors?.['required']" class="ml-3">-->
-<!--                    le code pin est obligatoire.-->
-<!--                  </div>-->
-<!--                  <div *ngIf="form['idStoreHouseStockage'].errors?.['pattern']" class="ml-3">-->
-<!--                    Le code pin est un nombre-->
-<!--                  </div>-->
-<!--                </div>-->
               </div>
-<!--              <div class="col-md-6">-->
-<!--                <div class="position-relative form-group">-->
-<!--                  &lt;!&ndash;                        <input id="idStore" placeholder="Magasin" type="text" name="idStore" class="form-control form-control-sm"  formControlName="idStore">&ndash;&gt;-->
-<!--                  &lt;!&ndash;                    <input type="text" id="clientref" class="form-control" formControlName="idStore" placeholder="choisir un magasin" &ndash;&gt;-->
-<!--                  &lt;!&ndash;                           list="storeListOption"  [(ngModel)]="user.idStore">&ndash;&gt;-->
-<!--                  <label>Entrepôt de stockage 2</label>-->
-<!--                  <select formControlName="idStoreHouseStockage2" class="form-control form-control-sm">-->
-<!--                    <option *ngFor="let store of storeHouses1" [value]="store.internalReference">{{store.name}}</option>-->
-<!--                  </select>-->
-<!--                </div>-->
-<!--                <div *ngIf="form['idStoreHouseSell'].invalid && (form['idStoreHouseSell'].dirty || form['idStoreHouseSell'].touched)"-->
-<!--                     class="mb-2"  style="color: #f65656; font-style: italic;">-->
-
-<!--                  <div *ngIf="form['idStoreHouseSell'].errors?.['required']" class="ml-3">-->
-<!--                    le magasin est obligatoire.-->
-<!--                  </div>-->
-                  <!--                        <div *ngIf="form['idStore'].errors?.['pattern']" class="ml-3">-->
-                  <!--                          Le magasin est un nombre-->
-                  <!--                        </div>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <div class="divider"></div>-->
-<!--              <div class="col-md-12">-->
-<!--                <div class="position-relative form-group">-->
-<!--                  <label for="tb" class="">Type de coupon</label>-->
-<!--                  <select name="select" id="tb" class="form-control" formControlName="typeVoucher">-->
-<!--                    <option value="" selected  hidden>Sélectionner un coupon</option>-->
-<!--                    <option *ngFor="let tVoucher of vouchers">{{tVoucher.amount}}</option>-->
-<!--                  </select>-->
-<!--                </div>-->
-<!--                <div *ngIf="form['typeVoucher'].invalid && (form['typeVoucher'].dirty || form['typeVoucher'].touched)"-->
-<!--                     class="mb-2"  style="color: #f65656; font-style: italic;">-->
-
-<!--                  <div *ngIf="form['typeVoucher'].errors?.['required']" class="ml-3">-->
-<!--                    le type de coupon est obligatoire.-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
               <div class="col-md-6">
                 <div class="position-relative form-group">
                   <label for="serialnumber" class="">Carton</label>
-<!--                  <input type="text" >-->
-                  <select id="serialnumber" [(ngModel)]="sn" formControlName="idCarton" class="form-control">
-                    <option *ngFor="let carton of cartons" value="{{carton.internalReference}}">{{carton.number}}</option>
+                  <!--                  <input type="text" >-->
+                  <select id="serialnumber" formControlName="idCarton" class="form-control">
+                    <option disabled selected hidden value="">Sélectionner un carton</option>
+                    <option *ngFor="let carton of cartons"
+                            value="{{carton.internalReference}}">{{carton.number}}</option>
                   </select>
                 </div>
                 <div *ngIf="form['idCarton'].invalid && (form['idCarton'].dirty || form['idCarton'].touched)"
-                     class="mb-2"  style="color: #f65656; font-style: italic;">
+                     class="mb-2" style="color: #f65656; font-style: italic;">
 
                   <div *ngIf="form['idCarton'].errors?.['required']" class="ml-3">
-                    le numéro de série est obligatoire.
+                    le carton est obligatoire.
                   </div>
 
                 </div>
@@ -150,10 +77,10 @@
 
               <div class="float-right">
 
-                <button type="submit" class="btn btn-primary" [disabled]="supplyForm.invalid || (isLoading$ | async)">
+                <button type="submit" class="btn btn-primary" [disabled]="tranfertForm.invalid || (isLoading$ | async)">
                   <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
-                  <span *ngIf="isLoading$ | async">Enregistrement...</span>
-                  <span *ngIf="!(isLoading$ | async)" (click)="transfertCarton()">Enregistrer</span>
+                  <span *ngIf="isLoading$ | async">Transfert...</span>
+                  <span *ngIf="!(isLoading$ | async)" (click)="transfertCarton()">Transférer</span>
                 </button>
               </div>
             </div>

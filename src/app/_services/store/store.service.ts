@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {TypeVoucher} from "../../_interfaces/typeVoucher";
+import {TypeVoucher} from "../../_model/typeVoucher";
 import {Observable} from "rxjs";
 import {environment} from "../../../environments/environment";
-import {Store} from "../../_interfaces/store";
+import {Store} from "../../_model/store";
 
 @Injectable({
   providedIn: 'root'
@@ -24,8 +24,8 @@ export class StoreService {
     return this.http.get<any>(environment.store+ `?page=${page}&size=${size}`)
   }
 
-  getStoreByInternalref(internalRef: number): Observable<any>{
-    return this.http.get<any>(environment.store + `/${internalRef}`)
+  getStoreByInternalref(internalRef: number): Observable<Store>{
+    return this.http.get<Store>(environment.store + `/${internalRef}`)
   }
 
   //liste des entrepots par magasin
@@ -44,5 +44,9 @@ export class StoreService {
   //liste des unités par magasin
   getUnitByStore(internalRef: number): Observable<any>{
     return this.http.get<any>(environment.store + `/group/${internalRef}`)
+  }
+
+  searchStore(localization: string): Observable<any>{
+    return this.http.get<any>(environment.client+ `/like/${localization}`)
   }
 }

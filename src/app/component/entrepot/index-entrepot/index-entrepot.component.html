@@ -85,7 +85,7 @@
               </thead>
               <tbody *ngFor="let storeHouse of storeHouses | paginate: { id: 'entrepot', itemsPerPage: size, currentPage: page, totalItems: totalElements }; let i = index">
 
-              <tr (dblclick)="showDetails(storeHouse)">
+              <tr >
                 <td>{{i + 1}}</td>
                 <td>{{storeHouse.internalReference}}</td>
                 <td>{{storeHouse.localisationStore}}</td>
@@ -98,9 +98,15 @@
 <!--                  <a style="cursor: pointer"  class="delete text-danger" (click)="deleteStoreHouse(storeHouse, i)" >-->
 <!--                    <i class="pe-7s-trash" title="supprimer"></i>-->
 <!--                  </a>&nbsp;-->
-                  <a style="cursor: pointer"  class="text-primary" (click)="updateStoreHouseModal(mymodal, storeHouse)">
+<!--                  <a style="cursor: pointer"  class="text-primary" (click)="updateStoreHouseModal(mymodal, storeHouse)">-->
+<!--                    <i class="pe-7s-eyedropper" title="modifier"></i>-->
+<!--                  </a>-->
+                  <button class="btn btn-sm btn-secondary mr-2" (click)="showDetails(storeHouse)">
+                    <i class="pe-7s-look" title="consulter"></i>
+                  </button>
+                  <button class="btn btn-sm btn-primary" (click)="updateStoreHouseModal(mymodal, storeHouse)">
                     <i class="pe-7s-eyedropper" title="modifier"></i>
-                  </a>
+                  </button>
                 </td>
               </tr>
             </table>

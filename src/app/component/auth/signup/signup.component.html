@@ -165,13 +165,13 @@
                     </div>
                   </div>
                 </form>
-                <ng-container *ngIf="(appState$ | async) as appState" [ngSwitch]="appState.dataState">
-                  <ng-container *ngSwitchCase="DataState.ERROR_STATE" class="">
-                    <div class="divider" ></div>
-                    <h6 class="mb-0 text-danger">{{appState.error}}</h6>
-                  </ng-container>
-                </ng-container>
-                {{errorMessage}}
+<!--                <ng-container *ngIf="(appState$ | async) as appState" [ngSwitch]="appState.dataState">-->
+<!--                  <ng-container *ngSwitchCase="DataState.ERROR_STATE" class="">-->
+<!--                    <div class="divider" ></div>-->
+<!--                    <h6 class="mb-0 text-danger">{{appState.error}}</h6>-->
+<!--                  </ng-container>-->
+<!--                </ng-container>-->
+<!--                {{errorMessage}}-->
               </div>
               <div class="modal-footer clearfix">
                 <div class="float-right">

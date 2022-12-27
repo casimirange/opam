@@ -1,18 +1,16 @@
 import {Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import {Client, TypeClient} from "../../../_interfaces/client";
+import {Client} from "../../../_model/client";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-
 import {ClientService} from "../../../_services/clients/client.service";
 import {BehaviorSubject, Observable, of} from "rxjs";
-// import {AppState} from "../interface/app-state";
-import {CustomResponseCliennts} from "../../../_interfaces/custom-response-cliennts";
-import {catchError, map, startWith} from "rxjs/operators";
+import {CustomResponse} from "../../../_interfaces/custom-response";
+import {catchError, endWith, map, startWith} from "rxjs/operators";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {Router} from "@angular/router";
 import Swal from "sweetalert2";
-// import Swal from "sweetalert2";
-
+import {AppState} from "../../../_interfaces/app-state";
+import {DataState} from "../../../_enum/data.state.enum";
 
 @Component({
   selector: 'app-index-client',
@@ -24,18 +22,16 @@ export class IndexClientComponent implements OnInit {
   clients: Client[] = [];
   client: Client = new Client();
   clientType: string;
-  displaySearchBar: boolean = false;
   clientForm: FormGroup;
-  // appState$: Observable<AppState<CustomResponseCliennts>>;
-  // private dataSubjects = new BehaviorSubject<CustomResponseCliennts>(null);
+  appState$: Observable<AppState<CustomResponse<Client>>>;
+  readonly DataState = DataState;
+  private dataSubjects = new BehaviorSubject<CustomResponse<Client>>(null);
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   name = ''
   compagny = ''
   date = ''
   internalRef = ''
-  p: number = 1;
-
   page: number = 1;
   totalPages: number;
   totalElements: number;
@@ -51,63 +47,38 @@ export class IndexClientComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.isLoading.next(true);
-    // this.clientService.getAllClientsWithPagination(this.page, this.size).subscribe(
-    //   resp => {
-    //     this.clients = resp.content;
-    //     this.isLoading.next(false);
-    //     console.log(resp)
-    //     this.size = resp.size
-    //     this.totalPages = resp.totalPages
-    //     this.totalElements = resp.totalElements
-    //     this.notifService.onSuccess('Liste des clients')
-    //   },
-    //   error => {
-    //     this.isLoading.next(false);
-    //   }
-    // )
     this.getClients()
   }
 
-  getClients(){
-    this.isLoading.next(true);
-    this.clientService.getAllClients().subscribe(
-      resp => {
-        this.clients = resp.content;
-        console.log(resp)
-        this.size = resp.size
-        this.totalPages = resp.totalPages
-        this.totalElements = resp.totalElements
-        this.isLoading.next(false);
-        this.notifService.onSuccess('Liste des clients')
-      },
-      error => {
-        this.isLoading.next(false);
-      }
-    )
+  getClients() {
+    this.appState$ = this.clientService.clients$(this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.dataSubjects.next(response)
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
-  getClientsPaginate(){
-    this.isLoading.next(true);
-    this.clientService.getAllClientsWithPagination(this.page-1, this.size).subscribe(
-      resp => {
-        this.clients = resp.content;
-        this.size = resp.size
-        this.totalPages = resp.totalPages
-        this.totalElements = resp.totalElements
-      },
-      error => {
-        this.isLoading.next(false);
-      }
-    )
-  }
-
-  pageChange(event: number){
+  pageChange(event: number) {
     this.page = event
-    this.getClientsPaginate()
+    this.appState$ = this.clientService.clients$(this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.dataSubjects.next(response)
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
-//initialisation du formulaire de création client
   formClient() {
     this.clientForm = this.fb.group({
       completeName: ['', [Validators.required, Validators.minLength(3)]],
@@ -117,38 +88,37 @@ export class IndexClientComponent implements OnInit {
       address: ['', [Validators.required, Validators.minLength(5)]],
       gulfcamAccountNumber: ['', [Validators.required, Validators.pattern('^[0-9 ]*$')]],
       rccm: ['', [Validators.required, Validators.minLength(2)]],
-      typeClient : ['', [Validators.required]],
+      typeClient: ['', [Validators.required]],
     });
   }
 
-  // searchBar() {
-  //   this.displaySearchBar = !this.displaySearchBar;
-  // }
-
   saveClient() {
-    this.isLoading.next(true);
-    this.clientService.addClient(this.clientForm.value as Client).subscribe(
-      resp => {
-        this.clients.push(resp)
-        this.isLoading.next(false);
-        this.notifService.onSuccess("client créé avec succès!")
-        this.annuler()
-      },
-      error => {
-        this.isLoading.next(false);
-        // if (error.error.message.includes('JWT expired')){
-        //
-        // }else {
-        //   this.notifService.onError(error.error.message, '')
-        // }
-      }
-    )
+    this.isLoading.next(true)
+
+    this.appState$ = this.clientService.addClient$(this.clientForm.value as Client)
+      .pipe(
+        map((response ) => {
+          this.dataSubjects.next(
+            {...this.dataSubjects.value , content: [response, ...this.dataSubjects.value.content]}
+          )
+          this.annuler()
+          this.isLoading.next(false)
+          this.notifService.onSuccess("nouveau client ajouté!")
+          return {dataState: DataState.LOADED_STATE, appData: this.dataSubjects.value}
+        }),
+        startWith({dataState: DataState.LOADED_STATE, appData: this.dataSubjects.value}),
+        catchError((error: string) => {
+          this.isLoading.next(false)
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
   annuler() {
     this.formClient();
     this.clientType = ''
     this.client = new Client()
+    this.clientForm.reset()
     this.modalService.dismissAll()
     this.modalTitle = 'Enregistrer nouveau client'
   }
@@ -159,42 +129,28 @@ export class IndexClientComponent implements OnInit {
     this.modalTitle = 'Enregistrer nouveau client'
   }
 
-  deleteClient(client: Client, index: number) {
+  deleteClient(client: Client) {
 
-      Swal.fire({
-        title: 'Supprimer client',
-        html: "Voulez-vous vraiment supprimer "+ client.completeName.bold() + " de la liste de vos clients ?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#00ace6',
-        cancelButtonColor: '#f65656',
-        confirmButtonText: 'OUI',
-        cancelButtonText: 'NON',
-        allowOutsideClick: true,
-        focusConfirm: false,
-        focusCancel: true,
-        focusDeny: true,
-        backdrop: `rgba(0, 0, 0, 0.4)`,
-        showLoaderOnConfirm: true
-      }).then((result) => {
-        if (result.value) {
-          this.isLoading.next(true)
-          this.clientService.deleteClient(client.internalReference).subscribe(
-            resp => {
-              this.clients.splice(index, 1)
-              this.isLoading.next(false)
-              this.notifService.onSuccess(client.completeName.bold() +' supprimé avec succès !')
-            },error => {
-              this.isLoading.next(false);
-              // if (error.error.message.includes('JWT expired')){
-              //
-              // }else {
-              //   this.notifService.onError(error.error.message, '')
-              // }
-            }
-          )
-        }
-      })
+    Swal.fire({
+      title: 'Supprimer client',
+      html: "Voulez-vous vraiment supprimer " + client.completeName.bold() + " de la liste de vos clients ?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3f6ad8',
+      cancelButtonColor: '#d92550',
+      confirmButtonText: 'OUI',
+      cancelButtonText: 'NON',
+      allowOutsideClick: true,
+      focusConfirm: false,
+      focusCancel: true,
+      focusDeny: true,
+      backdrop: `rgba(0, 0, 0, 0.4)`,
+      showLoaderOnConfirm: true
+    }).then((result) => {
+      if (result.value) {
+        this.deleteClients(client.internalReference)
+      }
+    })
 
   }
 
@@ -210,25 +166,42 @@ export class IndexClientComponent implements OnInit {
   }
 
   updateClient() {
-    this.isLoading.next(true);
-    this.clientService.updatelient(this.clientForm.value as Client, this.client.internalReference).subscribe(
-      resp => {
-        this.isLoading.next(false);
-        // on recherche l'index du client dont on veut faire la modification dans liste des clients
-        const index = this.clients.findIndex(client => client.internalReference === resp.internalReference);
-        this.clients[ index ] = resp;
-        this.notifService.onSuccess("client modifié avec succès!")
-        this.annuler()
-      },
-      error => {
-        this.isLoading.next(false);
-        if (error.error.message.includes('JWT expired')){
+    this.isLoading.next(true)
+    this.appState$ = this.clientService.updateClient$(this.clientForm.value as Client, this.client.internalReference)
+      .pipe(
+        map(response => {
+          const index = this.dataSubjects.value.content.findIndex(client => client.internalReference === response.internalReference)
+          this.dataSubjects.value.content[index] = response
+          this.isLoading.next(false)
+          this.notifService.onSuccess("client modifié avec succès!")
+          this.annuler()
+          return {dataState: DataState.LOADED_STATE, appData: this.dataSubjects.value}
+        }),
+        startWith({dataState: DataState.LOADED_STATE, appData: this.dataSubjects.value}),
+        catchError((error: string) => {
+          this.isLoading.next(false)
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
+  }
 
-        }else {
-          this.notifService.onError(error.error.message, '')
-        }
-      }
-    )
+  deleteClients(internalRef: number) {
+    this.isLoading.next(true)
+    this.appState$ = this.clientService.deleteClient$(internalRef)
+      .pipe(
+        map((response ) => {
+          const index = this.dataSubjects.value.content.findIndex(client => client.internalReference === internalRef)
+          this.dataSubjects.value.content.splice(index, 1)
+          this.isLoading.next(false)
+          this.notifService.onSuccess("client supprimé avec succès!")
+          return {dataState: DataState.LOADED_STATE, appData: this.dataSubjects.value}
+        }),
+        startWith({dataState: DataState.LOADED_STATE, appData: this.dataSubjects.value}),
+        catchError((error: string) => {
+          this.isLoading.next(false)
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
 }

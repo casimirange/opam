@@ -3,11 +3,10 @@ import {HttpClient, HttpErrorResponse, HttpParams} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {Observable, throwError} from "rxjs";
 import {ICredentials} from "../_interfaces/credentials";
-import {IToken} from "../_interfaces/token";
-import {ICredentialsSignup, ISignup} from "../_interfaces/signup";
+import {IToken} from "../_model/token";
+import {ICredentialsSignup, ISignup} from "../_model/signup";
 import {catchError, tap} from "rxjs/operators";
-import {CustomResponseLogin} from "../_interfaces/custom-response-login";
-import {CustomResponseSignup} from "../_interfaces/custom-response-signup";
+import {CustomResponse} from "../_interfaces/custom-response";
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +22,7 @@ export class AuthService {
   login$ = (credentials: ICredentials) => <Observable<any>> this.http.post<any>(environment.signin, credentials)
     .pipe(tap(console.log), catchError(this.handleError));
 
-  signup$ = (credentials: ICredentialsSignup) => <Observable<CustomResponseSignup>> this.http.post<CustomResponseSignup>(environment.signup, credentials)
+  signup$ = (credentials: ICredentialsSignup) => <Observable<CustomResponse<ISignup>>> this.http.post<CustomResponse<ISignup>>(environment.signup, credentials)
     .pipe(tap(console.log), catchError(this.handleError));
 
 

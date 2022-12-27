@@ -3,11 +3,11 @@ import {OrderService} from "../../../_services/order/order.service";
 import {NotifsService} from "../../../_services/notifications/notifs.service";
 import {ActivatedRoute} from "@angular/router";
 import {UsersService} from "../../../_services/users/users.service";
-import {ICredentialsSignup, ISignup} from "../../../_interfaces/signup";
+import {ICredentialsSignup, ISignup} from "../../../_model/signup";
 import {StoreService} from "../../../_services/store/store.service";
-import {Store} from "../../../_interfaces/store";
+import {Store} from "../../../_model/store";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {IToken} from "../../../_interfaces/token";
+import {IToken} from "../../../_model/token";
 import {BehaviorSubject} from "rxjs";
 import {StatusAccountService} from "../../../_services/status/status-account.service";
 import {StatusUserService} from "../../../_services/status/status-user.service";
@@ -26,7 +26,7 @@ export class DetailsUserComponent implements OnInit {
   statusUser: string = '';
   updateUser: FormGroup ;
   credentials: ICredentialsSignup = new ICredentialsSignup()
-
+  activeUser: boolean
   errorMessage = '';
   stores: Store[] = [];
   form: any;
@@ -91,13 +91,13 @@ export class DetailsUserComponent implements OnInit {
   }
 
   enableDesable(){
-    console.log(this.user.status.id)
-    console.log(this.user.internalReference)
-    this.userService.enableDesable(this.user.internalReference, this.user.status.id).subscribe(
+    this.activeUser = this.user.status.name == 'USER_ENABLED' ? false : true
+    this.isLoading.next(true);
+    this.userService.enableDesable(this.user.userId, this.activeUser).subscribe(
       resp => {
-        console.log('new user', resp)
-        this.getUser()
+        this.isLoading.next(false);
         this.notifsService.onSuccess(resp.message)
+        this.getUser()
       }
     )
   }

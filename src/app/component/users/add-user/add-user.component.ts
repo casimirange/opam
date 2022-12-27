@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {ICredentialsSignup} from "../../../_interfaces/signup";
-import {IToken} from "../../../_interfaces/token";
-import {Store} from "../../../_interfaces/store";
+import {ICredentialsSignup} from "../../../_model/signup";
+import {IToken} from "../../../_model/token";
+import {Store} from "../../../_model/store";
 import {BehaviorSubject, Observable} from "rxjs";
 import {AppState} from "../../../_interfaces/app-state";
-import {CustomResponseSignup} from "../../../_interfaces/custom-response-signup";
 import {AuthService} from "../../../_services/auth.service";
 import {Router} from "@angular/router";
 import {StoreService} from "../../../_services/store/store.service";
@@ -24,11 +23,9 @@ export class AddUserComponent implements OnInit {
   errorMessage = '';
   stores: Store[] = [];
   findStore: Store;
-  appState$: Observable<AppState<CustomResponseSignup>> = new Observable<AppState<CustomResponseSignup>>();
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   // readonly DataState = DataState;
-  private dataSubject = new BehaviorSubject<CustomResponseSignup>(null);
   form: any;
   constructor(
     private fb: FormBuilder, private authService: AuthService, private router: Router, private storeService: StoreService,

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ConfigOptions} from "../../../configOptions/config-options";
 
 @Component({
   selector: 'app-command-layout',
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CommandLayoutComponent implements OnInit {
   user: any;
-  constructor() { }
+
+  constructor(public globals: ConfigOptions) { }
 
   ngOnInit(): void {
+    console.log(this.globals.toggleSidebar)
   }
 
 }
