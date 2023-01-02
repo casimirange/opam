@@ -479,4 +479,8 @@ export class EditComponent implements OnInit {
   closeLoader(){
     this.modalService.dismissAll()
   }
+
+  formatNumber(amount: any): string{
+    return parseInt(amount).toFixed(0).replace(/(\d)(?=(\d{3})+\b)/g,'$1 ');
+  }
 }

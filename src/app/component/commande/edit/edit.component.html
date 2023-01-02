@@ -1,3 +1,4 @@
+<!--<app-loader></app-loader>-->
 <ng-container class="bg-white" *ngIf="(orderState$ | async) as appState" [ngSwitch]="appState.dataState">
   <ng-container class="bg-white" *ngSwitchCase="DataState.LOADING_STATE">
     <div class="col-md-12 text-center my-3">
@@ -268,14 +269,14 @@
                     <th scope="row">{{i + 1}}</th>
                     <td>
                         <span *ngFor="let voucher of vouchers">
-                          {{voucher.internalReference === prod.idTypeVoucher ? voucher.amount : ''}}
+                          {{voucher.internalReference === prod.idTypeVoucher ? formatNumber(voucher.amount) : ''}}
                         </span>
 <!--                      <span>{{prod.idTypeVoucher | amountVoucher}}</span>-->
                     </td>
                     <td>{{prod.quantityNotebook}}</td>
                     <td>{{prod.quantityNotebook * 10}}</td>
                     <td><span
-                      *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? voucher.amount * prod.quantityNotebook * 10 : ''}}</span>
+                      *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? formatNumber(voucher.amount * prod.quantityNotebook * 10) : ''}}</span>
                     </td>
                     <!--                <td></td>-->
                     <td>{{prod.createdAt | date: 'dd/MM/yyyy à hh:mm'}}</td>

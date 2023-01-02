@@ -62,9 +62,10 @@ import {NgxIntlTelInputModule} from "ngx-intl-tel-input";
     // ClientService
   ],
   bootstrap: [AppComponent],
-  exports: [
+    exports: [
+        LoaderComponent
 
-  ],
+    ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }
