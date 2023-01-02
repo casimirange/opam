@@ -11,6 +11,7 @@ import {Router} from "@angular/router";
 import Swal from "sweetalert2";
 import {AppState} from "../../../_interfaces/app-state";
 import {DataState} from "../../../_enum/data.state.enum";
+import {CountryISO, SearchCountryField} from "ngx-intl-tel-input";
 
 @Component({
   selector: 'app-index-client',
@@ -38,6 +39,11 @@ export class IndexClientComponent implements OnInit {
   size: number = 10;
   roleUser = localStorage.getItem('userAccount').toString()
   modalTitle = 'Enregistrer nouveau client'
+  SearchCountryField = SearchCountryField;
+  // TooltipLabel = Labe;
+  CountryISO = CountryISO;
+  preferredCountries: CountryISO[] = [CountryISO.Cameroon];
+
 
   @ViewChild('mymodal', {static: false}) viewMe?: ElementRef<HTMLElement>;
 
@@ -84,7 +90,7 @@ export class IndexClientComponent implements OnInit {
       completeName: ['', [Validators.required, Validators.minLength(3)]],
       companyName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern('^[2,6][0-9]{8}'), Validators.minLength(9), Validators.maxLength(9)]],
+      phone: ['', [Validators.required, ]],
       address: ['', [Validators.required, Validators.minLength(5)]],
       gulfcamAccountNumber: ['', [Validators.required, Validators.pattern('^[0-9 ]*$')]],
       rccm: ['', [Validators.required, Validators.minLength(2)]],
@@ -94,8 +100,9 @@ export class IndexClientComponent implements OnInit {
 
   saveClient() {
     this.isLoading.next(true)
-
-    this.appState$ = this.clientService.addClient$(this.clientForm.value as Client)
+    this.client = this.clientForm.value
+    this.client.phone = this.clientForm.controls['phone'].value.e164Number
+    this.appState$ = this.clientService.addClient$(this.client)
       .pipe(
         map((response ) => {
           this.dataSubjects.next(
@@ -204,4 +211,7 @@ export class IndexClientComponent implements OnInit {
       )
   }
 
+  telInputObject($event: any) {
+    console.log($event);
+  }
 }

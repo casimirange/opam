@@ -33,12 +33,25 @@ export class AppComponent implements OnInit{
   isConnected: boolean
   // status1: OnlineStatusType; //Enum provided by ngx-online-status
   // onlineStatusCheck: any = OnlineStatusType;
-  source = interval(1000)
+  source = interval(3000)
   url: string;
   timer: number = 0;
   navStart: Observable<NavigationStart>
-  constructor(private notifsService: NotifsService, private tokenService: TokenService,
+  constructor(private notifsService: NotifsService, private tokenService: TokenService, private _http: HttpClient,
               private bnIdle: BnNgIdleService, private router: Router, private _location: Location) {
+
+
+    // this.source.subscribe(() => {
+    //   this._http.get('https://www.google.com', { observe: 'response' })
+    //     .pipe(first())
+    //     .subscribe((resp: any) => {
+    //       if (resp.status === 200 ) {
+    //         console.log(true)
+    //       } else {
+    //         console.log(false)
+    //       }
+    //     }, err => console.log(err));
+    // });
 
     // const checkOnlinestatus = async () => {
     //   try {
@@ -126,16 +139,16 @@ export class AppComponent implements OnInit{
     // }
 
     // this.createOnline$().subscribe(isOnline => console.log(isOnline));
-
-    this.navStart = this.router.events.pipe(
-      filter(evt => evt instanceof NavigationStart)) as Observable<NavigationStart>;
+    //
+    // this.navStart = this.router.events.pipe(
+    //   filter(evt => evt instanceof NavigationStart)) as Observable<NavigationStart>;
 
   }
 
   ngOnInit(): void {
-    this.navStart.subscribe( (res) => {
-      console.log('navigation started', res)
-    })
+    // this.navStart.subscribe( (res) => {
+    //   console.log('navigation started', res)
+    // })
     // this.router.events.subscribe((val) => {
     //   // console.log(this._location.path())
     //   this.url = this._location.path()

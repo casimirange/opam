@@ -2,11 +2,11 @@
   <div class="page-title-wrapper">
     <div class="page-title-heading">
       <div class="page-title-icon">
-        <i class="pe-7s-home icon-gradient bg-night-fade">
+        <i class="pe-7s-cash icon-gradient bg-night-fade">
         </i>
       </div>
       <div>Note de crédit
-        <div class="page-title-subheading">Gérez toutes les requêtes d'opposition
+        <div class="page-title-subheading">Gérez toutes les notes de crédit
         </div>
       </div>
     </div>
@@ -46,7 +46,7 @@
           <td>{{credit.internalReference}}</td>
           <td>{{credit.station.designation}} </td>
           <td>{{credit.coupon[0].serialNumber}} </td>
-          <td>{{credit.status.name}}</td>
+          <td>{{getStatuts(credit.status.name)}}</td>
           <td> {{credit.createdAt | date: 'dd/MM/yyyy HH:mm'}}</td>
           <!--          <td> {{store.updateAt | date: 'dd/MM/yyyy HH:mm'}}</td>-->
           <td>
@@ -60,7 +60,7 @@
 <!--            <a  style="cursor: pointer" class="text-primary" (click)="updateStoreModal(mymodal, credit)">-->
 <!--              <i class="pe-7s-eyedropper" title="modifier"></i>-->
 <!--            </a>-->
-            <button class="btn btn-sm btn-success mr-2" (click)="valid(credit.internalReference, i)">
+            <button *ngIf="credit.status.name != 'ACTIVATED'" class="btn btn-sm btn-success mr-2" (click)="valid(credit.internalReference, i)">
               <i class="pe-7s-check" title="valider la note de crédit"></i>
             </button>
             <button class="btn btn-sm btn-primary" (click)="updateStoreModal(mymodal, credit)">
@@ -165,11 +165,11 @@
           <button class="mt-1 btn btn-secondary float-right ml-3" (click)="annuler()"><i class="pe-7s-back"></i>Annuler
           </button>
           <button class="mt-1 btn btn-primary float-right" [disabled]="(creditForm.invalid && vouchers.length ==0) || (isLoading$ | async)"
-                  (click)="modalTitle == 'Enregistrer nouvelle requête' ? createCreditNote() : updateRequest()">
+                  (click)="modalTitle == 'Enregistrer nouvelle note de credit' ? createCreditNote() : updateRequest()">
             <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
             <span *ngIf="isLoading$ | async">Enregistrement ...</span>
             <span
-              *ngIf="!(isLoading$ | async)">{{modalTitle == 'Enregistrer nouvelle requête' ? 'Enregistrer requête' : 'Modifier requête'}}</span>
+              *ngIf="!(isLoading$ | async)">{{modalTitle == 'Enregistrer nouvelle note de credit' ? 'Enregistrer note' : 'Modifier note'}}</span>
           </button>
         </form>
       </div>

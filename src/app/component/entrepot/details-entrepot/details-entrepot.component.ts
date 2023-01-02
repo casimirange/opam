@@ -124,7 +124,6 @@ export class DetailsEntrepotComponent implements OnInit {
     this.activatedRoute.params.subscribe(params => {
       this.storeHouseService.getItemByStoreHouse(params['id']).subscribe(
         res => {
-          console.log('res', res)
           this.items = res;
         }
       )
@@ -136,7 +135,7 @@ export class DetailsEntrepotComponent implements OnInit {
   }
 
   pageChangeCarnet(event: number){
-    this.page = event
+    this.page1 = event
     this.carnetService.getCarnetsByStoreHouse(this.storeHouse.internalReference,this.page1 -1, this.size1).subscribe(
       resp => {
         this.carnets = resp.content
@@ -182,4 +181,8 @@ export class DetailsEntrepotComponent implements OnInit {
   //   )
   //   return numero
   // }
+
+  formatNumber(amount: number): string{
+    return amount.toFixed(0).replace(/(\d)(?=(\d{3})+\b)/g,'$1 ');
+  }
 }

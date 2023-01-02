@@ -21,6 +21,7 @@ import {StationService} from "../../../_services/stations/station.service";
 import {Station} from "../../../_model/station";
 import {CreditNote} from "../../../_model/creditNote";
 import {CreditNoteService} from "../../../_services/creditNote/credit-note.service";
+import {StatusService} from "../../../_services/status/status.service";
 
 @Component({
   selector: 'app-index-credit-note',
@@ -42,12 +43,12 @@ export class IndexCreditNoteComponent implements OnInit {
   vouchers: number[] = []
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
-  modalTitle: string = 'Enregistrer nouvelle requête';
+  modalTitle: string = 'Enregistrer nouvelle note de credit';
   roleUser = localStorage.getItem('userAccount').toString()
   constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService, private router: Router,
               private notifService: NotifsService, private unitService: UnitsService, private voucherService: VoucherService,
               private clientService: ClientService, private userService: UsersService, private creditNoteService: CreditNoteService,
-              private stationService: StationService) {
+              private stationService: StationService, private statusService: StatusService) {
     this.formStore();
   }
 
@@ -233,4 +234,7 @@ export class IndexCreditNoteComponent implements OnInit {
     this.vouchers.splice(prodIndex, 1)
   }
 
+  getStatuts(status: string): string {
+    return this.statusService.allStatus(status)
+  }
 }

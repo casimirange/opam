@@ -185,7 +185,7 @@ export class EditComponent implements OnInit {
       resp => {
         this.isLoading.next(false);
         this.notifsService.onSuccess('Commande Acceptée')
-        this.generateReçu()
+        // this.generateReçu()
         this.refreshOrder()
         this.editForm.reset()
         this.formOrder()

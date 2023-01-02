@@ -172,4 +172,8 @@ export class DetailsMagasinComponent implements OnInit {
   getStatuts(status: string): string {
     return this.statusService.allStatus(status)
   }
+
+  formatNumber(amount: number): string{
+      return amount.toFixed(0).replace(/(\d)(?=(\d{3})+\b)/g,'$1 ');
+  }
 }

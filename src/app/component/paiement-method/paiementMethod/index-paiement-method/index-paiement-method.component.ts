@@ -21,7 +21,7 @@ export class IndexPaiementMethodComponent implements OnInit {
   paiementMethod: PaiementMethod = new PaiementMethod();
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
-  modalTitle = 'Enregistrer méthode de paiement';
+  modalTitle = 'Enregistrer mode de paiement';
   roleUser = localStorage.getItem('userAccount').toString()
   constructor(private modalService: NgbModal, private fb: FormBuilder, private paiementService: PaiementService, private notifServices: NotifsService) {
     this.formPaiement()
@@ -60,17 +60,16 @@ export class IndexPaiementMethodComponent implements OnInit {
     this.formPaiement();
     this.modalService.dismissAll()
     this.paiementMethod = new PaiementMethod()
-    this.modalTitle = 'Enregistrer méthode de paiement';
+    this.modalTitle = 'Enregistrer mode de paiement';
   }
   getPaiements(){
-    // console.log(this.storeForm.value)
     this.isLoading.next(true);
     this.paiementService.getPaymentMethods().subscribe(
       resp => {
         console.log(resp)
         this.paiementMethods = resp.content
         this.isLoading.next(false);
-        this.notifServices.onSuccess('liste des méthodes de paiement')
+        this.notifServices.onSuccess('liste des modes de paiement')
       },
       error => {
         this.notifServices.onError(error.error.message, '')
@@ -89,14 +88,12 @@ export class IndexPaiementMethodComponent implements OnInit {
     this.isLoading.next(true);
     this.paiementService.deletePaymentMethod(payment.internalReference).subscribe(
       resp => {
-        // console.log(resp)
         this.paiementMethods.splice(index, 1)
         this.isLoading.next(false);
         this.notifServices.onSuccess("méthode de paiement supprimée")
         this.annuler()
       },
       error => {
-        // this.notifServices.onError(error.error.message,"échec de suppression")
         this.isLoading.next(false);
       }
     )
@@ -128,7 +125,7 @@ export class IndexPaiementMethodComponent implements OnInit {
   updatePaymentModal(mymodal: TemplateRef<any>, payment: PaiementMethod) {
     this.modalService.open(mymodal, {ariaLabelledBy: 'modal-basic-title', size: 'sm'});
     this.paiementMethod = payment
-    this.modalTitle = 'Modifier méthode de paiement'
+    this.modalTitle = 'Modifier mode de paiement'
   }
 
   updatePayment() {
@@ -138,8 +135,8 @@ export class IndexPaiementMethodComponent implements OnInit {
         this.isLoading.next(false);
         const index = this.paiementMethods.findIndex(store => store.internalReference === resp.internalReference);
         this.paiementMethods[ index ] = resp;
-        this.notifServices.onSuccess("méthode modifiée avec succès!")
-        this.modalTitle = 'Enregistrer méthode de paiement'
+        this.notifServices.onSuccess("mode de paiement modifié avec succès!")
+        this.modalTitle = 'Enregistrer mode de paiement'
         this.annuler()
       },
       error => {

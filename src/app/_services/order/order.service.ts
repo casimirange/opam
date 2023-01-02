@@ -171,6 +171,6 @@ export class OrderService {
       .pipe(catchError(this.handleError));
 
   handleError(error: HttpErrorResponse): Observable<never>{
-    return throwError(`Une erreur est survenue: ${error.error.message.toString().bold()}` )
+    return throwError(`Une erreur est survenue: ${error.error.message }` )
   }
 }

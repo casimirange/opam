@@ -23,7 +23,7 @@ import {CustomResponse} from "../../../_interfaces/custom-response";
 import {DataState} from "../../../_enum/data.state.enum";
 import {catchError, map, startWith} from "rxjs/operators";
 import {ConfigOptions} from "../../../configOptions/config-options";
-
+import {CountryISO, SearchCountryField} from "ngx-intl-tel-input";
 export class Product{
   quantity: number;
   voucher: number;
@@ -53,6 +53,7 @@ export class IndexCommandComponent implements OnInit {
   Products: Products[] = [];
   Product: Products = new Products();
   totalOrder: number = 0;
+  totalTTC: number = 0;
   vouchers: TypeVoucher[] = [];
   voucher: TypeVoucher = new TypeVoucher()
   orders: Order[] = [];
@@ -74,10 +75,14 @@ export class IndexCommandComponent implements OnInit {
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   roleUser = localStorage.getItem('userAccount').toString()
+  SearchCountryField = SearchCountryField;
+  // TooltipLabel = Labe;
+  CountryISO = CountryISO;
+  preferredCountries: CountryISO[] = [CountryISO.Cameroon];
   constructor(private fb: FormBuilder, private modalService: NgbModal, private clientService: ClientService,
               private voucherService: VoucherService, private notifsService: NotifsService, private storeService: StoreService,
               private productService: ProductService, private orderService: OrderService, private statusService: StatusOrderService,
-              private global: ConfigOptions
+              public global: ConfigOptions
   ) {
     this.formClient();
     this.formOrder();
@@ -91,7 +96,7 @@ export class IndexCommandComponent implements OnInit {
       completeName: ['', [Validators.required, Validators.minLength(3)]],
       companyName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern('^[2,6][0-9]{8}'), Validators.minLength(9), Validators.maxLength(9) ]],
+      phone: ['', [Validators.required]],
       address: ['', [Validators.required, Validators.minLength(5)]],
       gulfcamAccountNumber: ['', [Validators.required, Validators.pattern('^[0-9 ]*$')]],
       rccm: ['', [Validators.required, Validators.minLength(2)]],
@@ -107,9 +112,9 @@ export class IndexCommandComponent implements OnInit {
       chanel: ['', [Validators.required, ]],
       quantity: ['', [Validators.required, Validators.pattern('^[0-9 ]*$')]],
       voucherType: ['', [Validators.required]],
-      delais: ['', [Validators.required]],
-      description: ['', [Validators.required, Validators.minLength(5)]],
-      refCli: ['', [Validators.required, Validators.minLength(3)]],
+      delais: ['',],
+      description: ['',],
+      refCli: ['', ],
     });
   }
 
@@ -195,6 +200,7 @@ export class IndexCommandComponent implements OnInit {
     for(let prod of this.tabProducts){
       this.totalOrder = this.totalOrder + prod.total
     }
+    this.totalTTC = this.totalOrder * this.global.tax + this.totalOrder
     this.orF['quantity'].reset();
     this.orF['voucherType'].reset();
   }
@@ -207,6 +213,7 @@ export class IndexCommandComponent implements OnInit {
     for(let prod of this.tabProducts){
       this.totalOrder = this.totalOrder + prod.total
     }
+    this.totalTTC = this.totalOrder * this.global.tax + this.totalOrder
   }
 
   showClientForms(){
@@ -221,7 +228,9 @@ export class IndexCommandComponent implements OnInit {
 
 
   saveClientt(){
-    this.clientService.addClient(this.clientForm.value as Client).subscribe(
+    this.client = this.clientForm.value
+    this.client.phone = this.clientForm.controls['phone'].value.e164Number
+    this.clientService.addClient(this.client).subscribe(
       resp => {
         this.clients.push(resp)
         this.notifsService.onSuccess('client rajouté avec succès')
@@ -239,7 +248,7 @@ export class IndexCommandComponent implements OnInit {
       .pipe(
         map(response => {
           this.dataSubjects.next(response)
-          this.notifsService.onSuccess('Cahrgement des commandes')
+          this.notifsService.onSuccess('Chargement des commandes')
           return {dataState: DataState.LOADED_STATE, appData: response}
         }),
         startWith({dataState: DataState.LOADING_STATE, appData: null}),
@@ -344,7 +353,7 @@ export class IndexCommandComponent implements OnInit {
       respProd => {
         const file = new Blob([respProd], { type: 'application/pdf' });
         const fileURL = URL.createObjectURL(file);
-        window.open(fileURL, 'Download');
+        window.open(fileURL);
       },
     )
   }
@@ -371,5 +380,9 @@ export class IndexCommandComponent implements OnInit {
 
   getStatuts(status: string): string {
     return this.statusService.allStatus(status)
+  }
+
+  formatNumber(amount: any): string{
+    return parseInt(amount).toFixed(0).replace(/(\d)(?=(\d{3})+\b)/g,'$1 ');
   }
 }
