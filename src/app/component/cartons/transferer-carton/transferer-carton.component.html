@@ -40,9 +40,9 @@
             <div class="form-row">
               <div class="col-md-6">
                 <div class="position-relative form-group">
-                  <label>Entrepôt de stockage d'arrivé</label>
+                  <label>Espace de stockage d'arrivé</label>
                   <select formControlName="idStoreHouseStockage" class="form-control">
-                    <option disabled selected hidden value="">Sélectionner un entrepôt</option>
+                    <option disabled selected hidden value="">Sélectionner un espace de stockage</option>
                     <option *ngFor="let store of storeHouses1" [value]="store.internalReference">{{store.name}}</option>
                   </select>
                   <div
