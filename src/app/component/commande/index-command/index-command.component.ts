@@ -76,7 +76,7 @@ export class IndexCommandComponent implements OnInit {
   isLoading$ = this.isLoading.asObservable();
   roleUser = localStorage.getItem('userAccount').toString()
   SearchCountryField = SearchCountryField;
-  // TooltipLabel = Labe;
+  // TooltipLabel = Toolt;
   CountryISO = CountryISO;
   preferredCountries: CountryISO[] = [CountryISO.Cameroon];
   constructor(private fb: FormBuilder, private modalService: NgbModal, private clientService: ClientService,

@@ -57,14 +57,14 @@
           <th>#</th>
           <th>Ref. interne</th>
           <th>Magasin de départ</th>
-          <th>Entrepôt de départ</th>
+          <th>Espace de stockage de départ</th>
           <th>Type de mouvement</th>
 <!--          <th>Type de bon</th>-->
           <th>Magasin d'arrivée</th>
-          <th>Entrepôt d'arrivée</th>
+          <th>Espace de stockage d'arrivée</th>
 <!--          <th>Quantité</th>-->
           <th>Date creation</th>
-          <th>Date modification</th>
+<!--          <th>Date modification</th>-->
 <!--          <th>Actions</th>-->
         </tr>
         </thead>
@@ -80,8 +80,8 @@
           <td><span *ngFor="let store of stores">  {{store.internalReference == mvtStock.idStore2 ? store.localization : ''}}  </span>  </td>
           <td><span *ngFor="let storehouse of storeHouses">  {{storehouse.internalReference == mvtStock.idStoreHouse2 ? storehouse.name : ''}} </span>  </td>
 <!--          <td>{{mvtStock.quantityCarton}} </td>-->
-          <td> {{mvtStock.createdAt | date: 'dd/MM/yyyy HH:mm'}}</td>
-          <td> {{mvtStock.updateAt | date: 'dd/MM/yyyy HH:mm'}}</td>
+          <td> {{mvtStock.createdAt | date: 'dd/MM/yyyy à HH:mm'}}</td>
+<!--          <td> {{mvtStock.updateAt | date: 'dd/MM/yyyy HH:mm'}}</td>-->
 <!--          <td>-->
 <!--            <a style="cursor: pointer" class=" text-success" data-toggle="modal"-->
 <!--               (click)="delete(store, i)">-->

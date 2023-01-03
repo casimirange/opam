@@ -258,10 +258,12 @@
                     <th>Type de coupon</th>
                     <th>Quantité de carnets</th>
                     <th>Quantité de coupons</th>
-                    <th>Montant total</th>
+                    <th>Montant HTC</th>
+                    <th>TVA</th>
+                    <th>Montant TTC</th>
                     <th>Date création</th>
-                    <th>Date modification</th>
-                    <th>Actions</th>
+<!--                    <th>Date modification</th>-->
+<!--                    <th>Actions</th>-->
                   </tr>
                   </thead>
                   <tbody>
@@ -278,17 +280,22 @@
                     <td><span
                       *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? formatNumber(voucher.amount * prod.quantityNotebook * 10) : ''}}</span>
                     </td>
+                    <td>{{global.tax * 100}} %</td>
+                    <td><span *ngFor="let voucher of vouchers">
+                      {{voucher.internalReference === prod.idTypeVoucher ? formatNumber((voucher.amount * prod.quantityNotebook * 10)+(voucher.amount * prod.quantityNotebook * 10) * global.tax) : ''}}
+                    </span>
+                    </td>
                     <!--                <td></td>-->
                     <td>{{prod.createdAt | date: 'dd/MM/yyyy à hh:mm'}}</td>
-                    <td>{{prod.updateAt | date: 'dd/MM/yyyy à hh:mm'}}</td>
-                    <td>
-                      <a style="cursor: pointer" class="delete text-danger">
-                        <i class="pe-7s-trash" title="supprimer"></i>
-                      </a>&nbsp;
-                      <a style="cursor: pointer" class="text-primary">
-                        <i class="pe-7s-eyedropper" title="modifier"></i>
-                      </a>
-                    </td>
+<!--                    <td>{{prod.updateAt | date: 'dd/MM/yyyy à hh:mm'}}</td>-->
+<!--                    <td>-->
+<!--                      <a style="cursor: pointer" class="delete text-danger">-->
+<!--                        <i class="pe-7s-trash" title="supprimer"></i>-->
+<!--                      </a>&nbsp;-->
+<!--                      <a style="cursor: pointer" class="text-primary">-->
+<!--                        <i class="pe-7s-eyedropper" title="modifier"></i>-->
+<!--                      </a>-->
+<!--                    </td>-->
                   </tr>
                   </tbody>
                   <tfoot>
@@ -340,14 +347,14 @@
                               <thead>
                               <tr>
                                 <th>#</th>
-                                <th>Coupon</th>
+                                <th>Numéro du Coupon</th>
                                 <th>Action</th>
                               </tr>
                               </thead>
                               <tbody>
                               <tr *ngFor="let coupon of listVouchers; let i = index">
                                 <th scope="row">{{i + 1}}</th>
-                                <td>{{coupon}}</td>
+                                <td>{{formatNumber(coupon)}}</td>
                                 <td><i class="pe-7s-trash text-danger" (click)="removeCoupon(coupon)"></i></td>
                               </tr>
                               </tbody>

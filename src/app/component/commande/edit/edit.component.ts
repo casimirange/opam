@@ -24,6 +24,7 @@ import {CustomResponse} from "../../../_interfaces/custom-response";
 import {DataState} from "../../../_enum/data.state.enum";
 import {LoaderComponent} from "../../../preloader/loader/loader.component";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {ConfigOptions} from "../../../configOptions/config-options";
 
 export class Product{
   coupon: number;
@@ -68,7 +69,7 @@ export class EditComponent implements OnInit {
               private clientService: ClientService, private storeService: StoreService, private productService: ProductService,
               private voucherService: VoucherService, private paymentService: PaiementService, private fb: FormBuilder,
               private statusService: StatusOrderService, private couponService: CouponService, private router: Router,
-              private modalService: NgbModal) {
+              private modalService: NgbModal, public global: ConfigOptions) {
     this.formOrder()
     this.formAddCarnet()
     this.orF = this.addCouponClientForm.controls;
@@ -185,7 +186,7 @@ export class EditComponent implements OnInit {
       resp => {
         this.isLoading.next(false);
         this.notifsService.onSuccess('Commande Acceptée')
-        // this.generateReçu()
+        this.generateReçu()
         this.refreshOrder()
         this.editForm.reset()
         this.formOrder()
