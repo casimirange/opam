@@ -16,7 +16,6 @@ import { ClientRefFilterPipe } from './pipes/client-ref-filter.pipe';
 import { OrderRefFilterPipe } from './pipes/order-ref-filter.pipe';
 import { OrderDateFilterPipe } from './pipes/order-date-filter.pipe';
 import {NgxPaginationModule} from "ngx-pagination";
-import {NgxIntlTelInputModule} from "ngx-intl-tel-input";
 import {AppModule} from "../../app.module";
 // import {AmountVoucherPipe} from "../../pipe/amount-voucher.pipe";
 
@@ -41,7 +40,6 @@ import {AppModule} from "../../app.module";
         ReactiveFormsModule,
         FormsModule,
         NgxPaginationModule,
-        NgxIntlTelInputModule,
     ],
     exports: [
         OrderDateFilterPipe

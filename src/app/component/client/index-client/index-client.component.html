@@ -228,27 +228,26 @@
             <div class="col-md-6">
               <div class="position-relative form-group">
                 <label for="phone" class="">Numéro de téléphone</label>
-<!--                <input name="email" id="phone" ngModel="{{client.phone}}"  type="text"-->
-<!--                       class="form-control" formControlName="phone" ng2TelInput-->
-<!--                       [ng2TelInputOptions]="{autoHideDialCode: false, initialCountry: 'cm', separateDialCode:true}" (intlTelInputObject)="telInputObject($event)">-->
+                <input name="email" id="phone" ngModel="{{client.phone}}"  type="text" placeholder="6937542108"
+                       class="form-control" formControlName="phone">
 
-                <ngx-intl-tel-input
-                  [cssClass]="'form-control'"
-                  [preferredCountries]="preferredCountries"
-                  [enableAutoCountrySelect]="true"
-                  [enablePlaceholder]="true"
-                  [searchCountryFlag]="true"
-                  [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
-                  [selectFirstCountry]="false"
-                  [selectedCountryISO]="CountryISO.Cameroon"
-                  [maxLength]="15"
-                  [separateDialCode]="true"
-                  [phoneValidation]="true"
-                  name="phone"
-                  id="phone"
-                  ngModel="{{client.phone}}"
-                  formControlName="phone"
-                ></ngx-intl-tel-input>
+<!--                <ngx-intl-tel-input-->
+<!--                  [cssClass]="'form-control'"-->
+<!--                  [preferredCountries]="preferredCountries"-->
+<!--                  [enableAutoCountrySelect]="true"-->
+<!--                  [enablePlaceholder]="true"-->
+<!--                  [searchCountryFlag]="true"-->
+<!--                  [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"-->
+<!--                  [selectFirstCountry]="false"-->
+<!--                  [selectedCountryISO]="CountryISO.Cameroon"-->
+<!--                  [maxLength]="15"-->
+<!--                  [separateDialCode]="true"-->
+<!--                  [phoneValidation]="true"-->
+<!--                  name="phone"-->
+<!--                  id="phone"-->
+<!--                  ngModel="{{client.phone}}"-->
+<!--                  formControlName="phone"-->
+<!--                ></ngx-intl-tel-input>-->
               </div>
               <div
                 *ngIf="clientForm.controls['phone'].invalid && ( clientForm.controls['phone'].touched)"
@@ -325,7 +324,7 @@
           </div>
           <button class="mt-1 btn btn-secondary float-right ml-3" (click)="annuler()"><i class="pe-7s-back"></i> Annuler
           </button>
-          <button class="mt-1 btn btn-primary float-right" [disabled]="clientForm.invalid || clientForm.controls['phone'].errors?.['validatePhoneNumber'] || (isLoading$ | async)"
+          <button class="mt-1 btn btn-primary float-right" [disabled]="clientForm.invalid || (isLoading$ | async)"
                   (click)="modalTitle == 'Enregistrer nouveau client' ? saveClient() : updateClient()">
             <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
             <span *ngIf="isLoading$ | async">Enregistrement ...</span>

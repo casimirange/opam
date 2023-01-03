@@ -16,8 +16,6 @@ import { ClientRefFilterPipe } from './pipes/client-ref-filter.pipe';
 import { ClientDateFilterPipe } from './pipes/client-date-filter.pipe';
 import { ClientCompagnyFilterPipe } from './pipes/client-compagny-filter.pipe';
 import {NgxPaginationModule} from "ngx-pagination";
-import {Ng2TelInputModule} from "ng2-tel-input";
-import {NgxIntlTelInputModule} from "ngx-intl-tel-input";
 
 @NgModule({
     declarations: [
@@ -36,8 +34,8 @@ import {NgxIntlTelInputModule} from "ngx-intl-tel-input";
         FormsModule,
         ReactiveFormsModule,
         NgxPaginationModule,
-        Ng2TelInputModule,
-        NgxIntlTelInputModule,
+        // Ng2TelInputModule,
+        // NgxIntlTelInputModule,
         // Ng2OrderModule,
         // NgxPaginationModule,
         // Ng2SearchPipeModule,

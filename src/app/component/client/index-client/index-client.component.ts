@@ -11,7 +11,6 @@ import {Router} from "@angular/router";
 import Swal from "sweetalert2";
 import {AppState} from "../../../_interfaces/app-state";
 import {DataState} from "../../../_enum/data.state.enum";
-import {CountryISO, SearchCountryField} from "ngx-intl-tel-input";
 
 @Component({
   selector: 'app-index-client',
@@ -39,10 +38,6 @@ export class IndexClientComponent implements OnInit {
   size: number = 10;
   roleUser = localStorage.getItem('userAccount').toString()
   modalTitle = 'Enregistrer nouveau client'
-  SearchCountryField = SearchCountryField;
-  // TooltipLabel = Labe;
-  CountryISO = CountryISO;
-  preferredCountries: CountryISO[] = [CountryISO.Cameroon];
 
 
   @ViewChild('mymodal', {static: false}) viewMe?: ElementRef<HTMLElement>;

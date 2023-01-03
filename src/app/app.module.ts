@@ -21,8 +21,6 @@ import {BnNgIdleService} from "bn-ng-idle";
 import { CreditNoteLayoutComponent } from './component/creditNote/credit-note-layout/credit-note-layout.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import { LoaderComponent } from './preloader/loader/loader.component';
-import {Ng2TelInputModule} from "ng2-tel-input";
-import {NgxIntlTelInputModule} from "ngx-intl-tel-input";
 // import {OnlineStatusModule} from "ngx-online-status";
 // import {Ng2SearchPipeModule} from "ng2-search-filter";
 // import {Ng2OrderModule} from "ng2-order-pipe";
@@ -49,8 +47,6 @@ import {NgxIntlTelInputModule} from "ngx-intl-tel-input";
     NgOtpInputModule,
     NgxPaginationModule,
     ReactiveFormsModule,
-    Ng2TelInputModule,
-    NgxIntlTelInputModule
     // SweetAlert2Module.forRoot(),
     // Ng2SearchPipeModule,
     // Ng2OrderModule

@@ -23,7 +23,6 @@ import {CustomResponse} from "../../../_interfaces/custom-response";
 import {DataState} from "../../../_enum/data.state.enum";
 import {catchError, map, startWith} from "rxjs/operators";
 import {ConfigOptions} from "../../../configOptions/config-options";
-import {CountryISO, SearchCountryField} from "ngx-intl-tel-input";
 export class Product{
   quantity: number;
   voucher: number;
@@ -75,10 +74,6 @@ export class IndexCommandComponent implements OnInit {
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
   roleUser = localStorage.getItem('userAccount').toString()
-  SearchCountryField = SearchCountryField;
-  // TooltipLabel = Toolt;
-  CountryISO = CountryISO;
-  preferredCountries: CountryISO[] = [CountryISO.Cameroon];
   constructor(private fb: FormBuilder, private modalService: NgbModal, private clientService: ClientService,
               private voucherService: VoucherService, private notifsService: NotifsService, private storeService: StoreService,
               private productService: ProductService, private orderService: OrderService, private statusService: StatusOrderService,

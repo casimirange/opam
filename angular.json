@@ -27,12 +27,9 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css",
-              "node_modules/intl-tel-input/build/css/intlTelInput.css"
+              "src/styles.css"
             ],
-            "scripts": [
-              "node_modules/intl-tel-input/build/js/intlTelInput.min.js"
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {

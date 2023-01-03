@@ -475,21 +475,23 @@
             <div class="col-md-6">
               <div class="position-relative form-group">
                 <label for="phone" class="">Numéro de téléphone</label>
-                <ngx-intl-tel-input
-                  [cssClass]="'form-control'"
-                  [preferredCountries]="preferredCountries"
-                  [enableAutoCountrySelect]="true"
-                  [enablePlaceholder]="true"
-                  [searchCountryFlag]="true"
-                  [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
-                  [selectFirstCountry]="false"
-                  [selectedCountryISO]="CountryISO.Cameroon"
-                  [maxLength]="15"
-                  [separateDialCode]="true"
-                  [phoneValidation]="true"
-                  id="phone"
-                  formControlName="phone"
-                ></ngx-intl-tel-input>
+                <input name="email" id="phone" type="text" placeholder="6937542108"
+                       class="form-control" formControlName="phone">
+<!--                <ngx-intl-tel-input-->
+<!--                  [cssClass]="'form-control'"-->
+<!--                  [preferredCountries]="preferredCountries"-->
+<!--                  [enableAutoCountrySelect]="true"-->
+<!--                  [enablePlaceholder]="true"-->
+<!--                  [searchCountryFlag]="true"-->
+<!--                  [searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"-->
+<!--                  [selectFirstCountry]="false"-->
+<!--                  [selectedCountryISO]="CountryISO.Cameroon"-->
+<!--                  [maxLength]="15"-->
+<!--                  [separateDialCode]="true"-->
+<!--                  [phoneValidation]="true"-->
+<!--                  id="phone"-->
+<!--                  formControlName="phone"-->
+<!--                ></ngx-intl-tel-input>-->
               </div>
               <div
                 *ngIf="clientForm.controls['phone'].invalid && ( clientForm.controls['phone'].touched)"
@@ -562,7 +564,7 @@
               </div>
             </div>
           </div>
-          <button class="mt-1 btn btn-primary float-right ml-3" [disabled]="clientForm.invalid || clientForm.controls['phone'].errors?.['validatePhoneNumber'] || (isLoading$ | async)" (click)="saveClientt()">
+          <button class="mt-1 btn btn-primary float-right ml-3" [disabled]="clientForm.invalid || (isLoading$ | async)" (click)="saveClientt()">
             <i *ngIf="isLoading$ | async" class="fa fa-spinner fa-spin"></i>&nbsp;
             <span *ngIf="isLoading$ | async">Enregistrement ...</span>
             <span *ngIf="!(isLoading$ | async)">Enregistrer client</span>
