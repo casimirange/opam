@@ -16,17 +16,21 @@ import { ClientRefFilterPipe } from './pipes/client-ref-filter.pipe';
 import { ClientDateFilterPipe } from './pipes/client-date-filter.pipe';
 import { ClientCompagnyFilterPipe } from './pipes/client-compagny-filter.pipe';
 import {NgxPaginationModule} from "ngx-pagination";
+import {CommandeModule} from "../commande/commande.module";
+import {AppModule} from "../../app.module";
+import {FormatNumberPipe} from "../../pipes/formatNumber/format-number.pipe";
 
 @NgModule({
-    declarations: [
-        IndexClientComponent,
-        ClientLayoutComponent,
-        DetailsComponent,
-        ClientNameFilterPipe,
-        ClientRefFilterPipe,
-        ClientDateFilterPipe,
-        ClientCompagnyFilterPipe,
-    ],
+  declarations: [
+    IndexClientComponent,
+    ClientLayoutComponent,
+    DetailsComponent,
+    ClientNameFilterPipe,
+    ClientRefFilterPipe,
+    ClientDateFilterPipe,
+    ClientCompagnyFilterPipe,
+    FormatNumberPipe,
+  ],
     imports: [
         CommonModule,
         ClientRoutingModule,
@@ -34,6 +38,8 @@ import {NgxPaginationModule} from "ngx-pagination";
         FormsModule,
         ReactiveFormsModule,
         NgxPaginationModule,
+        CommandeModule,
+
         // Ng2TelInputModule,
         // NgxIntlTelInputModule,
         // Ng2OrderModule,
@@ -42,6 +48,7 @@ import {NgxPaginationModule} from "ngx-pagination";
     ],
     providers: [
         ClientService,
+        FormatNumberPipe
     ],
     exports: [
         ClientNameFilterPipe

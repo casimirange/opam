@@ -51,6 +51,7 @@
             <th class="">Fonction</th>
             <th class="">Téléphone</th>
             <th class="">Type de compte</th>
+            <th class="">Statut</th>
             <th class="text-center">Actions</th>
           </tr>
           </thead>
@@ -60,11 +61,16 @@
             <td class="text-left">{{user.lastName}}</td>
             <td class="text-left">{{user.firstName}}</td>
             <td class="text-left">{{user.email}}</td>
-            <td class="text-left"><span *ngFor="let cli of stores">{{cli.internalReference == user.idStore ? cli.localization : ''}}</span></td>
+            <td class="text-left">{{user.nameStore}}</td>
             <td class="text-left">{{user.pinCode }}</td>
             <td class="text-left">{{user.position }}</td>
             <td class="text-left">{{user.telephone }}</td>
             <td class="text-left">{{getStatusAccount(user.typeAccount.name)}}</td>
+            <td class="text-left">
+              <span class="mb-2 mr-2 badge " [ngClass]="user.status.name == 'USER_ENABLED' ? 'badge-success' : 'badge-danger'">
+                {{getStatusUser(user.status.name)}}
+              </span>
+              </td>
             <td class="text-center">
 <!--              <a style="cursor: pointer" class=" text-success" data-toggle="modal"-->
 <!--                 (click)="showDetails(user)">-->

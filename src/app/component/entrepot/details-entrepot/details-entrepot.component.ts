@@ -21,6 +21,11 @@ import {Carton} from "../../../_model/carton";
 import {Carnet} from "../../../_model/carnet";
 import {Un} from "../../magasin/details-magasin/details-magasin.component";
 import {StatusService} from "../../../_services/status/status.service";
+import {catchError, map, startWith} from "rxjs/operators";
+import {BehaviorSubject, Observable, of} from "rxjs";
+import {AppState} from "../../../_interfaces/app-state";
+import {CustomResponse} from "../../../_interfaces/custom-response";
+import {DataState} from "../../../_enum/data.state.enum";
 
 @Component({
   selector: 'app-details-entrepot',
@@ -31,18 +36,9 @@ export class DetailsEntrepotComponent implements OnInit {
 
   store: Store;
   storeHouse: StoreHouse = new StoreHouse();
-  name = ''
-  refCli = ''
-  date = ''
-  internalRef = ''
-  orders: Order[] = [];
-  order: Order = new Order();
   items: Piece[] = [];
   item: Piece = new Piece();
   storeHouses: StoreHouse[] = [];
-  vouchers: TypeVoucher[] = [];
-  vouchers1: TypeVoucher[] = [];
-  vouchers2: TypeVoucher[] = [];
   all: Un[] = []
   cartons: Carton[] = [];
   carnets: Carnet[] = [];
@@ -55,6 +51,15 @@ export class DetailsEntrepotComponent implements OnInit {
   totalElements1: number;
   size1: number = 20;
   size: number = 20;
+  carnetState$: Observable<AppState<CustomResponse<Carnet>>>;
+  cartonState$: Observable<AppState<CustomResponse<Carton>>>;
+  readonly DataState = DataState;
+  private datacarnetSubjects = new BehaviorSubject<CustomResponse<Carnet>>(null);
+  private datacartonSubjects = new BehaviorSubject<CustomResponse<Carton>>(null);
+  private isLoading = new BehaviorSubject<boolean>(false);
+  isLoading$ = this.isLoading.asObservable();
+  private isLoadingCarton = new BehaviorSubject<boolean>(false);
+  isLoadingCarton$ = this.isLoadingCarton.asObservable();
   roleUser = localStorage.getItem('userAccount').toString()
   constructor(private clientService: ClientService, private activatedRoute: ActivatedRoute, private router: Router,
               private orderService: OrderService, private notifService: NotifsService, private storeService: StoreService,
@@ -66,47 +71,54 @@ export class DetailsEntrepotComponent implements OnInit {
 
   ngOnInit(): void {
     this.getStoreHouseInfos(),
-    this.getVoucherType()
+    // this.getVoucherType()
     this.getCartonsByStoreHouse()
     this.getCarnetsByStoreHouse()
     this.getItemsByStoreHouse()
   }
 
-  getVoucherType(){
-      this.voucherService.getTypevoucher().subscribe(
-        res => {
-          this.vouchers = res.content;
-          this.vouchers1 = res.content;
-          this.vouchers2 = res.content;
-          console.log('bons',res)
-        }
-      )
-  }
-
   getCartonsByStoreHouse(){
     this.activatedRoute.params.subscribe(params => {
-      this.cartonService.getCartonsByStoreHouse(params['id'], this.page - 1, this.size1).subscribe(
-        res => {
-          this.cartons = res.content;
-          console.log('cartons', this.cartons)
-          this.size = res.size
-          this.totalPages = res.totalPages
-          this.totalElements = res.totalElements
-        }
-      )
+
+      this.cartonState$ = this.cartonService.cartonsByStoreHouse$(params['id'],this.page - 1, this.size)
+        .pipe(
+          map(response => {
+            this.datacartonSubjects.next(response)
+            return {dataState: DataState.LOADED_STATE, appData: response}
+          }),
+          startWith({dataState: DataState.LOADING_STATE, appData: null}),
+          catchError((error: string) => {
+            return of({dataState: DataState.ERROR_STATE, error: error})
+          })
+        )
+
+      // this.cartonService.getCartonsByStoreHouse(params['id'], this.page - 1, this.size1).subscribe(
+      //   res => {
+      //     this.cartons = res.content;
+      //     console.log('cartons', this.cartons)
+      //     this.size = res.size
+      //     this.totalPages = res.totalPages
+      //     this.totalElements = res.totalElements
+      //   }
+      // )
     })
   }
 
   getCarnetsByStoreHouse(){
     this.activatedRoute.params.subscribe(params => {
-      this.carnetService.getCarnetsByStoreHouse(params['id'], this.page1 - 1, this.size1).subscribe(
-        resp => {
-          this.carnets = resp.content;
-          this.size1 = resp.size
-          this.totalPages1 = resp.totalPages
-          this.totalElements1 = resp.totalElements
-        }
-      )
+
+      this.carnetState$ = this.carnetService.carnetsByStoreHouse$(params['id'],this.page - 1, this.size)
+        .pipe(
+          map(response => {
+            console.log('carnets',response)
+            this.datacarnetSubjects.next(response)
+            return {dataState: DataState.LOADED_STATE, appData: response}
+          }),
+          startWith({dataState: DataState.LOADING_STATE, appData: null}),
+          catchError((error: string) => {
+            return of({dataState: DataState.ERROR_STATE, error: error})
+          })
+        )
     })
   }
 
@@ -136,26 +148,32 @@ export class DetailsEntrepotComponent implements OnInit {
 
   pageChangeCarnet(event: number){
     this.page1 = event
-    this.carnetService.getCarnetsByStoreHouse(this.storeHouse.internalReference,this.page1 -1, this.size1).subscribe(
-      resp => {
-        this.carnets = resp.content
-        this.size1 = resp.size
-        this.totalPages1 = resp.totalPages
-        this.totalElements1 = resp.totalElements
-      },
-    )
+    this.carnetState$ = this.carnetService.carnetsByStoreHouse$(this.storeHouse.internalReference,this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.datacarnetSubjects.next(response)
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
   pageChangeCarton(event: number){
     this.page = event
-    this.cartonService.getCartonsByStoreHouse(this.storeHouse.internalReference,this.page -1, this.size).subscribe(
-      resp => {
-        this.cartons = resp.content
-        this.size = resp.size
-        this.totalPages = resp.totalPages
-        this.totalElements = resp.totalElements
-      },
-    )
+    this.cartonState$ = this.cartonService.cartonsByStoreHouse$(this.storeHouse.internalReference,this.page - 1, this.size)
+      .pipe(
+        map(response => {
+          this.datacartonSubjects.next(response)
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
   }
 
   padWithZero(num, targetLength) {

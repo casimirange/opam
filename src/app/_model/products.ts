@@ -5,6 +5,7 @@ export class Products{
     internalReference?: number
     idTypeVoucher?:	number
     idOrder?:	number
+    amount?:	number
     quantityNotebook?:	number
     createdAt?:	Date
     updateAt?:	Date

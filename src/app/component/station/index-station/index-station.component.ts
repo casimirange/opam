@@ -57,7 +57,6 @@ export class IndexStationComponent implements OnInit {
   getStations(){
     this.stationService.getAllStationWithPagination(this.page-1, this.size).subscribe(
       resp => {
-        console.log(resp)
         this.stations = resp.content
         this.size = resp.size
         this.totalPages = resp.totalPages

@@ -56,49 +56,10 @@ export class IndexCarnetComponent implements OnInit {
   constructor(private fb: FormBuilder, private modalService: NgbModal, private storeHouseService: StoreHouseService,
               private storeService: StoreService, private notifService: NotifsService, private cartonService: CartonService,
               private carnetService: CarnetService, private voucherService: VoucherService, private statusService: StatusService) {
-    this.formCarnet();
   }
 
   ngOnInit(): void {
-    this.getStores();
-    this.getTypeVoucher()
-    this.storeHouseService.getStoreHouses().subscribe(
-      resp => {
-        this.storeHouses = resp.content
-      },
-    )
-    this.getCartons();
     this.getCarnets();
-  }
-
-  //formulaire de création
-  formCarnet(){
-    this.cartonForm = this.fb.group({
-      idStoreHouse: ['', [Validators.required]],
-      idStore: ['', [Validators.required]],
-      serialNumber: ['', [Validators.required, ]],
-      voucherType: ['', [Validators.required]],
-    });
-  }
-
-  //récupération de la liste des magasins
-  getStores(){
-    this.storeService.getStore().subscribe(
-      resp => {
-        this.stores = resp.content
-      },
-    )
-  }
-
-  //récupération de la liste des entrepots
-  getCartons(){
-
-    this.cartonService.getCartons().subscribe(
-      resp => {
-        this.cartons = resp.content
-        this.notifService.onSuccess('chargement des cartons')
-      },
-    )
   }
   //récupération de la liste des entrepots
   getCarnets(){
@@ -114,27 +75,6 @@ export class IndexCarnetComponent implements OnInit {
           return of({dataState: DataState.ERROR_STATE, error: error})
         })
       )
-
-  }
-
-  //on récupère la liste des types de coupon
-  getTypeVoucher(): void{
-    this.voucherService.getTypevoucher().subscribe(
-      resp => {
-        this.vouchers = resp.content
-      }
-    )
-  }
-
-  annuler() {
-    this.formCarnet();
-    this.storeHouse = new StoreHouse()
-    this.modalService.dismissAll()
-  }
-
-  open(content: any){
-    const modal = true;
-    this.modalService.open(content, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
   }
 
   pageChange(event: number){

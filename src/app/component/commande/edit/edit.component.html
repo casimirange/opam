@@ -269,22 +269,12 @@
                   <tbody>
                   <tr *ngFor="let prod of products; let i = index">
                     <th scope="row">{{i + 1}}</th>
-                    <td>
-                        <span *ngFor="let voucher of vouchers">
-                          {{voucher.internalReference === prod.idTypeVoucher ? formatNumber(voucher.amount) : ''}}
-                        </span>
-<!--                      <span>{{prod.idTypeVoucher | amountVoucher}}</span>-->
-                    </td>
+                    <td>{{formatNumber(prod.amount)}}</td>
                     <td>{{prod.quantityNotebook}}</td>
                     <td>{{prod.quantityNotebook * 10}}</td>
-                    <td><span
-                      *ngFor="let voucher of vouchers">{{voucher.internalReference === prod.idTypeVoucher ? formatNumber(voucher.amount * prod.quantityNotebook * 10) : ''}}</span>
-                    </td>
+                    <td>{{formatNumber(prod.amount * prod.quantityNotebook * 10)}}</td>
                     <td>{{global.tax * 100}} %</td>
-                    <td><span *ngFor="let voucher of vouchers">
-                      {{voucher.internalReference === prod.idTypeVoucher ? formatNumber((voucher.amount * prod.quantityNotebook * 10)+(voucher.amount * prod.quantityNotebook * 10) * global.tax) : ''}}
-                    </span>
-                    </td>
+                    <td>{{formatNumber((prod.amount * prod.quantityNotebook * 10)+(prod.amount * prod.quantityNotebook * 10) * global.tax)}}</td>
                     <!--                <td></td>-->
                     <td>{{prod.createdAt | date: 'dd/MM/yyyy à hh:mm'}}</td>
 <!--                    <td>{{prod.updateAt | date: 'dd/MM/yyyy à hh:mm'}}</td>-->

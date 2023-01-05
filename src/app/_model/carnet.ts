@@ -1,4 +1,5 @@
 import {Status} from "./status";
+import {Carton} from "./carton";
 
 export class Carnet{
   id?: number;
@@ -10,5 +11,10 @@ export class Carnet{
   createdAt?: Date;
   updateAt?: Date;
   status?: Status;
+  amountCoupon: number;
+  carton: Carton;
+  nameStoreHouse: string;
+  nameStoreKeeper: string;
+  numberCarton: number;
 }
 

@@ -57,23 +57,18 @@
 <!--                <th>Actions</th>-->
               </tr>
               </thead>
-              <tbody *ngFor="let carnet of appState.appData.content | paginate: { id: 'carnet', itemsPerPage: appState.appData.size, currentPage: page, totalItems: appState.appData.totalElements }; let i = index">
+              <tbody *ngFor="let carnet of appState.appData.content |
+              paginate: { id: 'carnet', itemsPerPage: appState.appData.size, currentPage: page, totalItems: appState.appData.totalElements }; let i = index">
               <tr>
                 <td>{{i + 1}}</td>
                 <td>{{carnet.internalReference}}</td>
                 <td>{{carnet.serialNumber}}</td>
-                <td >
-                  <span *ngFor="let carton of cartons">
-                    {{(carton.internalReference === carnet.idCarton ? carton.number : '')}}
-                  </span>
-                </td>
-                <td >
-                  <span *ngFor="let storeHouse of storeHouses">{{storeHouse.internalReference === carnet.idStoreHouse ? storeHouse.localisationStore : ''}}</span>
-                </td>
-                <td>{{carnet.idStoreKeeper}}</td>
+                <td>{{carnet.numberCarton}} </td>
+                <td>{{carnet.nameStoreHouse}}</td>
+                <td>{{carnet.nameStoreKeeper}}</td>
                 <td>{{getStatuts(carnet.status.name)}}</td>
-                <td>{{carnet.createdAt | date: 'dd/MM/yyyy à hh:mm'}}</td>
-                <td>{{carnet.updateAt | date: 'dd/MM/yyyy à hh:mm'}}</td>
+                <td>{{carnet.createdAt | date: 'dd/MM/yyyy à HH:mm'}}</td>
+                <td>{{carnet.updateAt | date: 'dd/MM/yyyy à HH:mm'}}</td>
               </tr>
             </table>
             <div class="text-center">

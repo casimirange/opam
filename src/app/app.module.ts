@@ -21,6 +21,7 @@ import {BnNgIdleService} from "bn-ng-idle";
 import { CreditNoteLayoutComponent } from './component/creditNote/credit-note-layout/credit-note-layout.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import { LoaderComponent } from './preloader/loader/loader.component';
+import {ConnectionServiceModule} from "ng-connection-service";
 // import {OnlineStatusModule} from "ngx-online-status";
 // import {Ng2SearchPipeModule} from "ng2-search-filter";
 // import {Ng2OrderModule} from "ng2-order-pipe";
@@ -36,6 +37,7 @@ import { LoaderComponent } from './preloader/loader/loader.component';
     CreditNoteLayoutComponent,
     LoaderComponent,
 
+
   ],
   imports: [
     BrowserModule,
@@ -47,6 +49,7 @@ import { LoaderComponent } from './preloader/loader/loader.component';
     NgOtpInputModule,
     NgxPaginationModule,
     ReactiveFormsModule,
+    ConnectionServiceModule
     // SweetAlert2Module.forRoot(),
     // Ng2SearchPipeModule,
     // Ng2OrderModule
@@ -59,7 +62,8 @@ import { LoaderComponent } from './preloader/loader/loader.component';
   ],
   bootstrap: [AppComponent],
     exports: [
-        LoaderComponent
+        LoaderComponent,
+
 
     ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

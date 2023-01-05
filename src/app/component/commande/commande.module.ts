@@ -42,7 +42,8 @@ import {AppModule} from "../../app.module";
         NgxPaginationModule,
     ],
     exports: [
-        OrderDateFilterPipe
+        OrderDateFilterPipe,
+        OrderRefFilterPipe
     ],
     providers: [
         // ClientService

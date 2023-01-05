@@ -1,5 +1,7 @@
 import {Store} from "./store";
 import {Status} from "./status";
+import {Client} from "./client";
+import {Ticket} from "./ticket";
 
 export class Coupon{
   id?: number;
@@ -15,4 +17,9 @@ export class Coupon{
   createdAt?: Date;
   updateAt?: Date;
   status?: Status;
+  amount: number;
+  nameClient: string;
+  nameStation: string;
+  ticket: Ticket;
+  productionDate: Date
 }

@@ -20,7 +20,7 @@ import {Coupon} from "../../../_model/coupon";
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
-  styleUrls: ['./details.component.css']
+  styleUrls: ['./details.component.scss']
 })
 export class DetailsComponent implements OnInit {
   client: Client;
@@ -40,6 +40,14 @@ export class DetailsComponent implements OnInit {
   private isSendding = new BehaviorSubject<boolean>(false);
   isSending$ = this.isSendding.asObservable();
   private IdParam: string;
+  name = ''
+  refCli = ''
+  date = ''
+  internalRef = ''
+  page: number = 1;
+  totalPages: number;
+  totalElements: number;
+  size: number = 10;
   constructor(private clientService: ClientService, private activatedRoute: ActivatedRoute, private route: ActivatedRoute,
               private orderService: OrderService, private notifService: NotifsService, private storeService: StoreService,
               private couponService: CouponService, private statusService: StatusOrderService) {
@@ -78,9 +86,10 @@ export class DetailsComponent implements OnInit {
 
   getClientOrders(){
 
-    this.clientOrder$ = this.orderService.clientOrders$(parseInt(this.IdParam))
+    this.clientOrder$ = this.orderService.clientOrders$(this.page - 1, this.size, parseInt(this.IdParam))
       .pipe(
         map(response => {
+          console.log('client order', response)
           this.dataSubjectsClientOrder.next(response)
           return {dataState: DataState.LOADED_STATE, appData: response}
         }),
@@ -144,4 +153,18 @@ export class DetailsComponent implements OnInit {
     return this.statusService.allStatus(status)
   }
 
+  pageChange(event: number){
+    this.page = event
+    this.clientOrder$ = this.orderService.clientOrders$(this.page - 1, this.size, parseInt(this.IdParam))
+      .pipe(
+        map(response => {
+          this.dataSubjectsClientOrder.next(response)
+          return {dataState: DataState.LOADED_STATE, appData: response}
+        }),
+        startWith({dataState: DataState.LOADING_STATE, appData: null}),
+        catchError((error: string) => {
+          return of({dataState: DataState.ERROR_STATE, error: error})
+        })
+      )
+  }
 }

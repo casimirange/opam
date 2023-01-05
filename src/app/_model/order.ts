@@ -1,5 +1,7 @@
 import {Client} from "./client";
 import {Status} from "./status";
+import {Store} from "./store";
+import {PaiementMethod} from "./paiement";
 
 export class Order{
     id?:	number
@@ -16,6 +18,7 @@ export class Order{
     linkDelivery?: string
     tax?:	number
     idStore?: number
+    store?: Store
     status?:	Status
     channel?:	string
     deliveryTime?:	string
@@ -25,6 +28,7 @@ export class Order{
     createdAt?:	string
     updateAt?:	string
     idPaymentMethod?:	number
+    paymentMethod?:	PaiementMethod
     netAggregateAmount?:	number
     ttcaggregateAmount?:	number
     localisation?:	string

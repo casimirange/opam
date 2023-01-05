@@ -50,6 +50,10 @@ export class CartonService {
     this.http.get<CustomResponse<Carton>>(environment.carton + `?page=${page}&size=${size}`,)
       .pipe(catchError(this.handleError));
 
+  cartonsByStoreHouse$ = (idStoreHouse: number, page: number, size: number) => <Observable<CustomResponse<Carton>>>
+    this.http.get<CustomResponse<Carton>>(environment.carton + `/storehouse/${idStoreHouse}?page=${page}&size=${size}`,)
+      .pipe(catchError(this.handleError));
+
   handleError(error: HttpErrorResponse): Observable<never>{
     return throwError(`Une erreur est survenue: ${error.error.message.toString().bold()}` )
   }

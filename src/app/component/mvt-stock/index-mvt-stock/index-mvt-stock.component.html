@@ -59,13 +59,9 @@
           <th>Magasin de départ</th>
           <th>Espace de stockage de départ</th>
           <th>Type de mouvement</th>
-<!--          <th>Type de bon</th>-->
           <th>Magasin d'arrivée</th>
           <th>Espace de stockage d'arrivée</th>
-<!--          <th>Quantité</th>-->
           <th>Date creation</th>
-<!--          <th>Date modification</th>-->
-<!--          <th>Actions</th>-->
         </tr>
         </thead>
         <tbody *ngFor="let mvtStock of mvtStocks; let i = index">
@@ -73,27 +69,12 @@
         <tr>
           <td>{{i + 1}}</td>
           <td>{{mvtStock.internalReference}}</td>
-          <td><span *ngFor="let store of stores">  {{store.internalReference == mvtStock.idStore1 ? store.localization : ''}} </span>  </td>
-          <td><span *ngFor="let storehouse of storeHouses">  {{storehouse.internalReference == mvtStock.idStoreHouse1 ? storehouse.name : ''}}</span>  </td>
+          <td>{{mvtStock.store1.localization}}</td>
+          <td>{{mvtStock.storeHouse1.name}}</td>
           <td>{{mvtStock.type}} </td>
-<!--          <td>{{mvtStock.typeVoucher}} </td>-->
-          <td><span *ngFor="let store of stores">  {{store.internalReference == mvtStock.idStore2 ? store.localization : ''}}  </span>  </td>
-          <td><span *ngFor="let storehouse of storeHouses">  {{storehouse.internalReference == mvtStock.idStoreHouse2 ? storehouse.name : ''}} </span>  </td>
-<!--          <td>{{mvtStock.quantityCarton}} </td>-->
-          <td> {{mvtStock.createdAt | date: 'dd/MM/yyyy à HH:mm'}}</td>
-<!--          <td> {{mvtStock.updateAt | date: 'dd/MM/yyyy HH:mm'}}</td>-->
-<!--          <td>-->
-<!--            <a style="cursor: pointer" class=" text-success" data-toggle="modal"-->
-<!--               (click)="delete(store, i)">-->
-<!--              <i class="pe-7s-look" data-toggle="modal" title="delete"></i>-->
-<!--            </a>-->
-<!--            <a style="cursor: pointer" class="delete text-danger" (click)="deleteStore(store, i)">-->
-<!--              <i class="pe-7s-trash" title="supprimer"></i>-->
-<!--            </a>&nbsp;-->
-<!--            <a style="cursor: pointer" class="text-primary" (click)="updateStoreModal(mymodal, store)">-->
-<!--              <i class="pe-7s-eyedropper" title="modifier"></i>-->
-<!--            </a>-->
-<!--          </td>-->
+          <td>{{mvtStock.store2.localization}}</td>
+          <td>{{mvtStock.storeHouse2.name}}</td>
+          <td>{{mvtStock.createdAt | date: 'dd/MM/yyyy à HH:mm'}}</td>
         </tr>
         </tbody>
       </table>

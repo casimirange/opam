@@ -125,8 +125,8 @@ export class OrderService {
     this.http.get<Order>(environment.order+`/${internalRef}`)
       .pipe(catchError(this.handleError));
 
-  clientOrders$ = (internalRef: number) => <Observable<CustomResponse<Order>>>
-    this.http.get<CustomResponse<Order>>(environment.order+`/client/${internalRef}`)
+  clientOrders$ = (page: number, size: number, internalRef: number) => <Observable<CustomResponse<Order>>>
+    this.http.get<CustomResponse<Order>>(environment.order+`/client/${internalRef}?page=${page}&size=${size}`)
       .pipe(catchError(this.handleError));
 
   sendMailOrder$ = (internalRef: number) => <Observable<Order>>

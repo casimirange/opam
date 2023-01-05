@@ -20,6 +20,7 @@ export class ISignup{
   pinCode: number;
   email: string;
   username: string;
+  nameStore: string;
   telephone: string;
   lastName: string;
   firstName: string;

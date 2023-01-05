@@ -6,6 +6,7 @@ export class Station{
   internalReference?: number;
   localization: string;
   designation: string;
+  nameManagerStation: string;
   pinCode: number;
   balance: number;
   managerStagion: number;

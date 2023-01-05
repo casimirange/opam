@@ -68,7 +68,6 @@ export class IndexCouponComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getTypeVoucher()
     this.getCoupons();
     this.getStations();
   }
@@ -106,6 +105,7 @@ export class IndexCouponComponent implements OnInit {
       .pipe(
         map(response => {
           this.dataSubjects.next(response)
+          console.log('coupons', response)
           this.notifService.onSuccess('chargement des coupons')
           return {dataState: DataState.LOADED_STATE, appData: response}
         }),
@@ -114,15 +114,6 @@ export class IndexCouponComponent implements OnInit {
           return of({dataState: DataState.ERROR_STATE, error: error})
         })
       )
-  }
-
-  //on récupère la liste des types de coupon
-  getTypeVoucher(): void{
-    this.voucherService.getTypevoucher().subscribe(
-      resp => {
-        this.vouchers = resp.content
-      }
-    )
   }
 
   annuler() {

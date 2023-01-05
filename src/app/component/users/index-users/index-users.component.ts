@@ -8,6 +8,7 @@ import {Store} from "../../../_model/store";
 import {StatusService} from "../../../_services/status/status.service";
 import {StatusAccountService} from "../../../_services/status/status-account.service";
 import {Router} from "@angular/router";
+import {StatusUserService} from "../../../_services/status/status-user.service";
 
 @Component({
   selector: 'app-index-users',
@@ -23,17 +24,12 @@ export class IndexUsersComponent implements OnInit {
   totalElements: number;
   size: number = 10;
   constructor(private modalService: NgbModal, private userService: UsersService, private notifsService: NotifsService,
-              private storeService: StoreService, private statusAccountService: StatusAccountService, private router: Router,) { }
+              private storeService: StoreService, private statusAccountService: StatusAccountService,
+              private statusUserService: StatusUserService, private router: Router,) { }
 
   ngOnInit(): void {
     this.getUsers()
-    this.getStores()
   }
-
-  // openCommandModal(content: any){
-  //   const modal = true;
-  //   this.modalService.open(content, {ariaLabelledBy: 'modal-basic-titles', size: 'xl', });
-  // }
 
   getUsers(): void{
     this.userService.getAllUsersWithPagination(this.page-1, this.size).subscribe(
@@ -50,19 +46,12 @@ export class IndexUsersComponent implements OnInit {
     )
   }
 
-  getStores(){
-    this.storeService.getStore().subscribe(
-      resp => {
-        this.stores = resp.content
-      },
-      error => {
-        // this.notifsService.onError(error.error.message, 'échec chargement magasins')
-      }
-    )
-  }
-
   getStatusAccount(status: string): string {
     return this.statusAccountService.allStatus(status)
+  }
+
+  getStatusUser(status: string): string {
+    return this.statusUserService.allStatus(status)
   }
 
   pageChange(event: number){

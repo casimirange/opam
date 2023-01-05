@@ -81,7 +81,7 @@ export class EditComponent implements OnInit {
 
   ngOnInit(): void {
     this.getOrder()
-    this.getVouchers()
+    // this.getVouchers()
     this.getProductsByOrder()
     this.getPaymentMethods()
   }
@@ -441,23 +441,6 @@ export class EditComponent implements OnInit {
     // }
   }
 
-  getVouchers(): void{
-      this.voucherService.getTypevoucher().subscribe(
-      resp => {
-        this.vouchers = resp.content;
-      })
-  }
-
-  getVoucher(product: number): number{
-    this.voucherService.getTypevoucherByInternalRef(product).subscribe(
-      resp => {
-        this.voucher = resp;
-      }, error => {},
-      ()=>{
-        this.voucherAmount = this.voucher.amount
-      })
-    return this.voucherAmount
-  }
 
   getStatuts(status: string): string {
     return this.statusService.allStatus(status)

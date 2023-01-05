@@ -35,7 +35,7 @@ export class IndexClientComponent implements OnInit {
   page: number = 1;
   totalPages: number;
   totalElements: number;
-  size: number = 10;
+  size: number = 20;
   roleUser = localStorage.getItem('userAccount').toString()
   modalTitle = 'Enregistrer nouveau client'
 
@@ -56,6 +56,7 @@ export class IndexClientComponent implements OnInit {
       .pipe(
         map(response => {
           this.dataSubjects.next(response)
+          this.notifService.onSuccess('chargement des clients')
           return {dataState: DataState.LOADED_STATE, appData: response}
         }),
         startWith({dataState: DataState.LOADING_STATE, appData: null}),
