@@ -22,6 +22,7 @@ import {Station} from "../../../_model/station";
 import {CreditNote} from "../../../_model/creditNote";
 import {CreditNoteService} from "../../../_services/creditNote/credit-note.service";
 import {StatusService} from "../../../_services/status/status.service";
+import {CouponService} from "../../../_services/coupons/coupon.service";
 
 @Component({
   selector: 'app-index-credit-note',
@@ -48,12 +49,11 @@ export class IndexCreditNoteComponent implements OnInit {
   constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService, private router: Router,
               private notifService: NotifsService, private unitService: UnitsService, private voucherService: VoucherService,
               private clientService: ClientService, private userService: UsersService, private creditNoteService: CreditNoteService,
-              private stationService: StationService, private statusService: StatusService) {
+              private stationService: StationService, private statusService: StatusService, private couponService: CouponService) {
     this.formStore();
   }
 
   ngOnInit(): void {
-    this.getClients();
     this.getCreditNote();
     this.getStations()
   }
@@ -77,7 +77,6 @@ export class IndexCreditNoteComponent implements OnInit {
     // this.creditNote.idClient = this.clients.find(client => client.completeName === this.creditForm.controls['idClient'].value).internalReference
     this.creditNote.idStation = parseInt(this.creditForm.controls['idStation'].value)
     this.creditNote.serialCoupons = this.vouchers
-    console.log('req', this.creditNote)
     this.isLoading.next(true);
     this.creditNoteService.saveCreditNote(this.creditNote).subscribe(
       resp => {
@@ -107,14 +106,6 @@ export class IndexCreditNoteComponent implements OnInit {
     this.stationService.getStations().subscribe(
       resp => {
         this.stations = resp.content
-      },
-    )
-  }
-
-  getClients(){
-    this.clientService.getAllClients().subscribe(
-      resp => {
-        this.clients = resp.content
       },
     )
   }
@@ -183,9 +174,13 @@ export class IndexCreditNoteComponent implements OnInit {
   }
 
   updateStoreModal(mymodal: TemplateRef<any>, store: CreditNote) {
-    this.modalService.open(mymodal, {ariaLabelledBy: 'modal-basic-title', size: 'sm'});
+    console.log(store)
+    this.modalService.open(mymodal, {ariaLabelledBy: 'modal-basic-title', size: 'lg'});
     this.creditNote = store
-    this.modalTitle = 'Modifier requête'
+    for (let coupon of store.coupon){
+      this.vouchers.push(parseInt(coupon.serialNumber))
+    }
+    this.modalTitle = 'Modifier note'
   }
 
   updateRequest() {
@@ -223,9 +218,22 @@ export class IndexCreditNoteComponent implements OnInit {
   }
 
   addCoupon() {
-    this.vouchers.push(this.creditForm.controls['serialNumber'].value)
-    this.creditForm.controls['serialNumber'].reset()
-    console.log(this.vouchers)
+    this.couponService.getCouponsBySerialNumber(this.creditForm.controls['serialNumber'].value).subscribe(
+      res => {
+        if (res.status.name === 'USED' ){
+          if (res.idCreditNote != null){
+            this.notifService.onWarning('Ce coupon a déjà fait l\'objet d\'une note de crédit')
+          }else {
+            this.vouchers.push(this.creditForm.controls['serialNumber'].value)
+            this.creditForm.controls['serialNumber'].reset()
+          }
+        }else{
+          this.notifService.onWarning("Ce coupon n'a pas encore été utilisé en station")
+        }
+      }, error => {
+        this.notifService.onError("Ce coupon n'existe pas", '')
+      }
+    )
   }
 
   removeCoupon(coupon: number) {
@@ -236,5 +244,9 @@ export class IndexCreditNoteComponent implements OnInit {
 
   getStatuts(status: string): string {
     return this.statusService.allStatus(status)
+  }
+
+  creditNoteDetails(note: CreditNote) {
+    this.router.navigate(['/credit-note/details', note.internalReference])
   }
 }

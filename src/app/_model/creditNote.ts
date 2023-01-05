@@ -7,7 +7,7 @@ export class CreditNote{
   internalReference?: number
   // idClient:	number
   idStation:	number
-  coupon:	Coupon
+  coupon:	Coupon[]
   station:	Station
   status?:	Status
   createdAt?:	string

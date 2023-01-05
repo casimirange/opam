@@ -53,11 +53,13 @@
                 <th>Service client</th>
                 <th>Statut</th>
                 <th>Date creation</th>
+                <th>Date Modification</th>
+                <th>Action</th>
               </tr>
               </thead>
               <tbody *ngFor="let request of requestOppositions | paginate: { id: 'request', itemsPerPage: size, currentPage: page, totalItems: totalElements } ; let i = index">
 
-              <tr (dblclick)="requestDetails(request)">
+              <tr>
                 <td>{{i + 1}}</td>
                 <td>{{request.internalReference}}</td>
                 <td>{{request.description}} </td>
@@ -66,7 +68,13 @@
                 <td>{{request.nameManagerCoupon}} </td>
                 <td>{{request.nzmeServiceClient}} </td>
                 <td>{{getStatuts(request.status.name)}}</td>
-                <td> {{request.createdAt | date: 'dd/MM/yyyy HH:mm'}}</td>
+                <td>{{request.createdAt | date: 'dd/MM/yyyy HH:mm'}}</td>
+                <td>{{request.updateAt | date: 'dd/MM/yyyy à HH:mm'}}</td>
+                <td>
+                  <button class="btn btn-sm btn-secondary mr-2" (click)="requestDetails(request)">
+                    <i class="pe-7s-look" title="consulter"></i>
+                  </button>
+                </td>
               </tr>
               </tbody>
             </table>

@@ -21,6 +21,14 @@ export class CouponService {
     return this.http.get<any>(environment.coupon+`/station/${idStation}?page=${page}&size=${size}`)
   }
 
+  getCouponsBySerialNumber(coupon: string): Observable<Coupon>{
+    return this.http.get<Coupon>(environment.coupon+`/serial/${coupon}`)
+  }
+
+  getCouponByInternalRel(coupon: number): Observable<Coupon>{
+    return this.http.get<Coupon>(environment.coupon+`/${coupon}`)
+  }
+
   sendCouponByClient(clientInternalReference: number): Observable<any>{
     return this.http.get<any>(environment.coupon + `/export/excel/client/${clientInternalReference}`,)
   }

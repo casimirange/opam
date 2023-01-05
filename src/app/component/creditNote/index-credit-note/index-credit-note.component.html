@@ -35,7 +35,7 @@
           <th>Coupon</th>
           <th>Statut</th>
           <th>Date creation</th>
-          <!--          <th>Date modification</th>-->
+          <th>Date modification</th>
           <th >Actions</th>
         </tr>
         </thead>
@@ -47,8 +47,8 @@
           <td>{{credit.station.designation}} </td>
           <td>{{credit.coupon[0].serialNumber}} </td>
           <td>{{getStatuts(credit.status.name)}}</td>
-          <td> {{credit.createdAt | date: 'dd/MM/yyyy HH:mm'}}</td>
-          <!--          <td> {{store.updateAt | date: 'dd/MM/yyyy HH:mm'}}</td>-->
+          <td>{{credit.createdAt | date: 'dd/MM/yyyy'}}</td>
+          <td>{{credit.updateAt | date: 'dd/MM/yyyy'}}</td>
           <td>
 <!--            <a  style="cursor: pointer" class=" text-success" data-toggle="tooltip" title="valider une note de crédit"-->
 <!--               (click)="valid(credit.internalReference, i)">-->
@@ -60,11 +60,14 @@
 <!--            <a  style="cursor: pointer" class="text-primary" (click)="updateStoreModal(mymodal, credit)">-->
 <!--              <i class="pe-7s-eyedropper" title="modifier"></i>-->
 <!--            </a>-->
-            <button *ngIf="credit.status.name != 'ACTIVATED'" class="btn btn-sm btn-success mr-2" (click)="valid(credit.internalReference, i)">
-              <i class="pe-7s-check" title="valider la note de crédit"></i>
-            </button>
-            <button class="btn btn-sm btn-primary" (click)="updateStoreModal(mymodal, credit)">
-              <i class="pe-7s-eyedropper" title="modifier"></i>
+<!--            <button *ngIf="credit.status.name != 'ACTIVATED'" class="btn btn-sm btn-success mr-2" (click)="valid(credit.internalReference, i)">-->
+<!--              <i class="pe-7s-check" title="valider la note de crédit"></i>-->
+<!--            </button>-->
+<!--            <button class="btn btn-sm btn-primary" (click)="updateStoreModal(mymodal, credit)">-->
+<!--              <i class="pe-7s-eyedropper" title="modifier"></i>-->
+<!--            </button>-->
+            <button class="btn btn-sm btn-secondary mr-2" (click)="creditNoteDetails(credit)">
+              <i class="pe-7s-look" title="consulter"></i>
             </button>
           </td>
         </tr>

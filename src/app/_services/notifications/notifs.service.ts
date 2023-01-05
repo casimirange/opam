@@ -54,6 +54,14 @@ export class NotifsService {
       });
   }
 
+  onWarning(message: string): void{
+    Toast.fire({
+        title: message,
+        icon: 'warning',
+      // background: 'success'
+      });
+  }
+
   sendError(message: string): void{
     this.apiError.next(message)
   }
