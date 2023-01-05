@@ -20,6 +20,7 @@ import {OppositionService} from "../../../_services/opposition/opposition.servic
 import {StatusOrderService} from "../../../_services/status/status-order.service";
 import {StatusService} from "../../../_services/status/status.service";
 import {ISignup} from "../../../_model/signup";
+import {CouponService} from "../../../_services/coupons/coupon.service";
 
 @Component({
   selector: 'app-index-request-opposition',
@@ -49,7 +50,7 @@ export class IndexRequestOppositionComponent implements OnInit {
   constructor(private modalService: NgbModal, private fb: FormBuilder, private storeService: StoreService, private router: Router,
               private notifService: NotifsService, private unitService: UnitsService, private voucherService: VoucherService,
               private clientService: ClientService, private userService: UsersService, private requestService: OppositionService,
-              private statusService: StatusService) {
+              private statusService: StatusService, private couponService: CouponService) {
     this.formRequest();
   }
 
@@ -178,8 +179,18 @@ export class IndexRequestOppositionComponent implements OnInit {
   }
 
   addCoupon() {
-    this.vouchers.push(this.requestForm.controls['serialNumber'].value)
-    this.requestForm.controls['serialNumber'].reset()
+    this.couponService.getCouponsBySerialNumber(this.requestForm.controls['serialNumber'].value).subscribe(
+      res => {
+        if (res.status.name === 'ACTIVATED' ){
+          this.vouchers.push(this.requestForm.controls['serialNumber'].value)
+          this.requestForm.controls['serialNumber'].reset()
+        }else{
+          this.notifService.onWarning(`Seuls les coupons activés peuvent être utilisés. statut du coupon: ${this.getStatuts(res.status.name)}`)
+        }
+      }, error => {
+        this.notifService.onError("Ce coupon n'existe pas", '')
+      }
+    )
     console.log(this.vouchers)
   }
 
