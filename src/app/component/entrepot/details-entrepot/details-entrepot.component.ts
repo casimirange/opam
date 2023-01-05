@@ -107,7 +107,7 @@ export class DetailsEntrepotComponent implements OnInit {
   getCarnetsByStoreHouse(){
     this.activatedRoute.params.subscribe(params => {
 
-      this.carnetState$ = this.carnetService.carnetsByStoreHouse$(params['id'],this.page - 1, this.size)
+      this.carnetState$ = this.carnetService.carnetsByStoreHouse$(params['id'],this.page1 - 1, this.size)
         .pipe(
           map(response => {
             console.log('carnets',response)
@@ -148,7 +148,7 @@ export class DetailsEntrepotComponent implements OnInit {
 
   pageChangeCarnet(event: number){
     this.page1 = event
-    this.carnetState$ = this.carnetService.carnetsByStoreHouse$(this.storeHouse.internalReference,this.page - 1, this.size)
+    this.carnetState$ = this.carnetService.carnetsByStoreHouse$(this.storeHouse.internalReference,this.page1 - 1, this.size)
       .pipe(
         map(response => {
           this.datacarnetSubjects.next(response)
