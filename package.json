@@ -1,5 +1,5 @@
 {
-  "name": "gulfin",
+  "name": "opam",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -20,13 +20,9 @@
     "@angular/platform-browser-dynamic": "~12.2.0",
     "@angular/router": "~12.2.0",
     "@ng-bootstrap/ng-bootstrap": "^10.0.0",
-    "bn-ng-idle": "^2.0.4",
     "express": "^4.18.2",
     "google-libphonenumber": "^3.2.31",
-    "intl-tel-input": "^17.0.3",
     "ng-connection-service": "^9.0.3",
-    "ng-otp-input": "^1.8.5",
-    "ngx-pagination": "^6.0.3",
     "path": "^0.12.7",
     "rxjs": "~6.6.0",
     "sweetalert2": "^11.6.8",

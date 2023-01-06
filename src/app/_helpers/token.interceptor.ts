@@ -24,8 +24,6 @@ export class TokenInterceptor implements HttpInterceptor {
       // on clone la requête d'origine
       let clone = request.clone({
         headers: request.headers.set('Authorization', 'Bearer ' + token),
-
-
         // params: request.params.set('code')
       })
       return next.handle(clone).pipe(
@@ -36,8 +34,9 @@ export class TokenInterceptor implements HttpInterceptor {
           } else if (err.error.message.includes("Une authentification complète est requise pour accéder à cette ressource")) {
             this.notifService.expiredSession()
           } else {
-            this.notifService.onError(err.error.message, '')
+            this.notifService.onError(err.error.message)
           }
+          this.notifService.onError(err)
           return throwError(err)
         })
       )

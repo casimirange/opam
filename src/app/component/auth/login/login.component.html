@@ -3,7 +3,7 @@
     <div class="h-100 bg-plum-plate bg-animation">
       <div class="d-flex h-100 justify-content-center align-items-center">
         <div class="mx-auto app-login-box col-md-8">
-<!--          <div class="app-logo-inverse mx-auto mb-3">Gulfcam</div>-->
+          <div class="app-logo-inverse mx-auto mb-3">OPAM</div>
 <!--          <div class="app-logo-inverse mx-auto mb-3">-->
 <!--            <img src="assets/images/logo-removebg-preview.png" width="60" alt="">-->
 <!--          </div>-->
@@ -11,9 +11,6 @@
             <div class="modal-content">
               <div class="modal-body">
                 <div class="h5 modal-title text-center">
-                  <h4 class="mt-2 mb-2">
-                    <img src="assets/images/logo-removebg-preview.png" width="60" alt="">
-                  </h4>
                   <h4 class="mt-2">
                     <div>Bienvenue,</div>
                     <span>Veuillez entrer les informations de votre compte</span>
@@ -23,31 +20,18 @@
                   <div class="form-row">
                     <div class="col-md-12">
                       <div class="position-relative form-group">
-                        <input id="exampleEmail" placeholder="Username..." type="email" class="form-control"  formControlName="username">
+                        <input id="exampleEmail" placeholder="Username..." type="text" class="form-control"  formControlName="username">
                         <div *ngIf="form['username'].invalid && (form['username'].dirty || form['username'].touched)"
                              class=""  style="color: #f65656; font-style: italic;">
 
                           <div *ngIf="form['username'].errors?.['required']" class="ml-3">
                             le nom d'utilisateur est requis.
                           </div>
-                          <div *ngIf="form['username'].errors?.['email']" class="ml-3">
-                            entrez une email valide : example@example.com
+                          <div *ngIf="form['username'].errors?.['minlength']" class="ml-3">
+                            au moins 4 caractères
                           </div>
                         </div>
                       </div>
-<!--                      <div style="color: #f65656; font-style: italic;" *ngIf="loginForm.controls['username'].invalid && ((loginForm.controls['username'].dirty))">-->
-<!--                        <span>*</span> usernmae invalide-->
-<!--                      </div>-->
-<!--                      <div *ngIf="form['username'].invalid && (form['username'].dirty || form['username'].touched)"-->
-<!--                           class="mb-2"  style="color: #f65656; font-style: italic;">-->
-
-<!--                        <div *ngIf="form['username'].errors?.['required']" class="ml-3">-->
-<!--                          le nom d'utilisateur est requis.-->
-<!--                        </div>-->
-<!--                        <div *ngIf="form['username'].errors?.['pattern']" class="ml-3">-->
-<!--                          le nom d'utilisateur doit comporter au moins 4 caractères.-->
-<!--                        </div>-->
-<!--                      </div>-->
                     </div>
                     <div class="col-md-12">
                       <div class="position-relative form-group">
@@ -65,17 +49,14 @@
                     </div>
                   </div>
                 </form>
-                <div *ngIf="errorMessage" >
-                  <div class="divider" ></div>
-                  <h6 class="mb-0 text-danger">{{errorMessage}}</h6>
-                </div>
-
-<!--                <ng-container *ngIf="(appState$ | async) as appState" [ngSwitch]="appState.dataState">-->
-<!--                  <ng-container *ngSwitchCase="DataState.ERROR_STATE" class="">-->
-<!--                    <div class="divider" ></div>-->
-<!--                    <h6 class="mb-0 text-danger">{{appState.error}}</h6>-->
-<!--                  </ng-container>-->
-<!--                </ng-container>-->
+                <div class="divider"></div>
+                <h6 class="mb-0">Pas de compte? <a routerLink="/auth/signup" class="text-primary">Créer ici</a></h6>
+                <ng-container *ngIf="(appState$ | async) as appState" [ngSwitch]="appState.dataState">
+                  <ng-container *ngSwitchCase="DataState.ERROR_STATE" class="">
+                    <div class="divider" ></div>
+                    <h6 class="mb-0 text-danger">{{appState.error}}</h6>
+                  </ng-container>
+                </ng-container>
               </div>
               <div class="modal-footer clearfix">
                 <div class="float-right">

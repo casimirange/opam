@@ -1,5 +1,3 @@
-import {Status} from "./status";
-
 export class IUser{
   id?: string;
   name?: string;
@@ -16,6 +14,5 @@ export class IUser{
   magasin?: string;
   crreatedAt?: Date;
   updatedAt?: Date;
-  status?: Status;
   access_token?: string;
 }
